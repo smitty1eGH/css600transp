@@ -1,6 +1,6 @@
 to setup
   clear-all
-  create-turtles 100 [ setxy random-xcor random-ycor ]
+  create-turtles 100 [ setxy random-xcor random-ycor pen-down ]
   reset-ticks
 end
 
@@ -37,8 +37,8 @@ GRAPHICS-WINDOW
 16
 -16
 16
-0
-0
+1
+1
 1
 ticks
 30.0
