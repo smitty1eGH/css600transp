@@ -634,128 +634,115 @@ NIL
 @#$#@#$#@
 ## WHAT IS IT?
 
-This is a model of traffic moving in a city grid. It allows you to control traffic lights and global variables, such as the speed limit and the number of cars, and explore traffic dynamics.
+Simulation Req's:
 
-Try to develop strategies to improve traffic and to understand the different ways to measure the quality of traffic.
+Environment- patches
+
+- exit area
+
+- Flammable patches
+
+-- walls
+
+-- floors
+
+-- grass
+
+- Burning
+
+- burnt
+
+
+Agent actions
+
+- agents have variable speeds
+
+- agents can die
+
+- agents move towards exit area
+
+- agents cant move through each other
+
+- the number of agents is variable
+
+- agents are randomly placed on floor patches
+
+- is there a way to specify agent placement through the UI?
+
+
+
+Sim UI features:
+
+- can specify the map
+
+- can control flamability of patches
+
+- number of agents
+
+- starting fire spots
+
+- agent speed distribution
+
 
 ## HOW IT WORKS
 
-Each time step, the cars attempt to move forward at their current speed.  If their current speed is less than the speed limit and there is no car directly in front of them, they accelerate.  If there is a slower car in front of them, they match the speed of the slower car and deccelerate.  If there is a red light or a stopped car in front of them, they stop.
-
-There are two different ways the lights can change.  First, the user can change any light at any time by making the light current, and then clicking CHANGE LIGHT.  Second, lights can change automatically, once per cycle.  Initially, all lights will automatically change at the beginning of each cycle.
-
-## HOW TO USE IT
-
-Change the traffic grid (using the sliders GRID-SIZE-X and GRID-SIZE-Y) to make the desired number of lights.  Change any other of the settings that you would like to change.  Press the SETUP button.
-
-At this time, you may configure the lights however you like, with any combination of auto/manual and any phase. Changes to the state of the current light are made using the CURRENT-AUTO?, CURRENT-PHASE and CHANGE LIGHT controls.  You may select the current intersection using the SELECT INTERSECTION control.  See below for details.
-
-Start the simulation by pressing the GO button.  You may continue to make changes to the lights while the simulation is running.
 
 ### Buttons
 
-SETUP - generates a new traffic grid based on the current GRID-SIZE-X and GRID-SIZE-Y and NUM-CARS number of cars.  This also clears all the plots. All lights are set to auto, and all phases are set to 0.
-GO - runs the simulation indefinitely
-CHANGE LIGHT - changes the direction traffic may flow through the current light. A light can be changed manually even if it is operating in auto mode.
-SELECT INTERSECTION - allows you to select a new "current" light. When this button is depressed, click in the intersection which you would like to make current. When you've selected an intersection, the "current" label will move to the new intersection and this button will automatically pop up.
 
 ### Sliders
 
-SPEED-LIMIT - sets the maximum speed for the cars
-NUM-CARS - the number of cars in the simulation (you must press the SETUP button to see the change)
-TICKS-PER-CYCLE - sets the number of ticks that will elapse for each cycle.  This has no effect on manual lights.  This allows you to increase or decrease the granularity with which lights can automatically change.
-GRID-SIZE-X - sets the number of vertical roads there are (you must press the SETUP button to see the change)
-GRID-SIZE-Y - sets the number of horizontal roads there are (you must press the SETUP button to see the change)
-CURRENT-PHASE - controls when the current light changes, if it is in auto mode. The slider value represents the percentage of the way through each cycle at which the light should change. So, if the TICKS-PER-CYCLE is 20 and CURRENT-PHASE is 75%, the current light will switch at tick 15 of each cycle.
 
 ### Switches
 
-POWER? - toggles the presence of traffic lights
-CURRENT-AUTO? - toggles the current light between automatic mode, where it changes once per cycle (according to CURRENT-PHASE), and manual, in which you directly control it with CHANGE LIGHT.
 
 ### Plots
 
-STOPPED CARS - displays the number of stopped cars over time
-AVERAGE SPEED OF CARS - displays the average speed of cars over time
-AVERAGE WAIT TIME OF CARS - displays the average time cars are stopped over time
 
 ## THINGS TO NOTICE
 
-When cars have stopped at a traffic light, and then they start moving again, the traffic jam will move backwards even though the cars are moving forwards.  Why is this?
-
-When POWER? is turned off and there are quite a few cars on the roads, "gridlock" usually occurs after a while.  In fact, gridlock can be so severe that traffic stops completely.  Why is it that no car can move forward and break the gridlock?  Could this happen in the real world?
-
-Gridlock can occur when the power is turned on, as well.  What kinds of situations can lead to gridlock?
 
 ## THINGS TO TRY
 
-Try changing the speed limit for the cars.  How does this affect the overall efficiency of the traffic flow?  Are fewer cars stopping for a shorter amount of time?  Is the average speed of the cars higher or lower than before?
-
-Try changing the number of cars on the roads.  Does this affect the efficiency of the traffic flow?
-
-How about changing the speed of the simulation?  Does this affect the efficiency of the traffic flow?
-
-Try running this simulation with all lights automatic.  Is it harder to make the traffic move well using this scheme than controlling one light manually?  Why?
-
-Try running this simulation with all lights automatic.  Try to find a way of setting the phases of the traffic lights so that the average speed of the cars is the highest.  Now try to minimize the number of stopped cars.  Now try to decrease the average wait time of the cars.  Is there any correlation between these different metrics?
 
 ## EXTENDING THE MODEL
 
-Currently, the maximum speed limit (found in the SPEED-LIMIT slider) for the cars is 1.0.  This is due to the fact that the cars must look ahead the speed that they are traveling to see if there are cars ahead of them.  If there aren't, they speed up.  If there are, they slow down.  Looking ahead for a value greater than 1 is a little bit tricky.  Try implementing the correct behavior for speeds greater than 1.
-
-When a car reaches the edge of the world, it reappears on the other side.  What if it disappeared, and if new cars entered the city at random locations and intervals?
-
-## NETLOGO FEATURES
-
-This model uses two forever buttons which may be active simultaneously, to allow the user to select a new current intersection while the model is running.
-
-It also uses a chooser to allow the user to choose between several different possible plots, or to display all of them at once.
 
 ## RELATED MODELS
 
-- "Traffic Basic": a simple model of the movement of cars on a highway.
 
-- "Traffic Basic Utility": a version of "Traffic Basic" including a utility function for the cars.
 
-- "Traffic Basic Adaptive": a version of "Traffic Basic" where cars adapt their acceleration to try and maintain a smooth flow of traffic.
+Fire simulation & agent based model papers
 
-- "Traffic Basic Adaptive Individuals": a version of "Traffic Basic Adaptive" where each car adapts individually, instead of all cars adapting in unison.
+Crowd Simulation Modeling Applied to Emergency and Evacuation Simulations using Multi-Agent Systems
 
-- "Traffic 2 Lanes": a more sophisticated two-lane version of the "Traffic Basic" model.
+https://arxiv.org/ftp/arxiv/papers/1303/1303.4692.pdf
 
-- "Traffic Intersection": a model of cars traveling through a single intersection.
 
-- "Traffic Grid Goal": a version of "Traffic Grid" where the cars have goals, namely to drive to and from work.
+Simulation of pedestrian evacuation route choice using social force model in large-scale public space: Comparison of five evacuation strategies
 
-- "Gridlock HubNet": a version of "Traffic Grid" where students control traffic lights in real-time.
+https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6730895/
 
-- "Gridlock Alternate HubNet": a version of "Gridlock HubNet" where students can enter NetLogo code to plot custom metrics.
+
+Agent Pathing
+
+A* in netlogo
+
+http://www.cs.us.es/~fsancho/?e=131
+
+
+Floor plan generation
+
+A Novel Algorithm for Real-time ProceduralGeneration of Building Floor Plans
+
+https://arxiv.org/pdf/1211.5842.pdf
+
 
 ## HOW TO CITE
 
-If you mention this model or the NetLogo software in a publication, we ask that you include the citations below.
-
-For the model itself:
-
-* Wilensky, U. (2003).  NetLogo Traffic Grid model.  http://ccl.northwestern.edu/netlogo/models/TrafficGrid.  Center for Connected Learning and Computer-Based Modeling, Northwestern University, Evanston, IL.
-
-Please cite the NetLogo software as:
-
-* Wilensky, U. (1999). NetLogo. http://ccl.northwestern.edu/netlogo/. Center for Connected Learning and Computer-Based Modeling, Northwestern University, Evanston, IL.
 
 ## COPYRIGHT AND LICENSE
 
-Copyright 2003 Uri Wilensky.
-
-![CC BY-NC-SA 3.0](http://ccl.northwestern.edu/images/creativecommons/byncsa.png)
-
-This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 3.0 License.  To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/3.0/ or send a letter to Creative Commons, 559 Nathan Abbott Way, Stanford, California 94305, USA.
-
-Commercial licenses are also available. To inquire about commercial licenses, please contact Uri Wilensky at uri@northwestern.edu.
-
-This model was created as part of the projects: PARTICIPATORY SIMULATIONS: NETWORK-BASED DESIGN FOR SYSTEMS LEARNING IN CLASSROOMS and/or INTEGRATED SIMULATION AND MODELING ENVIRONMENT. The project gratefully acknowledges the support of the National Science Foundation (REPP & ROLE programs) -- grant numbers REC #9814682 and REC-0126227.
-
-<!-- 2003 -->
 @#$#@#$#@
 default
 true
