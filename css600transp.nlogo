@@ -1,31 +1,374 @@
+globals
+[
+  grid-x-inc               ;; the amount of patches in between two roads in the x direction
+  grid-y-inc               ;; the amount of patches in between two roads in the y direction
+  acceleration             ;; the constant that controls how much a car speeds up or slows down by if
+                           ;; it is to accelerate or decelerate
+  phase                    ;; keeps track of the phase
+  num-cars-stopped         ;; the number of cars that are stopped during a single pass thru the go procedure
+  current-light            ;; the currently selected light
+
+  ;; patch agentsets
+  intersections ;; agentset containing the patches that are intersections
+  roads         ;; agentset containing the patches that are roads
+]
+
+turtles-own
+[
+  speed     ;; the speed of the turtle
+  up-car?   ;; true if the turtle moves downwards and false if it moves to the right
+  wait-time ;; the amount of time since the last time a turtle has moved
+]
+
+patches-own
+[
+  intersection?   ;; true if the patch is at the intersection of two roads
+  green-light-up? ;; true if the green light is above the intersection.  otherwise, false.
+                  ;; false for a non-intersection patches.
+  my-row          ;; the row of the intersection counting from the upper left corner of the
+                  ;; world.  -1 for non-intersection patches.
+  my-column       ;; the column of the intersection counting from the upper left corner of the
+                  ;; world.  -1 for non-intersection patches.
+  my-phase        ;; the phase for the intersection.  -1 for non-intersection patches.
+  auto?           ;; whether or not this intersection will switch automatically.
+                  ;; false for non-intersection patches.
+]
+
+
+;;;;;;;;;;;;;;;;;;;;;;
+;; Setup Procedures ;;
+;;;;;;;;;;;;;;;;;;;;;;
+
+;; Initialize the display by giving the global and patch variables initial values.
+;; Create num-cars of turtles if there are enough road patches for one turtle to
+;; be created per road patch. Set up the plots.
 to setup
   clear-all
-  create-turtles 100 [ setxy random-xcor random-ycor pen-down ]
+  setup-globals
+
+  ;; First we ask the patches to draw themselves and set up a few variables
+  setup-patches
+  make-current one-of intersections
+  label-current
+
+  set-default-shape turtles "car"
+
+  if (num-cars > count roads)
+  [
+    user-message (word "There are too many cars for the amount of "
+                       "road.  Either increase the amount of roads "
+                       "by increasing the GRID-SIZE-X or "
+                       "GRID-SIZE-Y sliders, or decrease the "
+                       "number of cars by lowering the NUMBER slider.\n"
+                       "The setup has stopped.")
+    stop
+  ]
+
+  ;; Now create the turtles and have each created turtle call the functions setup-cars and set-car-color
+  create-turtles num-cars
+  [
+    setup-cars
+    set-car-color
+    record-data
+  ]
+
+  ;; give the turtles an initial speed
+  ask turtles [ set-car-speed ]
+
   reset-ticks
 end
 
+;; Initialize the global variables to appropriate values
+to setup-globals
+  set current-light nobody ;; just for now, since there are no lights yet
+  set phase 0
+  set num-cars-stopped 0
+  set grid-x-inc world-width / grid-size-x
+  set grid-y-inc world-height / grid-size-y
+
+  ;; don't make acceleration 0.1 since we could get a rounding error and end up on a patch boundary
+  set acceleration 0.099
+end
+
+;; Make the patches have appropriate colors, set up the roads and intersections agentsets,
+;; and initialize the traffic lights to one setting
+to setup-patches
+  ;; initialize the patch-owned variables and color the patches to a base-color
+  ask patches
+  [
+    set intersection? false
+    set auto? false
+    set green-light-up? true
+    set my-row -1
+    set my-column -1
+    set my-phase -1
+    set pcolor brown + 3
+  ]
+
+  ;; initialize the global variables that hold patch agentsets
+  set roads patches with
+    [(floor((pxcor + max-pxcor - floor(grid-x-inc - 1)) mod grid-x-inc) = 0) or
+    (floor((pycor + max-pycor) mod grid-y-inc) = 0)]
+  set intersections roads with
+    [(floor((pxcor + max-pxcor - floor(grid-x-inc - 1)) mod grid-x-inc) = 0) and
+    (floor((pycor + max-pycor) mod grid-y-inc) = 0)]
+
+  ask roads [ set pcolor white ]
+  setup-intersections
+end
+
+;; Give the intersections appropriate values for the intersection?, my-row, and my-column
+;; patch variables.  Make all the traffic lights start off so that the lights are red
+;; horizontally and green vertically.
+to setup-intersections
+  ask intersections
+  [
+    set intersection? true
+    set green-light-up? true
+    set my-phase 0
+    set auto? true
+    set my-row floor((pycor + max-pycor) / grid-y-inc)
+    set my-column floor((pxcor + max-pxcor) / grid-x-inc)
+    set-signal-colors
+  ]
+end
+
+;; Initialize the turtle variables to appropriate values and place the turtle on an empty road patch.
+to setup-cars  ;; turtle procedure
+  set speed 0
+  set wait-time 0
+  put-on-empty-road
+  ifelse intersection?
+  [
+    ifelse random 2 = 0
+    [ set up-car? true ]
+    [ set up-car? false ]
+  ]
+  [
+    ; if the turtle is on a vertical road (rather than a horizontal one)
+    ifelse (floor((pxcor + max-pxcor - floor(grid-x-inc - 1)) mod grid-x-inc) = 0)
+    [ set up-car? true ]
+    [ set up-car? false ]
+  ]
+  ifelse up-car?
+  [ set heading 180 ]
+  [ set heading 90 ]
+end
+
+;; Find a road patch without any turtles on it and place the turtle there.
+to put-on-empty-road  ;; turtle procedure
+  move-to one-of roads with [not any? turtles-on self]
+end
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;
+;; Runtime Procedures ;;
+;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Run the simulation
 to go
-  move-turtles
+
+  update-current
+
+  ;; have the intersections change their color
+  set-signals
+  set num-cars-stopped 0
+
+  ;; set the turtles speed for this time thru the procedure, move them forward their speed,
+  ;; record data for plotting, and set the color of the turtles to an appropriate color
+  ;; based on their speed
+  ask turtles [
+    set-car-speed
+    fd speed
+    record-data
+    set-car-color
+  ]
+
+  ;; update the phase and the global clock
+  next-phase
   tick
 end
 
-to move-turtles
-  ask turtles [
-    right random 360
-    forward 1
+to choose-current
+  if mouse-down?
+  [
+    let x-mouse mouse-xcor
+    let y-mouse mouse-ycor
+    if [intersection?] of patch x-mouse y-mouse
+    [
+      update-current
+      unlabel-current
+      make-current patch x-mouse y-mouse
+      label-current
+      stop
+    ]
   ]
 end
+
+;; Set up the current light and the interface to change it.
+to make-current [light]
+  set current-light light
+  set current-phase [my-phase] of current-light
+  set current-auto? [auto?] of current-light
+end
+
+;; update the variables for the current light
+to update-current
+  ask current-light [
+    set my-phase current-phase
+    set auto? current-auto?
+  ]
+end
+
+;; label the current light
+to label-current
+  ask current-light
+  [
+    ask patch-at -1 1
+    [
+      set plabel-color black
+      set plabel "current"
+    ]
+  ]
+end
+
+;; unlabel the current light (because we've chosen a new one)
+to unlabel-current
+  ask current-light
+  [
+    ask patch-at -1 1
+    [
+      set plabel ""
+    ]
+  ]
+end
+
+;; have the traffic lights change color if phase equals each intersections' my-phase
+to set-signals
+  ask intersections with [auto? and phase = floor ((my-phase * ticks-per-cycle) / 100)]
+  [
+    set green-light-up? (not green-light-up?)
+    set-signal-colors
+  ]
+end
+
+;; This procedure checks the variable green-light-up? at each intersection and sets the
+;; traffic lights to have the green light up or the green light to the left.
+to set-signal-colors  ;; intersection (patch) procedure
+  ifelse power?
+  [
+    ifelse green-light-up?
+    [
+      ask patch-at -1 0 [ set pcolor red ]
+      ask patch-at 0 1 [ set pcolor green ]
+    ]
+    [
+      ask patch-at -1 0 [ set pcolor green ]
+      ask patch-at 0 1 [ set pcolor red ]
+    ]
+  ]
+  [
+    ask patch-at -1 0 [ set pcolor white ]
+    ask patch-at 0 1 [ set pcolor white ]
+  ]
+end
+
+;; set the turtles' speed based on whether they are at a red traffic light or the speed of the
+;; turtle (if any) on the patch in front of them
+to set-car-speed  ;; turtle procedure
+  ifelse pcolor = red
+  [ set speed 0 ]
+  [
+    ifelse up-car?
+    [ set-speed 0 -1 ]
+    [ set-speed 1 0 ]
+  ]
+end
+
+;; set the speed variable of the car to an appropriate value (not exceeding the
+;; speed limit) based on whether there are cars on the patch in front of the car
+to set-speed [ delta-x delta-y ]  ;; turtle procedure
+  ;; get the turtles on the patch in front of the turtle
+  let turtles-ahead turtles-at delta-x delta-y
+
+  ;; if there are turtles in front of the turtle, slow down
+  ;; otherwise, speed up
+  ifelse any? turtles-ahead
+  [
+    ifelse any? (turtles-ahead with [ up-car? != [up-car?] of myself ])
+    [
+      set speed 0
+    ]
+    [
+      set speed [speed] of one-of turtles-ahead
+      slow-down
+    ]
+  ]
+  [ speed-up ]
+end
+
+;; decrease the speed of the turtle
+to slow-down  ;; turtle procedure
+  ifelse speed <= 0  ;;if speed < 0
+  [ set speed 0 ]
+  [ set speed speed - acceleration ]
+end
+
+;; increase the speed of the turtle
+to speed-up  ;; turtle procedure
+  ifelse speed > speed-limit
+  [ set speed speed-limit ]
+  [ set speed speed + acceleration ]
+end
+
+;; set the color of the turtle to a different color based on how fast the turtle is moving
+to set-car-color  ;; turtle procedure
+  ifelse speed < (speed-limit / 2)
+  [ set color blue ]
+  [ set color cyan - 2 ]
+end
+
+;; keep track of the number of stopped turtles and the amount of time a turtle has been stopped
+;; if its speed is 0
+to record-data  ;; turtle procedure
+  ifelse speed = 0
+  [
+    set num-cars-stopped num-cars-stopped + 1
+    set wait-time wait-time + 1
+  ]
+  [ set wait-time 0 ]
+end
+
+to change-current
+  ask current-light
+  [
+    set green-light-up? (not green-light-up?)
+    set-signal-colors
+  ]
+end
+
+;; cycles phase to the next appropriate value
+to next-phase
+  ;; The phase cycles from 0 to ticks-per-cycle, then starts over.
+  set phase phase + 1
+  if phase mod ticks-per-cycle = 0
+    [ set phase 0 ]
+end
+
+
+; Copyright 2003 Uri Wilensky.
+; See Info tab for full copyright and license.
 @#$#@#$#@
 GRAPHICS-WINDOW
-210
+327
 10
-647
-448
+668
+352
 -1
 -1
-13.0
+9.0
 1
-10
+12
 1
 1
 1
@@ -33,22 +376,149 @@ GRAPHICS-WINDOW
 1
 1
 1
--16
-16
--16
-16
+-18
+18
+-18
+18
 1
 1
 1
 ticks
 30.0
 
-BUTTON
-10
-10
-73
-43
+PLOT
+453
+377
+671
+541
+Average Wait Time of Cars
+Time
+Average Wait
+0.0
+100.0
+0.0
+5.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "plot mean [wait-time] of turtles"
+
+PLOT
+228
+377
+444
+542
+Average Speed of Cars
+Time
+Average Speed
+0.0
+100.0
+0.0
+1.0
+true
+false
+"set-plot-y-range 0 speed-limit" ""
+PENS
+"default" 1.0 0 -16777216 true "" "plot mean [speed] of turtles"
+
+SLIDER
+108
+35
+205
+68
+grid-size-y
+grid-size-y
+1
+9
+5.0
+1
+1
 NIL
+HORIZONTAL
+
+SLIDER
+12
+35
+106
+68
+grid-size-x
+grid-size-x
+1
+9
+5.0
+1
+1
+NIL
+HORIZONTAL
+
+SWITCH
+12
+107
+107
+140
+power?
+power?
+0
+1
+-1000
+
+SLIDER
+12
+71
+293
+104
+num-cars
+num-cars
+1
+400
+200.0
+1
+1
+NIL
+HORIZONTAL
+
+PLOT
+5
+376
+219
+540
+Stopped Cars
+Time
+Stopped Cars
+0.0
+100.0
+0.0
+100.0
+true
+false
+"set-plot-y-range 0 num-cars" ""
+PENS
+"default" 1.0 0 -16777216 true "" "plot num-cars-stopped"
+
+BUTTON
+221
+184
+285
+217
+Go
+go
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+0
+
+BUTTON
+208
+35
+292
+68
+Setup
 setup
 NIL
 1
@@ -60,13 +530,97 @@ NIL
 NIL
 1
 
-BUTTON
-100
-10
-163
-43
+SLIDER
+11
+177
+165
+210
+speed-limit
+speed-limit
+0.1
+1
+1.0
+0.1
+1
 NIL
-go
+HORIZONTAL
+
+MONITOR
+205
+132
+310
+177
+Current Phase
+phase
+3
+1
+11
+
+SLIDER
+11
+143
+165
+176
+ticks-per-cycle
+ticks-per-cycle
+1
+100
+20.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+146
+256
+302
+289
+current-phase
+current-phase
+0
+99
+0.0
+1
+1
+%
+HORIZONTAL
+
+BUTTON
+9
+292
+143
+325
+Change light
+change-current
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+0
+
+SWITCH
+9
+256
+144
+289
+current-auto?
+current-auto?
+0
+1
+-1000
+
+BUTTON
+145
+292
+300
+325
+Select intersection
+choose-current
 T
 1
 T
@@ -80,39 +634,128 @@ NIL
 @#$#@#$#@
 ## WHAT IS IT?
 
-(a general understanding of what the model is trying to show or explain)
+This is a model of traffic moving in a city grid. It allows you to control traffic lights and global variables, such as the speed limit and the number of cars, and explore traffic dynamics.
+
+Try to develop strategies to improve traffic and to understand the different ways to measure the quality of traffic.
 
 ## HOW IT WORKS
 
-(what rules the agents use to create the overall behavior of the model)
+Each time step, the cars attempt to move forward at their current speed.  If their current speed is less than the speed limit and there is no car directly in front of them, they accelerate.  If there is a slower car in front of them, they match the speed of the slower car and deccelerate.  If there is a red light or a stopped car in front of them, they stop.
+
+There are two different ways the lights can change.  First, the user can change any light at any time by making the light current, and then clicking CHANGE LIGHT.  Second, lights can change automatically, once per cycle.  Initially, all lights will automatically change at the beginning of each cycle.
 
 ## HOW TO USE IT
 
-(how to use the model, including a description of each of the items in the Interface tab)
+Change the traffic grid (using the sliders GRID-SIZE-X and GRID-SIZE-Y) to make the desired number of lights.  Change any other of the settings that you would like to change.  Press the SETUP button.
+
+At this time, you may configure the lights however you like, with any combination of auto/manual and any phase. Changes to the state of the current light are made using the CURRENT-AUTO?, CURRENT-PHASE and CHANGE LIGHT controls.  You may select the current intersection using the SELECT INTERSECTION control.  See below for details.
+
+Start the simulation by pressing the GO button.  You may continue to make changes to the lights while the simulation is running.
+
+### Buttons
+
+SETUP - generates a new traffic grid based on the current GRID-SIZE-X and GRID-SIZE-Y and NUM-CARS number of cars.  This also clears all the plots. All lights are set to auto, and all phases are set to 0.
+GO - runs the simulation indefinitely
+CHANGE LIGHT - changes the direction traffic may flow through the current light. A light can be changed manually even if it is operating in auto mode.
+SELECT INTERSECTION - allows you to select a new "current" light. When this button is depressed, click in the intersection which you would like to make current. When you've selected an intersection, the "current" label will move to the new intersection and this button will automatically pop up.
+
+### Sliders
+
+SPEED-LIMIT - sets the maximum speed for the cars
+NUM-CARS - the number of cars in the simulation (you must press the SETUP button to see the change)
+TICKS-PER-CYCLE - sets the number of ticks that will elapse for each cycle.  This has no effect on manual lights.  This allows you to increase or decrease the granularity with which lights can automatically change.
+GRID-SIZE-X - sets the number of vertical roads there are (you must press the SETUP button to see the change)
+GRID-SIZE-Y - sets the number of horizontal roads there are (you must press the SETUP button to see the change)
+CURRENT-PHASE - controls when the current light changes, if it is in auto mode. The slider value represents the percentage of the way through each cycle at which the light should change. So, if the TICKS-PER-CYCLE is 20 and CURRENT-PHASE is 75%, the current light will switch at tick 15 of each cycle.
+
+### Switches
+
+POWER? - toggles the presence of traffic lights
+CURRENT-AUTO? - toggles the current light between automatic mode, where it changes once per cycle (according to CURRENT-PHASE), and manual, in which you directly control it with CHANGE LIGHT.
+
+### Plots
+
+STOPPED CARS - displays the number of stopped cars over time
+AVERAGE SPEED OF CARS - displays the average speed of cars over time
+AVERAGE WAIT TIME OF CARS - displays the average time cars are stopped over time
 
 ## THINGS TO NOTICE
 
-(suggested things for the user to notice while running the model)
+When cars have stopped at a traffic light, and then they start moving again, the traffic jam will move backwards even though the cars are moving forwards.  Why is this?
+
+When POWER? is turned off and there are quite a few cars on the roads, "gridlock" usually occurs after a while.  In fact, gridlock can be so severe that traffic stops completely.  Why is it that no car can move forward and break the gridlock?  Could this happen in the real world?
+
+Gridlock can occur when the power is turned on, as well.  What kinds of situations can lead to gridlock?
 
 ## THINGS TO TRY
 
-(suggested things for the user to try to do (move sliders, switches, etc.) with the model)
+Try changing the speed limit for the cars.  How does this affect the overall efficiency of the traffic flow?  Are fewer cars stopping for a shorter amount of time?  Is the average speed of the cars higher or lower than before?
+
+Try changing the number of cars on the roads.  Does this affect the efficiency of the traffic flow?
+
+How about changing the speed of the simulation?  Does this affect the efficiency of the traffic flow?
+
+Try running this simulation with all lights automatic.  Is it harder to make the traffic move well using this scheme than controlling one light manually?  Why?
+
+Try running this simulation with all lights automatic.  Try to find a way of setting the phases of the traffic lights so that the average speed of the cars is the highest.  Now try to minimize the number of stopped cars.  Now try to decrease the average wait time of the cars.  Is there any correlation between these different metrics?
 
 ## EXTENDING THE MODEL
 
-(suggested things to add or change in the Code tab to make the model more complicated, detailed, accurate, etc.)
+Currently, the maximum speed limit (found in the SPEED-LIMIT slider) for the cars is 1.0.  This is due to the fact that the cars must look ahead the speed that they are traveling to see if there are cars ahead of them.  If there aren't, they speed up.  If there are, they slow down.  Looking ahead for a value greater than 1 is a little bit tricky.  Try implementing the correct behavior for speeds greater than 1.
+
+When a car reaches the edge of the world, it reappears on the other side.  What if it disappeared, and if new cars entered the city at random locations and intervals?
 
 ## NETLOGO FEATURES
 
-(interesting or unusual features of NetLogo that the model uses, particularly in the Code tab; or where workarounds were needed for missing features)
+This model uses two forever buttons which may be active simultaneously, to allow the user to select a new current intersection while the model is running.
+
+It also uses a chooser to allow the user to choose between several different possible plots, or to display all of them at once.
 
 ## RELATED MODELS
 
-(models in the NetLogo Models Library and elsewhere which are of related interest)
+- "Traffic Basic": a simple model of the movement of cars on a highway.
 
-## CREDITS AND REFERENCES
+- "Traffic Basic Utility": a version of "Traffic Basic" including a utility function for the cars.
 
-(a reference to the model's URL on the web if it has one, as well as any other necessary credits, citations, and links)
+- "Traffic Basic Adaptive": a version of "Traffic Basic" where cars adapt their acceleration to try and maintain a smooth flow of traffic.
+
+- "Traffic Basic Adaptive Individuals": a version of "Traffic Basic Adaptive" where each car adapts individually, instead of all cars adapting in unison.
+
+- "Traffic 2 Lanes": a more sophisticated two-lane version of the "Traffic Basic" model.
+
+- "Traffic Intersection": a model of cars traveling through a single intersection.
+
+- "Traffic Grid Goal": a version of "Traffic Grid" where the cars have goals, namely to drive to and from work.
+
+- "Gridlock HubNet": a version of "Traffic Grid" where students control traffic lights in real-time.
+
+- "Gridlock Alternate HubNet": a version of "Gridlock HubNet" where students can enter NetLogo code to plot custom metrics.
+
+## HOW TO CITE
+
+If you mention this model or the NetLogo software in a publication, we ask that you include the citations below.
+
+For the model itself:
+
+* Wilensky, U. (2003).  NetLogo Traffic Grid model.  http://ccl.northwestern.edu/netlogo/models/TrafficGrid.  Center for Connected Learning and Computer-Based Modeling, Northwestern University, Evanston, IL.
+
+Please cite the NetLogo software as:
+
+* Wilensky, U. (1999). NetLogo. http://ccl.northwestern.edu/netlogo/. Center for Connected Learning and Computer-Based Modeling, Northwestern University, Evanston, IL.
+
+## COPYRIGHT AND LICENSE
+
+Copyright 2003 Uri Wilensky.
+
+![CC BY-NC-SA 3.0](http://ccl.northwestern.edu/images/creativecommons/byncsa.png)
+
+This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 3.0 License.  To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/3.0/ or send a letter to Creative Commons, 559 Nathan Abbott Way, Stanford, California 94305, USA.
+
+Commercial licenses are also available. To inquire about commercial licenses, please contact Uri Wilensky at uri@northwestern.edu.
+
+This model was created as part of the projects: PARTICIPATORY SIMULATIONS: NETWORK-BASED DESIGN FOR SYSTEMS LEARNING IN CLASSROOMS and/or INTEGRATED SIMULATION AND MODELING ENVIRONMENT. The project gratefully acknowledges the support of the National Science Foundation (REPP & ROLE programs) -- grant numbers REC #9814682 and REC-0126227.
+
+<!-- 2003 -->
 @#$#@#$#@
 default
 true
@@ -161,14 +804,14 @@ Line -16777216 false 150 105 195 60
 Line -16777216 false 150 105 105 60
 
 car
-false
+true
 0
-Polygon -7500403 true true 300 180 279 164 261 144 240 135 226 132 213 106 203 84 185 63 159 50 135 50 75 60 0 150 0 165 0 225 300 225 300 180
+Polygon -7500403 true true 180 15 164 21 144 39 135 60 132 74 106 87 84 97 63 115 50 141 50 165 60 225 150 285 165 285 225 285 225 15 180 15
+Circle -16777216 true false 180 30 90
 Circle -16777216 true false 180 180 90
-Circle -16777216 true false 30 180 90
-Polygon -16777216 true false 162 80 132 78 134 135 209 135 194 105 189 96 180 89
-Circle -7500403 true true 47 195 58
+Polygon -16777216 true false 80 138 78 168 135 166 135 91 105 106 96 111 89 120
 Circle -7500403 true true 195 195 58
+Circle -7500403 true true 195 47 58
 
 circle
 false
@@ -306,22 +949,6 @@ Polygon -7500403 true true 135 105 90 60 45 45 75 105 135 135
 Polygon -7500403 true true 165 105 165 135 225 105 255 45 210 60
 Polygon -7500403 true true 135 90 120 45 150 15 180 45 165 90
 
-sheep
-false
-15
-Circle -1 true true 203 65 88
-Circle -1 true true 70 65 162
-Circle -1 true true 150 105 120
-Polygon -7500403 true false 218 120 240 165 255 165 278 120
-Circle -7500403 true false 214 72 67
-Rectangle -1 true true 164 223 179 298
-Polygon -1 true true 45 285 30 285 30 240 15 195 45 210
-Circle -1 true true 3 83 150
-Rectangle -1 true true 65 221 80 296
-Polygon -1 true true 195 285 210 285 210 240 240 210 195 210
-Polygon -7500403 true false 276 85 285 105 302 99 294 83
-Polygon -7500403 true false 219 85 210 105 193 99 201 83
-
 square
 false
 0
@@ -406,13 +1033,6 @@ Line -7500403 true 40 84 269 221
 Line -7500403 true 40 216 269 79
 Line -7500403 true 84 40 221 269
 
-wolf
-false
-0
-Polygon -16777216 true false 253 133 245 131 245 133
-Polygon -7500403 true true 2 194 13 197 30 191 38 193 38 205 20 226 20 257 27 265 38 266 40 260 31 253 31 230 60 206 68 198 75 209 66 228 65 243 82 261 84 268 100 267 103 261 77 239 79 231 100 207 98 196 119 201 143 202 160 195 166 210 172 213 173 238 167 251 160 248 154 265 169 264 178 247 186 240 198 260 200 271 217 271 219 262 207 258 195 230 192 198 210 184 227 164 242 144 259 145 284 151 277 141 293 140 299 134 297 127 273 119 270 105
-Polygon -7500403 true true -1 195 14 180 36 166 40 153 53 140 82 131 134 133 159 126 188 115 227 108 236 102 238 98 268 86 269 92 281 87 269 103 269 113
-
 x
 false
 0
@@ -436,5 +1056,5 @@ true
 Line -7500403 true 150 150 90 180
 Line -7500403 true 150 150 210 180
 @#$#@#$#@
-1
+0
 @#$#@#$#@
