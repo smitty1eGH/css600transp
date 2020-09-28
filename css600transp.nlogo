@@ -743,6 +743,7 @@ https://arxiv.org/pdf/1211.5842.pdf
 
 ## COPYRIGHT AND LICENSE
 
+MIT
 @#$#@#$#@
 default
 true
