@@ -86,7 +86,7 @@ to assign-speeds
   let medium_people   floor ((Medium / total_count) * People)
   let fast_people  floor ((Fast / total_count) * People)
   ;set default
-  ask turtles [ set speed default_speed ]
+  ask turtles [ set speed default_speed set speed table:get speed_color_table "medium" ]
 
   ask turtles with [ who < slow_people ] [ set speed table:get speed_table "slow" set color table:get speed_color_table "slow"]
   ask turtles with [ who >= slow_people and who < slow_people + medium_people ] [ set speed table:get speed_table "medium" set color table:get speed_color_table "medium"]
@@ -191,7 +191,7 @@ People
 People
 0
 100
-43.0
+100.0
 1
 1
 NIL
