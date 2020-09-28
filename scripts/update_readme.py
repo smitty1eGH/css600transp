@@ -1,6 +1,6 @@
 import re
 
-FILEN='css600transp.nlogo'
+FILEN='FireSim.nlogo'
 README='README.md'
 RX='@#\$#@#\$#@'
 rx=re.compile(RX)
@@ -12,13 +12,4 @@ with open(FILEN,'r') as f:
     readme_data=h[2]
 
 with open(README,'w') as f:
-    f.write(readme_data) 
-
-
-
-
-
-
-
-
-
+    f.write(readme_data)
