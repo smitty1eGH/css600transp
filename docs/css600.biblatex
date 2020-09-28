@@ -1,0 +1,58 @@
+
+@article{almeidaCrowdSimulationModeling2013,
+  title = {Crowd {{Simulation Modeling Applied}} to {{Emergency}} and {{Evacuation Simulations}} Using {{Multi}}-{{Agent Systems}}},
+  author = {Almeida, João E. and Rosseti, Rosaldo J. F. and Coelho, António Leça},
+  date = {2013},
+  url = {https://arxiv.org/abs/1303.4692},
+  urldate = {2020-09-28},
+  abstract = {In recent years crowd modeling has become increasingly important both in the computer games industry and in emergency simulation. This paper discusses some aspects of what has been accomplished in this field, from social sciences to the computer implementation of modeling and simulation. Problem overview is described including some of the most common techniques used. Multi-Agent Systems is stated as the preferred approach for emergency evacuation simulations. A framework is proposed based on the work of Fangqin and Aizhu with extensions to include some BDI aspects. Future work includes expansion of the model's features and implementation of a prototype for validation of the propose methodology.},
+  file = {/home/smitty/Zotero/storage/SYN5Q39C/Almeida et al. - 2013 - Crowd Simulation Modeling Applied to Emergency and.pdf},
+  keywords = {Computer Science - Multiagent Systems},
+  langid = {english}
+}
+
+@online{caparriniGeneralSolverNetLogo2018,
+  title = {A {{General A}}* {{Solver}} in {{NetLogo}}},
+  author = {Caparrini, Fernando Sancho},
+  date = {2018-10-16},
+  url = {http://www.cs.us.es/~fsancho/?e=131},
+  urldate = {2020-09-28},
+  file = {/home/smitty/Zotero/storage/5JE4MQG4/~fsancho.html}
+}
+
+@article{mirahmadiNovelAlgorithmRealtime2012,
+  title = {A {{Novel Algorithm}} for {{Real}}-Time {{Procedural Generation}} of {{Building Floor Plans}}},
+  author = {Mirahmadi, Maysam and Shami, Abdallah},
+  date = {2012-11-25},
+  url = {http://arxiv.org/abs/1211.5842},
+  urldate = {2020-09-28},
+  abstract = {Real-time generation of natural-looking floor plans is vital in games with dynamic environments. This paper presents an algorithm to generate suburban house floor plans in real-time. The algorithm is based on the work presented in [1]. However, the corridor placement is redesigned to produce floor plans similar to real houses. Moreover, an optimization stage is added to find a corridor placement with the minimum used space, an approach that is designed to mimic the real-life practices to minimize the wasted spaces in the design. The results show very similar floor plans to the ones designed by an architect.},
+  archivePrefix = {arXiv},
+  eprint = {1211.5842},
+  eprinttype = {arxiv},
+  file = {/home/smitty/Zotero/storage/ELMGF6MI/Mirahmadi and Shami - 2012 - A Novel Algorithm for Real-time Procedural Generat.pdf;/home/smitty/Zotero/storage/TUYQVLU6/1211.html},
+  keywords = {Computer Science - Graphics},
+  primaryClass = {cs}
+}
+
+@article{zhouSimulationPedestrianEvacuation2019,
+  title = {Simulation of Pedestrian Evacuation Route Choice Using Social Force Model in Large-Scale Public Space: {{Comparison}} of Five Evacuation Strategies},
+  shorttitle = {Simulation of Pedestrian Evacuation Route Choice Using Social Force Model in Large-Scale Public Space},
+  author = {Zhou, Jibiao and Guo, Yanyong and Dong, Sheng and Zhang, Minjie and Mao, Tianqi},
+  date = {2019},
+  journaltitle = {PloS one},
+  volume = {14},
+  pages = {e0221872--e0221872},
+  publisher = {{Public Library of Science PLoS, Public Library of Science}},
+  location = {{United States}},
+  issn = {1932-6203},
+  doi = {10.1371/journal.pone.0221872},
+  abstract = {The primary objective of this study is to compare pedestrian evacuation strategies in the large-scale public space (LPS) using microscopic model. Data were collected by video recording from Tian-yi square for 36 hours in city of Ningbo, China. A pedestrian evacuation simulation model was developed based on the social force model (SFM). The simulation model parameters, such as reaction time, elasticity coefficient, sliding coefficient, et al, were calibrated using the real data extracted from the video. Five evacuation strategies, strategy 1 (S1) to strategy 5 (S5) involving distance, density and capacity factors were simulated and compared by indicators of evacuation time and channel utilization rate, as well as the evacuation efficiency. The simulation model parameters calibration results showed that a) the pedestrians walking speed is 1.0 \textasciitilde{} 1.5m/s; b) the pedestrians walking diameter is 0.3 \textasciitilde{} 0.4m; c) the frequency of pedestrian arrival and departure followed multi-normal distribution. The simulation results showed that, (a) in terms of total evacuation time, the performance of S4 and S5 which considering the capacity and density factors were best in all evacuation scenarios, the performance of S3 which only considering the density factor was the worst, relatively, and S1 and S2 which considering the distance factor were in the middle. (b) the utilization rate of channels under S5 strategy was better than other strategies, which performs best in the balance of evacuation. S3 strategy was the worst, and S1, S2 and S4 were in the middle. (c) in terms of the evacuation efficiency, when the number of evacuees is within 2, 500 peds, the S1 and S2 strategy which considering the distance factor have best evacuation efficiency than other strategies. And when the number of evacuees is above 2, 500 peds, the S4 and S5 strategy which considering the capacity factor are better than others.},
+  editora = {Chen, Peng},
+  editoratype = {collaborator},
+  file = {/home/smitty/Zotero/storage/2VXPF6U7/Simulation_of_pedestrian_evacu.PDF;/home/smitty/Zotero/storage/H5AYCH36/Zhou et al. - 2019 - Simulation of pedestrian evacuation route choice u.pdf},
+  langid = {english},
+  number = {9}
+}
+
+
