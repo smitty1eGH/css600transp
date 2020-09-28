@@ -283,7 +283,7 @@ PLOT
 16
 868
 166
-People 
+People
 NIL
 NIL
 0.0
@@ -301,39 +301,116 @@ PENS
 @#$#@#$#@
 ## WHAT IS IT?
 
-(a general understanding of what the model is trying to show or explain)
+This is the Fall 2020 CSS600 Group Ten project,
+
+by Justin Downes and Chris Smith
+
+prepared for Prof. Dale Rothman
+
+The goal is to simulate the emergency evacuation of a floorplan, for example in the case of fire.
+
+The environment patches include rooms, corridors, and exit areas, as well as patches in normal, burning, and burnt states.
+
+Agents are randomply placed people moving at various speeds and directions, but which can die and block each other.
+
+Maps are editable for layout, patch flammability, number of agents, initial fire locations, agent speed range and plancement.
+
+
+Prior art for this project includes, but is not limited to:
+
+- Crowd Simulation Modeling Applied to Emergency and Evacuation Simulations using Multi-Agent Systems https://arxiv.org/ftp/arxiv/papers/1303/1303.4692.pdf
+
+
+- Simulation of pedestrian evacuation route choice using social force model in large-scale public space: Comparison of five evacuation strategies https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6730895/
+
+
+- Agent Pathing http://www.cs.us.es/~fsancho/?e=131
+
+
+- A Novel Algorithm for Real-time ProceduralGeneration of Building Floor Plans https://arxiv.org/pdf/1211.5842.pdf
+
 
 ## HOW IT WORKS
+Simulation Req's:
 
-(what rules the agents use to create the overall behavior of the model)
+Environment- patches
 
-## HOW TO USE IT
+- exit area
 
-(how to use the model, including a description of each of the items in the Interface tab)
+- Flammable patches
+
+-- walls
+
+-- floors
+
+-- grass
+
+- Burning
+
+- burnt
+
+
+Agent actions
+
+- agents have variable speeds
+
+- agents can die
+
+- agents move towards exit area
+
+- agents cant move through each other
+
+- the number of agents is variable
+
+- agents are randomly placed on floor patches
+
+- is there a way to specify agent placement through the UI?
+
+
+
+Sim UI features:
+
+- can specify the map
+
+- can control flamability of patches
+
+- number of agents
+
+- starting fire spots
+
+- agent speed distribution
+
+
+### Buttons
+
+
+### Sliders
+
+
+### Switches
+
+
+### Plots
+
 
 ## THINGS TO NOTICE
 
-(suggested things for the user to notice while running the model)
 
 ## THINGS TO TRY
 
-(suggested things for the user to try to do (move sliders, switches, etc.) with the model)
 
 ## EXTENDING THE MODEL
 
-(suggested things to add or change in the Code tab to make the model more complicated, detailed, accurate, etc.)
-
-## NETLOGO FEATURES
-
-(interesting or unusual features of NetLogo that the model uses, particularly in the Code tab; or where workarounds were needed for missing features)
 
 ## RELATED MODELS
 
-(models in the NetLogo Models Library and elsewhere which are of related interest)
 
-## CREDITS AND REFERENCES
+## HOW TO CITE
 
-(a reference to the model's URL on the web if it has one, as well as any other necessary credits, citations, and links)
+
+## COPYRIGHT AND LICENSE
+
+MIT
 @#$#@#$#@
 default
 true
