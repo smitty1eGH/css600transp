@@ -1,6 +1,6 @@
 extensions [array table]
 turtles-own [speed]
-globals [xdim ydim map_table spawn_patch block_patch speed_table default_speed speed_color_table safety_color]
+globals [xdim ydim map_table spawn_patch block_patch speed_table default_speed default_color speed_color_table safety_color]
 
 to setup-globals
   ; x and ydims are half the distance of the map e.g. 33 width = xdim  16
@@ -31,7 +31,6 @@ to setup-globals
   table:put speed_table "medium" .5
   table:put speed_table "fast" 1.2
 
-  set default_speed table:get speed_table "medium"
 
   ; mapping of speed to color
   set speed_color_table table:make
@@ -39,6 +38,8 @@ to setup-globals
   table:put speed_color_table "medium" 43
   table:put speed_color_table "fast" 63
 
+  set default_speed table:get speed_table "medium"
+  set default_color table:get speed_color_table "medium"
 end
 
 to setup
@@ -86,7 +87,7 @@ to assign-speeds
   let medium_people   floor ((Medium / total_count) * People)
   let fast_people  floor ((Fast / total_count) * People)
   ;set default
-  ask turtles [ set speed default_speed set color table:get speed_color_table "medium" ]
+  ask turtles [ set speed default_speed set color default_color ]
 
   ask turtles with [ who < slow_people ] [ set speed table:get speed_table "slow" set color table:get speed_color_table "slow"]
   ask turtles with [ who >= slow_people and who < slow_people + medium_people ] [ set speed table:get speed_table "medium" set color table:get speed_color_table "medium"]
