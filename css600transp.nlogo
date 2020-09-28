@@ -634,6 +634,36 @@ NIL
 @#$#@#$#@
 ## WHAT IS IT?
 
+This is the Fall 2020 CSS600 Group Ten project,
+
+by Justin Downes and Chris Smith
+
+prepared for Prof. Dale Rothman
+
+The goal is to simulate the emergency evacuation of a floorplan, for example in the case of fire. 
+
+The environment patches include rooms, corridors, and exit areas, as well as patches in normal, burning, and burnt states.
+
+Agents are randomply placed people moving at various speeds and directions, but which can die and block each other.
+
+Maps are editable for layout, patch flammability, number of agents, initial fire locations, agent speed range and plancement.
+
+
+Prior art for this project includes, but is not limited to:
+
+- Crowd Simulation Modeling Applied to Emergency and Evacuation Simulations using Multi-Agent Systems https://arxiv.org/ftp/arxiv/papers/1303/1303.4692.pdf
+
+
+- Simulation of pedestrian evacuation route choice using social force model in large-scale public space: Comparison of five evacuation strategies https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6730895/
+
+
+- Agent Pathing http://www.cs.us.es/~fsancho/?e=131
+
+
+- A Novel Algorithm for Real-time ProceduralGeneration of Building Floor Plans https://arxiv.org/pdf/1211.5842.pdf
+
+
+## HOW IT WORKS
 Simulation Req's:
 
 Environment- patches
@@ -684,9 +714,6 @@ Sim UI features:
 - agent speed distribution
 
 
-## HOW IT WORKS
-
-
 ### Buttons
 
 
@@ -709,33 +736,6 @@ Sim UI features:
 
 
 ## RELATED MODELS
-
-
-
-Fire simulation & agent based model papers
-
-Crowd Simulation Modeling Applied to Emergency and Evacuation Simulations using Multi-Agent Systems
-
-https://arxiv.org/ftp/arxiv/papers/1303/1303.4692.pdf
-
-
-Simulation of pedestrian evacuation route choice using social force model in large-scale public space: Comparison of five evacuation strategies
-
-https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6730895/
-
-
-Agent Pathing
-
-A* in netlogo
-
-http://www.cs.us.es/~fsancho/?e=131
-
-
-Floor plan generation
-
-A Novel Algorithm for Real-time ProceduralGeneration of Building Floor Plans
-
-https://arxiv.org/pdf/1211.5842.pdf
 
 
 ## HOW TO CITE
