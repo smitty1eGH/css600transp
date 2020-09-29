@@ -468,7 +468,7 @@ People
 People
 0
 500
-300.0
+500.0
 1
 1
 NIL
@@ -496,8 +496,8 @@ CHOOSER
 218
 map-file
 map-file
-"a.map" "b.map"
-1
+"a.map" "b.map" "c.map"
+2
 
 TEXTBOX
 19
@@ -518,7 +518,7 @@ Slow
 Slow
 0
 100
-50.0
+100.0
 1
 1
 NIL
@@ -533,7 +533,7 @@ Medium
 Medium
 0
 100
-50.0
+0.0
 1
 1
 NIL
@@ -548,7 +548,7 @@ Fast
 Fast
 0
 100
-50.0
+0.0
 1
 1
 NIL
