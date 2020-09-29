@@ -1,6 +1,35 @@
 extensions [array table]
 turtles-own [speed]
-globals [xdim ydim map_table spawn_patch block_patch speed_table default_speed default_color speed_color_table safety_color]
+globals [
+  xdim
+  ydim
+  map_table
+  spawn_patch
+  block_patch
+  speed_table
+  default_speed
+  default_color
+  speed_color_table
+  safety_color
+
+  p-valids   ; Valid Patches for moving not wall)
+  Start      ; Starting patch
+  Final-Cost ; The final cost of the path given by A*
+]
+
+patches-own
+[
+  cost ; for brute force
+
+
+
+  father     ; Previous patch in this partial path
+  Cost-path  ; Stores the cost of the path to the current patch
+  visited?   ; has the path been visited previously? That is,
+             ; at least one path has been calculated going through this patch
+  active?    ; is the patch active? That is, we have reached it, but
+             ; we must consider it because its children have not been explored
+]
 
 to setup-globals
   ; x and ydims are half the distance of the map e.g. 33 width = xdim  16
@@ -47,9 +76,43 @@ to setup
   setup-globals
   setup-patches
   setup-agents
+
+  calc-weights
+  display-weights
+  ;setup-astar
   reset-ticks
 end
+to display-weights
+  ask patches [set plabel cost]
+end
 
+
+to calc-weights
+  ; init
+  ask patches [set cost -1 ]
+  ask patches with [pcolor = safety_color] [set cost 0]
+  ask patches with [pcolor = block_patch] [set cost -2]
+  let current-patches patches with [cost = 0]
+  let current-distance 0
+  ;display-weights
+
+  while [ any? current-patches]
+  [
+    show current-distance
+    let next-patches no-patches
+    ask current-patches [
+      let patch_neighbors neighbors with [cost = -1]
+
+      ask patch_neighbors [set cost (current-distance + 1)]
+      set next-patches (patch-set patch_neighbors next-patches)
+      ;set next-patches fput patch_neighbors next-patches
+    ]
+
+    set current-distance (current-distance + 1)
+    set current-patches next-patches
+  ]
+
+end
 
 to go
   move-turtles
@@ -73,8 +136,9 @@ to evac-turtles
   ]
 end
 to setup-agents
-  set-default-shape turtles "person"
+  ;set-default-shape turtles "person"
   ask n-of People patches with [pcolor = spawn_patch and not any? other turtles-here] [sprout 1]
+  ask turtles [set shape "person"]
   ;create-turtles People [ setxy random-xcor random-ycor set shape "person" ]
   assign-speeds
 end
@@ -120,6 +184,188 @@ to load-map
   set row (row - 1)
   ]
   file-close
+end
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;   A* implementation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+
+; Prepares the world and starting point
+to setup-astar
+  ;ca
+  ; Initial values of patches for A*
+  ask patches
+  [
+    set father nobody
+    set Cost-path 0
+    set visited? false
+    set active? false
+  ]
+  ;; Generation of random obstacles
+  ;ask n-of 100 patches
+  ;[
+  ;  set pcolor brown
+  ;  ask patches in-radius random 10 [set pcolor brown]
+  ;]
+  ; Se the valid patches (not wall)
+  set p-valids patches with [pcolor != safety_color and pcolor != block_patch]
+  ; Create a random start
+  set Start one-of patches with [pcolor = spawn_patch ]
+  ask Start [set pcolor white]
+  ; Create a turtle to draw the path (when found)
+  crt 1
+  [
+    ht
+    set size 1
+    set pen-size 2
+    set shape "square"
+  ]
+end
+
+; Patch report to estimate the total expected cost of the path starting from
+; in Start, passing through it, and reaching the #Goal
+to-report Total-expected-cost [#Goal]
+  report Cost-path + Heuristic #Goal
+end
+
+; Patch report to reurtn the heuristic (expected length) from the current patch
+; to the #Goal
+to-report Heuristic [#Goal]
+  report distance #Goal
+end
+
+; A* algorithm. Inputs:
+;   - #Start     : starting point of the search.
+;   - #Goal      : the goal to reach.
+;   - #valid-map : set of agents (patches) valid to visit.
+; Returns:
+;   - If there is a path : list of the agents of the path.
+;   - Otherwise          : false
+
+to-report A* [#Start #Goal #valid-map]
+  ; clear all the information in the agents
+  ask #valid-map with [visited?]
+  [
+    set father nobody
+    set Cost-path 0
+    set visited? false
+    set active? false
+  ]
+  ; Active the staring point to begin the searching loop
+  ask #Start
+  [
+    set father self
+    set visited? true
+    set active? true
+  ]
+  ; exists? indicates if in some instant of the search there are no options to
+  ; continue. In this case, there is no path connecting #Start and #Goal
+  let exists? true
+  ; The searching loop is executed while we don't reach the #Goal and we think
+  ; a path exists
+  while [not [visited?] of #Goal and exists?]
+  [
+    ; We only work on the valid pacthes that are active
+    let options #valid-map with [active?]
+    ; If any
+    ifelse any? options
+    [
+      ; Take one of the active patches with minimal expected cost
+      ask min-one-of options [Total-expected-cost #Goal]
+      [
+        ; Store its real cost (to reach it) to compute the real cost
+        ; of its children
+        let Cost-path-father Cost-path
+        ; and deactivate it, because its children will be computed right now
+        set active? false
+        ; Compute its valid neighbors
+        let valid-neighbors neighbors with [member? self #valid-map]
+        ask valid-neighbors
+        [
+          ; There are 2 types of valid neighbors:
+          ;   - Those that have never been visited (therefore, the
+          ;       path we are building is the best for them right now)
+          ;   - Those that have been visited previously (therefore we
+          ;       must check if the path we are building is better or not,
+          ;       by comparing its expected length with the one stored in
+          ;       the patch)
+          ; One trick to work with both type uniformly is to give for the
+          ; first case an upper bound big enough to be sure that the new path
+          ; will always be smaller.
+          let t ifelse-value visited? [ Total-expected-cost #Goal] [2 ^ 20]
+          ; If this temporal cost is worse than the new one, we substitute the
+          ; information in the patch to store the new one (with the neighbors
+          ; of the first case, it will be always the case)
+          if t > (Cost-path-father + distance myself + Heuristic #Goal)
+          [
+            ; The current patch becomes the father of its neighbor in the new path
+            set father myself
+            set visited? true
+            set active? true
+            ; and store the real cost in the neighbor from the real cost of its father
+            set Cost-path Cost-path-father + distance father
+            set Final-Cost precision Cost-path 3
+          ]
+        ]
+      ]
+    ]
+    ; If there are no more options, there is no path between #Start and #Goal
+    [
+      set exists? false
+    ]
+  ]
+  ; After the searching loop, if there exists a path
+  ifelse exists?
+  [
+    ; We extract the list of patches in the path, form #Start to #Goal
+    ; by jumping back from #Goal to #Start by using the fathers of every patch
+    let current #Goal
+    set Final-Cost (precision [Cost-path] of #Goal 3)
+    let rep (list current)
+    While [current != #Start]
+    [
+      set current [father] of current
+      set rep fput current rep
+    ]
+    report rep
+  ]
+  [
+    ; Otherwise, there is no path, and we return False
+    report false
+  ]
+end
+
+; Axiliary procedure to lunch the A* algorithm between random patches
+to Look-for-Goal
+  ; Take one random Goal
+  let Goal one-of p-valids
+  ; Compute the path between Start and Goal
+  let path  A* Start Goal p-valids
+  ; If any...
+  if path != false [
+    ; Take a random color to the drawer turtle
+    ask turtle 0 [set color (lput 150 (n-values 3 [100 + random 155])) set shape "square"]
+    ; Move the turtle on the path stamping its shape in every patch
+    foreach path [
+      p ->
+      ask turtle 0 [
+        move-to p
+        stamp]]
+    ; Set the Goal and the new Start point
+    set Start Goal
+  ]
+end
+
+; Auxiliary procedure to clear the paths in the world
+to clean
+  cd
+  ask patches with [pcolor != black and pcolor != brown] [set pcolor black]
+  ask Start [set pcolor white]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
