@@ -11,7 +11,7 @@ globals [
   default_color
   speed_color_table
   safety_color
-
+  person_path_weight
   p-valids   ; Valid Patches for moving not wall)
   Start      ; Starting patch
   Final-Cost ; The final cost of the path given by A*
@@ -36,6 +36,8 @@ to setup-globals
   set xdim  16
   set ydim  16
   set map_table table:make
+
+  set person_path_weight 2
   ; set map table file values to patch colors
   ; grass
   table:put map_table 0 55
@@ -58,7 +60,7 @@ to setup-globals
   set speed_table table:make
   table:put speed_table "slow" .1
   table:put speed_table "medium" .5
-  table:put speed_table "fast" 1.2
+  table:put speed_table "fast" .9 ; if fast is over 1 they might jump over an exit patch
 
 
   ; mapping of speed to color
@@ -98,7 +100,7 @@ to calc-weights
 
   while [ any? current-patches]
   [
-    show current-distance
+    ;show current-distance
     let next-patches no-patches
     ask current-patches [
       let patch_neighbors neighbors with [cost = -1]
@@ -112,26 +114,50 @@ to calc-weights
     set current-patches next-patches
   ]
 
+  ; add person weights
+
+  ask turtles [
+
+    ask patch-here [set cost (cost + person_path_weight)]
+  ]
+  ;ask patches with [turtles-on] [set cost (cost+person_path_weight)
+
 end
 
 to go
   move-turtles
   evac-turtles
+
+  calc-weights ; fixes a bug where a patch misses being incremented/decremented
+  display-weights
   tick
 end
 
 to move-turtles
   ask turtles [
-    right random 360
+    ;ask patch-here [set cost (cost - person_path_weight)]
+
+    ; move towards the least cost
+    ; TODO switch neighbors4 to neighbors (8) but need to figure out how not to get stuck in wall corners
+    let patch_to_move one-of neighbors4 with [cost != -2 ] with-min [cost]
+
+    set heading towards patch_to_move
+
+    ;right random 360
     forward speed
     if pcolor = block_patch [
-      back speed
+      back ( speed  )
     ]
+
+
+    ;ask patch-here [set cost (cost + person_path_weight)]
+
   ]
 end
 
 to evac-turtles
   ask turtles [
+    if pcolor = safety_color [ask patch-here [set cost 0]]
     if pcolor = safety_color [die]
   ]
 end
@@ -141,6 +167,7 @@ to setup-agents
   ask turtles [set shape "person"]
   ;create-turtles People [ setxy random-xcor random-ycor set shape "person" ]
   assign-speeds
+  ask turtles [ask patch-here [set cost (cost + person_path_weight)]]
 end
 
 ; assign speeds to agents based on slider distribution
@@ -151,11 +178,14 @@ to assign-speeds
   let medium_people   floor ((Medium / total_count) * People)
   let fast_people  floor ((Fast / total_count) * People)
   ;set default
+
   ask turtles [ set speed default_speed set color default_color ]
 
+
   ask turtles with [ who < slow_people ] [ set speed table:get speed_table "slow" set color table:get speed_color_table "slow"]
-  ask turtles with [ who >= slow_people and who < slow_people + medium_people ] [ set speed table:get speed_table "medium" set color table:get speed_color_table "medium"]
-  ask turtles with [ who >= slow_people + medium_people and who < total_count ] [ set speed table:get speed_table "fast" set color table:get speed_color_table "fast"]
+
+  ask turtles with [ who >= slow_people ] [ set speed table:get speed_table "medium" set color table:get speed_color_table "medium"]
+  ask turtles with [ who >= (slow_people + medium_people)] [ set speed table:get speed_table "fast" set color table:get speed_color_table "fast"]
 end
 
 to setup-patches
@@ -437,8 +467,8 @@ SLIDER
 People
 People
 0
-100
-100.0
+500
+300.0
 1
 1
 NIL
@@ -488,7 +518,7 @@ Slow
 Slow
 0
 100
-33.0
+50.0
 1
 1
 NIL
@@ -503,7 +533,7 @@ Medium
 Medium
 0
 100
-33.0
+50.0
 1
 1
 NIL
@@ -518,7 +548,7 @@ Fast
 Fast
 0
 100
-33.0
+50.0
 1
 1
 NIL
