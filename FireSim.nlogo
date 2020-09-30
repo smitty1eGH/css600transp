@@ -39,7 +39,7 @@ to setup-globals
   set ydim  16
   set map_table table:make
 
-  set person_path_weight 2
+  set person_path_weight 3
   ; set map table file values to patch colors
   ; grass
   table:put map_table 0 55
