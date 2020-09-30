@@ -31,6 +31,8 @@ patches-own
              ; we must consider it because its children have not been explored
 ]
 
+;TODO add model termination when agents are all gone
+
 to setup-globals
   ; x and ydims are half the distance of the map e.g. 33 width = xdim  16
   set xdim  16
@@ -80,19 +82,25 @@ to setup
   setup-agents
 
   calc-weights
-  display-weights
+  ifelse display-path-cost?[
+    display-weights
+  ]
+  [ remove-weights ]
   ;setup-astar
   reset-ticks
 end
 to display-weights
   ask patches [set plabel cost]
 end
+to remove-weights
+  ask patches [set plabel ""]
+end
 
 
 to calc-weights
   ; init
   ask patches [set cost -1 ]
-  ask patches with [pcolor = safety_color] [set cost 0]
+  ask patches with [pcolor = safety_color] [set cost 0 ]
   ask patches with [pcolor = block_patch] [set cost -2]
   let current-patches patches with [cost = 0]
   let current-distance 0
@@ -119,6 +127,9 @@ to calc-weights
   ask turtles [
 
     ask patch-here [set cost (cost + person_path_weight)]
+    if add-person-spacing? [
+      ask neighbors4 with [cost != -2] [set cost (cost + (person_path_weight / 10 ) ) ]
+    ]
   ]
   ;ask patches with [turtles-on] [set cost (cost+person_path_weight)
 
@@ -129,7 +140,10 @@ to go
   evac-turtles
 
   calc-weights ; fixes a bug where a patch misses being incremented/decremented
-  display-weights
+  ifelse display-path-cost?[
+    display-weights
+  ]
+  [ remove-weights ]
   tick
 end
 
@@ -139,6 +153,7 @@ to move-turtles
 
     ; move towards the least cost
     ; TODO switch neighbors4 to neighbors (8) but need to figure out how not to get stuck in wall corners
+    ;TODO broaden the search get the min for a larger expanse (maybe 2 or 3 out)
     let patch_to_move one-of neighbors4 with [cost != -2 ] with-min [cost]
 
     set heading towards patch_to_move
@@ -460,10 +475,10 @@ NIL
 1
 
 SLIDER
-14
-82
-186
-115
+13
+124
+185
+157
 People
 People
 0
@@ -475,10 +490,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-15
-127
-187
-160
+668
+220
+840
+253
 Fire_Speed
 Fire_Speed
 0
@@ -490,30 +505,30 @@ NIL
 HORIZONTAL
 
 CHOOSER
-14
-173
-152
-218
+13
+75
+151
+120
 map-file
 map-file
 "a.map" "b.map" "c.map"
-2
+1
 
 TEXTBOX
-19
-268
-169
-286
+18
+318
+168
+336
 People Speed Distribution
 11
 0.0
 1
 
 SLIDER
-15
-287
-187
-320
+14
+337
+186
+370
 Slow
 Slow
 0
@@ -525,10 +540,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-15
-326
-187
-359
+14
+376
+186
+409
 Medium
 Medium
 0
@@ -540,10 +555,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-15
-364
-187
-397
+14
+414
+186
+447
 Fast
 Fast
 0
@@ -573,6 +588,48 @@ PENS
 "Slow People" 1.0 0 -8053223 true "" "plot count turtles with [ color = table:get speed_color_table \"slow\" ]"
 "Medium People" 1.0 0 -7171555 true "" "plot count turtles with [ color = table:get speed_color_table \"medium\" ]"
 "Fast People" 1.0 0 -15040220 true "" "plot count turtles with [ color = table:get speed_color_table \"fast\" ]"
+
+SWITCH
+14
+265
+185
+298
+add-person-spacing?
+add-person-spacing?
+1
+1
+-1000
+
+TEXTBOX
+15
+234
+165
+262
+People try to give each other space
+11
+0.0
+1
+
+SWITCH
+14
+193
+171
+226
+display-path-cost?
+display-path-cost?
+1
+1
+-1000
+
+TEXTBOX
+19
+164
+169
+192
+Show distance to escape patches
+11
+0.0
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
