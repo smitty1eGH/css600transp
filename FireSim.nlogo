@@ -11,10 +11,10 @@ globals [
   default_color
   speed_color_table
   safety_color
-  person_path_weight
-  p-valids   ; Valid Patches for moving not wall)
-  Start      ; Starting patch
-  Final-Cost ; The final cost of the path given by A*
+
+  ;p-valids   ; Valid Patches for moving not wall)
+ ; Start      ; Starting patch
+ ; Final-Cost ; The final cost of the path given by A*
 ]
 
 patches-own
@@ -23,11 +23,11 @@ patches-own
 
 
 
-  father     ; Previous patch in this partial path
-  Cost-path  ; Stores the cost of the path to the current patch
-  visited?   ; has the path been visited previously? That is,
+ ;father     ; Previous patch in this partial path
+ ; Cost-path  ; Stores the cost of the path to the current patch
+ ; visited?   ; has the path been visited previously? That is,
              ; at least one path has been calculated going through this patch
-  active?    ; is the patch active? That is, we have reached it, but
+  ;active?    ; is the patch active? That is, we have reached it, but
              ; we must consider it because its children have not been explored
 ]
 
@@ -39,7 +39,7 @@ to setup-globals
   set ydim  16
   set map_table table:make
 
-  set person_path_weight 3
+  ;set person_path_weight 3
   ; set map table file values to patch colors
   ; grass
   table:put map_table 0 55
@@ -128,7 +128,7 @@ to calc-weights
 
     ask patch-here [set cost (cost + person_path_weight)]
     if add-person-spacing? [
-      ask neighbors4 with [cost != -2] [set cost (cost + (person_path_weight / 10 ) ) ]
+      ask neighbors4 with [cost != -2] [set cost (cost + (person_path_weight / 10 ) ) ] ; divide neighbor weights by scaling factor of person weight
     ]
   ]
   ;ask patches with [turtles-on] [set cost (cost+person_path_weight)
@@ -144,8 +144,19 @@ to go
     display-weights
   ]
   [ remove-weights ]
+
+  if set-fire?[
+
+    burn-patches
+  ]
   tick
+
+
 end
+
+to burn-patches
+end
+
 
 to move-turtles
   ask turtles [
@@ -240,184 +251,184 @@ end
 
 
 
-; Prepares the world and starting point
-to setup-astar
-  ;ca
-  ; Initial values of patches for A*
-  ask patches
-  [
-    set father nobody
-    set Cost-path 0
-    set visited? false
-    set active? false
-  ]
-  ;; Generation of random obstacles
-  ;ask n-of 100 patches
-  ;[
-  ;  set pcolor brown
-  ;  ask patches in-radius random 10 [set pcolor brown]
-  ;]
-  ; Se the valid patches (not wall)
-  set p-valids patches with [pcolor != safety_color and pcolor != block_patch]
-  ; Create a random start
-  set Start one-of patches with [pcolor = spawn_patch ]
-  ask Start [set pcolor white]
-  ; Create a turtle to draw the path (when found)
-  crt 1
-  [
-    ht
-    set size 1
-    set pen-size 2
-    set shape "square"
-  ]
-end
-
-; Patch report to estimate the total expected cost of the path starting from
-; in Start, passing through it, and reaching the #Goal
-to-report Total-expected-cost [#Goal]
-  report Cost-path + Heuristic #Goal
-end
-
-; Patch report to reurtn the heuristic (expected length) from the current patch
-; to the #Goal
-to-report Heuristic [#Goal]
-  report distance #Goal
-end
-
-; A* algorithm. Inputs:
-;   - #Start     : starting point of the search.
-;   - #Goal      : the goal to reach.
-;   - #valid-map : set of agents (patches) valid to visit.
-; Returns:
-;   - If there is a path : list of the agents of the path.
-;   - Otherwise          : false
-
-to-report A* [#Start #Goal #valid-map]
-  ; clear all the information in the agents
-  ask #valid-map with [visited?]
-  [
-    set father nobody
-    set Cost-path 0
-    set visited? false
-    set active? false
-  ]
-  ; Active the staring point to begin the searching loop
-  ask #Start
-  [
-    set father self
-    set visited? true
-    set active? true
-  ]
-  ; exists? indicates if in some instant of the search there are no options to
-  ; continue. In this case, there is no path connecting #Start and #Goal
-  let exists? true
-  ; The searching loop is executed while we don't reach the #Goal and we think
-  ; a path exists
-  while [not [visited?] of #Goal and exists?]
-  [
-    ; We only work on the valid pacthes that are active
-    let options #valid-map with [active?]
-    ; If any
-    ifelse any? options
-    [
-      ; Take one of the active patches with minimal expected cost
-      ask min-one-of options [Total-expected-cost #Goal]
-      [
-        ; Store its real cost (to reach it) to compute the real cost
-        ; of its children
-        let Cost-path-father Cost-path
-        ; and deactivate it, because its children will be computed right now
-        set active? false
-        ; Compute its valid neighbors
-        let valid-neighbors neighbors with [member? self #valid-map]
-        ask valid-neighbors
-        [
-          ; There are 2 types of valid neighbors:
-          ;   - Those that have never been visited (therefore, the
-          ;       path we are building is the best for them right now)
-          ;   - Those that have been visited previously (therefore we
-          ;       must check if the path we are building is better or not,
-          ;       by comparing its expected length with the one stored in
-          ;       the patch)
-          ; One trick to work with both type uniformly is to give for the
-          ; first case an upper bound big enough to be sure that the new path
-          ; will always be smaller.
-          let t ifelse-value visited? [ Total-expected-cost #Goal] [2 ^ 20]
-          ; If this temporal cost is worse than the new one, we substitute the
-          ; information in the patch to store the new one (with the neighbors
-          ; of the first case, it will be always the case)
-          if t > (Cost-path-father + distance myself + Heuristic #Goal)
-          [
-            ; The current patch becomes the father of its neighbor in the new path
-            set father myself
-            set visited? true
-            set active? true
-            ; and store the real cost in the neighbor from the real cost of its father
-            set Cost-path Cost-path-father + distance father
-            set Final-Cost precision Cost-path 3
-          ]
-        ]
-      ]
-    ]
-    ; If there are no more options, there is no path between #Start and #Goal
-    [
-      set exists? false
-    ]
-  ]
-  ; After the searching loop, if there exists a path
-  ifelse exists?
-  [
-    ; We extract the list of patches in the path, form #Start to #Goal
-    ; by jumping back from #Goal to #Start by using the fathers of every patch
-    let current #Goal
-    set Final-Cost (precision [Cost-path] of #Goal 3)
-    let rep (list current)
-    While [current != #Start]
-    [
-      set current [father] of current
-      set rep fput current rep
-    ]
-    report rep
-  ]
-  [
-    ; Otherwise, there is no path, and we return False
-    report false
-  ]
-end
-
-; Axiliary procedure to lunch the A* algorithm between random patches
-to Look-for-Goal
-  ; Take one random Goal
-  let Goal one-of p-valids
-  ; Compute the path between Start and Goal
-  let path  A* Start Goal p-valids
-  ; If any...
-  if path != false [
-    ; Take a random color to the drawer turtle
-    ask turtle 0 [set color (lput 150 (n-values 3 [100 + random 155])) set shape "square"]
-    ; Move the turtle on the path stamping its shape in every patch
-    foreach path [
-      p ->
-      ask turtle 0 [
-        move-to p
-        stamp]]
-    ; Set the Goal and the new Start point
-    set Start Goal
-  ]
-end
-
-; Auxiliary procedure to clear the paths in the world
-to clean
-  cd
-  ask patches with [pcolor != black and pcolor != brown] [set pcolor black]
-  ask Start [set pcolor white]
-end
+;; Prepares the world and starting point
+;to setup-astar
+;  ;ca
+;  ; Initial values of patches for A*
+;  ask patches
+;  [
+;    set father nobody
+;    set Cost-path 0
+;    set visited? false
+;    set active? false
+;  ]
+;  ;; Generation of random obstacles
+;  ;ask n-of 100 patches
+;  ;[
+;  ;  set pcolor brown
+;  ;  ask patches in-radius random 10 [set pcolor brown]
+;  ;]
+;  ; Se the valid patches (not wall)
+;  set p-valids patches with [pcolor != safety_color and pcolor != block_patch]
+;  ; Create a random start
+;  set Start one-of patches with [pcolor = spawn_patch ]
+;  ask Start [set pcolor white]
+;  ; Create a turtle to draw the path (when found)
+;  crt 1
+;  [
+;    ht
+;    set size 1
+;    set pen-size 2
+;    set shape "square"
+;  ]
+;end
+;
+;; Patch report to estimate the total expected cost of the path starting from
+;; in Start, passing through it, and reaching the #Goal
+;to-report Total-expected-cost [#Goal]
+;  report Cost-path + Heuristic #Goal
+;end
+;
+;; Patch report to reurtn the heuristic (expected length) from the current patch
+;; to the #Goal
+;to-report Heuristic [#Goal]
+;  report distance #Goal
+;end
+;
+;; A* algorithm. Inputs:
+;;   - #Start     : starting point of the search.
+;;   - #Goal      : the goal to reach.
+;;   - #valid-map : set of agents (patches) valid to visit.
+;; Returns:
+;;   - If there is a path : list of the agents of the path.
+;;   - Otherwise          : false
+;
+;to-report A* [#Start #Goal #valid-map]
+;  ; clear all the information in the agents
+;  ask #valid-map with [visited?]
+;  [
+;    set father nobody
+;    set Cost-path 0
+;    set visited? false
+;    set active? false
+;  ]
+;  ; Active the staring point to begin the searching loop
+;  ask #Start
+;  [
+;    set father self
+;    set visited? true
+;    set active? true
+;  ]
+;  ; exists? indicates if in some instant of the search there are no options to
+;  ; continue. In this case, there is no path connecting #Start and #Goal
+;  let exists? true
+;  ; The searching loop is executed while we don't reach the #Goal and we think
+;  ; a path exists
+;  while [not [visited?] of #Goal and exists?]
+;  [
+;    ; We only work on the valid pacthes that are active
+;    let options #valid-map with [active?]
+;    ; If any
+;    ifelse any? options
+;    [
+;      ; Take one of the active patches with minimal expected cost
+;      ask min-one-of options [Total-expected-cost #Goal]
+;      [
+;        ; Store its real cost (to reach it) to compute the real cost
+;        ; of its children
+;        let Cost-path-father Cost-path
+;        ; and deactivate it, because its children will be computed right now
+;        set active? false
+;        ; Compute its valid neighbors
+;        let valid-neighbors neighbors with [member? self #valid-map]
+;        ask valid-neighbors
+;        [
+;          ; There are 2 types of valid neighbors:
+;          ;   - Those that have never been visited (therefore, the
+;          ;       path we are building is the best for them right now)
+;          ;   - Those that have been visited previously (therefore we
+;          ;       must check if the path we are building is better or not,
+;          ;       by comparing its expected length with the one stored in
+;          ;       the patch)
+;          ; One trick to work with both type uniformly is to give for the
+;          ; first case an upper bound big enough to be sure that the new path
+;          ; will always be smaller.
+;          let t ifelse-value visited? [ Total-expected-cost #Goal] [2 ^ 20]
+;          ; If this temporal cost is worse than the new one, we substitute the
+;          ; information in the patch to store the new one (with the neighbors
+;          ; of the first case, it will be always the case)
+;          if t > (Cost-path-father + distance myself + Heuristic #Goal)
+;          [
+;            ; The current patch becomes the father of its neighbor in the new path
+;            set father myself
+;            set visited? true
+;            set active? true
+;            ; and store the real cost in the neighbor from the real cost of its father
+;            set Cost-path Cost-path-father + distance father
+;            set Final-Cost precision Cost-path 3
+;          ]
+;        ]
+;      ]
+;    ]
+;    ; If there are no more options, there is no path between #Start and #Goal
+;    [
+;      set exists? false
+;    ]
+;  ]
+;  ; After the searching loop, if there exists a path
+;  ifelse exists?
+;  [
+;    ; We extract the list of patches in the path, form #Start to #Goal
+;    ; by jumping back from #Goal to #Start by using the fathers of every patch
+;    let current #Goal
+;    set Final-Cost (precision [Cost-path] of #Goal 3)
+;    let rep (list current)
+;    While [current != #Start]
+;    [
+;      set current [father] of current
+;      set rep fput current rep
+;    ]
+;    report rep
+;  ]
+;  [
+;    ; Otherwise, there is no path, and we return False
+;    report false
+;  ]
+;end
+;
+;; Axiliary procedure to lunch the A* algorithm between random patches
+;to Look-for-Goal
+;  ; Take one random Goal
+;  let Goal one-of p-valids
+;  ; Compute the path between Start and Goal
+;  let path  A* Start Goal p-valids
+;  ; If any...
+;  if path != false [
+;    ; Take a random color to the drawer turtle
+;    ask turtle 0 [set color (lput 150 (n-values 3 [100 + random 155])) set shape "square"]
+;    ; Move the turtle on the path stamping its shape in every patch
+;    foreach path [
+;      p ->
+;      ask turtle 0 [
+;        move-to p
+;        stamp]]
+;    ; Set the Goal and the new Start point
+;    set Start Goal
+;  ]
+;end
+;
+;; Auxiliary procedure to clear the paths in the world
+;to clean
+;  cd
+;  ask patches with [pcolor != black and pcolor != brown] [set pcolor black]
+;  ask Start [set pcolor white]
+;end
 @#$#@#$#@
 GRAPHICS-WINDOW
-210
-10
-647
-448
+414
+15
+851
+453
 -1
 -1
 13.0
@@ -475,10 +486,10 @@ NIL
 1
 
 SLIDER
-13
-124
-185
-157
+225
+75
+397
+108
 People
 People
 0
@@ -490,10 +501,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-668
-220
-840
-253
+867
+276
+1039
+309
 Fire_Speed
 Fire_Speed
 0
@@ -512,23 +523,23 @@ CHOOSER
 map-file
 map-file
 "a.map" "b.map" "c.map"
-1
+2
 
 TEXTBOX
-18
-318
-168
-336
+227
+216
+377
+234
 People Speed Distribution
 11
 0.0
 1
 
 SLIDER
-14
-337
-186
-370
+223
+235
+395
+268
 Slow
 Slow
 0
@@ -540,10 +551,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-14
-376
-186
-409
+223
+274
+395
+307
 Medium
 Medium
 0
@@ -555,10 +566,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-14
-414
-186
-447
+223
+312
+395
+345
 Fast
 Fast
 0
@@ -570,10 +581,10 @@ NIL
 HORIZONTAL
 
 PLOT
-668
-16
-868
-166
+872
+21
+1072
+171
 People
 NIL
 NIL
@@ -590,10 +601,10 @@ PENS
 "Fast People" 1.0 0 -15040220 true "" "plot count turtles with [ color = table:get speed_color_table \"fast\" ]"
 
 SWITCH
-14
-265
-185
-298
+12
+245
+183
+278
 add-person-spacing?
 add-person-spacing?
 1
@@ -601,20 +612,20 @@ add-person-spacing?
 -1000
 
 TEXTBOX
-15
-234
-165
-262
+13
+214
+163
+242
 People try to give each other space
 11
 0.0
 1
 
 SWITCH
-14
-193
-171
-226
+12
+173
+169
+206
 display-path-cost?
 display-path-cost?
 1
@@ -622,14 +633,50 @@ display-path-cost?
 -1000
 
 TEXTBOX
-19
-164
-169
-192
+17
+144
+167
+172
 Show distance to escape patches
 11
 0.0
 1
+
+SLIDER
+224
+161
+398
+194
+person_path_weight
+person_path_weight
+0
+3
+3.0
+.1
+1
+NIL
+HORIZONTAL
+
+TEXTBOX
+225
+129
+375
+157
+How much a person blocks a patch
+11
+0.0
+1
+
+SWITCH
+868
+237
+971
+270
+set-fire?
+set-fire?
+1
+1
+-1000
 
 @#$#@#$#@
 ## WHAT IS IT?
