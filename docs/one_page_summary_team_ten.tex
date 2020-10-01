@@ -13,11 +13,29 @@
 
 \section {Introduction}
 
-The inherent dangers in doing live simulations of emergency evacuations has led to an increasing reliance on computer simulations to understand emergent behaviors of crowds under strenuous conditions\cite{almeidaCrowdSimulationModeling2013}.  Our project will seek to understand crowd evacuation behaviors through the modeling of a variety of environmental and agent factors in the NetLogo simulation suite.
+The inherent dangers in doing live simulations of emergency evacuations has led to an increasing reliance on computer simulations to understand emergent behaviors of crowds under strenuous conditions\cite{almeidaCrowdSimulationModeling2013}.  Our project will seek to understand crowd evacuation behaviors through the modeling of a variety of environmental and agent factors in the NetLogo simulation suite. While NetLogo may be simpler environment then current state of the art modeling tools it is our hope that the simulation we develop will have reuseability for computationally similar problems such as fluid dynamics and other flow based environments.
 
-\section {Experiments}
+\section {Experiments todo flesh out}
+todo we are not doing behavioral modeling of the agents as reffed here  https://tsapps.nist.gov/publication/get\_pdf.cfm?pub\_id=861543
+
+\begin{itemize}
+\item Evaluate the affect of floor plans and exit doors on escape rates
+\item Determine maximum occupancies as function of design and area
+\item Evaluate the impact of fire spread on escape rates
+\item Evaluate the impact of distribution of agent speeds impacts agent subgroups (speeds) mean escape time
+\item Stretch Goals
+\begin{itemize}
+\item Evaluate agent evacuation strategies
+\item Evaluate propogation of knowledge of fire
+\item Simulate smoke propogation
+\end{itemize}
+\end{itemize}
 
 \section {Environment}
+
+We plan on developing a simulation environment that exposes as many parameters as possible to the experimenter. Since one of our parameters is the layout (floor plan) of a given building we will also allow for users to develop their own layouts and easily load different map files in between simulations through the UI. Parameters of the simulation can be broadly broken up into two groups, those of the people agents and those of the environment that they move around in. The agents are driven by a heuristic of moving towards the exit which, in turn, is largely driven by our path generating algorithms\cite{caparriniGeneralSolverNetLogo2018}.  The parameters that go into the pathing algorithm will be exposed for modification and allow for a more thorough understanding of evacuation behaviors. 
+
+
 
 \section {Deliverables}
 We will deliver a formal paper describing our experiments, the simulation software we created, our results, and the conclusions we can generate from those results. In addition we will develop presentation material to communicate concisely our overall project that will include live simulations or video recordings of previous simulations.
@@ -37,28 +55,11 @@ Agents are randomply placed people moving at various speeds and directions, but 
 
 Maps are editable for layout, patch flammability, number of agents, initial fire locations, agent speed range and plancement.
 
-Research Goals:
-
-\begin{itemize}
-\item Evaluate the affect of floor plans and exit doors on escape rates
-\item Determine maximum occupancies as function of design and area
-\item Evaluate the impact of fire spread on escape rates
-\item Stretch Goals
-\begin{itemize}
-\item Evaluate agent evacuation strategies
-\item Evaluate propogation of knowledge of fire
-\item Simulate smoke propogation
-\end{itemize}
-\end{itemize}
 
 
-Prior art for this project includes, but is not limited to:
-\begin{itemize}
-\item Crowd Simulation Modeling Applied to Emergency and Evacuation Simulations using Multi-Agent Systems https://arxiv.org/ftp/arxiv/papers/1303/1303.4692.pdf
-\item Simulation of pedestrian evacuation route choice using social force model in large-scale public space: Comparison of five evacuation strategies https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6730895/
-\item Agent Pathing http://www.cs.us.es/~fsancho/?e=131
-\item A Novel Algorithm for Real-time ProceduralGeneration of Building Floor Plans https://arxiv.org/pdf/1211.5842.pdf
-\end{itemize}
+
+
+
 
 HOW IT WORKS
 
