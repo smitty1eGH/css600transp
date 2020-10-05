@@ -60,9 +60,9 @@ to setup-globals
 
   ; a mapping of speed settings to numerical speed
   set speed_table table:make
-  table:put speed_table "slow" .1
-  table:put speed_table "medium" .5
-  table:put speed_table "fast" .9 ; if fast is over 1 they might jump over an exit patch
+  table:put speed_table "slow" Slow-Speed
+  table:put speed_table "medium" Medium-Speed
+  table:put speed_table "fast" Fast-Speed ; if fast is over 1 they might jump over an exit patch
 
 
   ; mapping of speed to color
@@ -88,6 +88,18 @@ to setup
   [ remove-weights ]
   ;setup-astar
   reset-ticks
+end
+
+to reset-defaults
+  set person_path_weight  2.0
+  set People 200
+  set Slow  33
+  set Medium  33
+  set Fast  33
+
+  set Slow-Speed .1
+  set Medium-Speed .4
+  set Fast-Speed .8
 end
 to display-weights
   ask patches [set plabel cost]
@@ -155,6 +167,8 @@ to go
 end
 
 to burn-patches
+
+  ; how to start the fire?
 end
 
 
@@ -167,14 +181,22 @@ to move-turtles
     ;TODO broaden the search get the min for a larger expanse (maybe 2 or 3 out)
     let patch_to_move one-of neighbors4 with [cost != -2 ] with-min [cost]
 
-    set heading towards patch_to_move
+    ; this wont work because people can see past walls and the get stuck to walls
+    ;let patch_to_move one-of  patches in-radius 2 with [cost != -2 ] with-min [cost]
 
-    ;right random 360
-    forward speed
-    if pcolor = block_patch [
-      back ( speed  )
+    let this-cost cost
+    ; dont move if its more expensive
+
+    if  ( [cost] of patch_to_move < this-cost) [
+
+      set heading towards patch_to_move
+
+      ;right random 360
+      forward speed
+      if pcolor = block_patch [
+        back ( speed  )
+      ]
     ]
-
 
     ;ask patch-here [set cost (cost + person_path_weight)]
 
@@ -469,10 +491,10 @@ NIL
 1
 
 BUTTON
-124
-30
-187
-63
+127
+29
+190
+62
 NIL
 go
 T
@@ -486,10 +508,10 @@ NIL
 1
 
 SLIDER
-225
-75
-397
-108
+9
+143
+181
+176
 People
 People
 0
@@ -526,35 +548,35 @@ map-file
 2
 
 TEXTBOX
-227
-216
-377
-234
+13
+283
+163
+301
 People Speed Distribution
 11
 0.0
 1
 
 SLIDER
-223
-235
-395
-268
+9
+302
+181
+335
 Slow
 Slow
 0
 100
-100.0
+33.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-223
-274
-395
-307
+9
+341
+181
+374
 Medium
 Medium
 0
@@ -566,10 +588,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-223
-312
-395
-345
+9
+379
+181
+412
 Fast
 Fast
 0
@@ -601,10 +623,10 @@ PENS
 "Fast People" 1.0 0 -15040220 true "" "plot count turtles with [ color = table:get speed_color_table \"fast\" ]"
 
 SWITCH
-12
-245
-183
-278
+239
+127
+410
+160
 add-person-spacing?
 add-person-spacing?
 1
@@ -612,56 +634,56 @@ add-person-spacing?
 -1000
 
 TEXTBOX
-13
-214
-163
-242
+240
+96
+390
+124
 People try to give each other space
 11
 0.0
 1
 
 SWITCH
-12
-173
-169
-206
+239
+55
+411
+88
 display-path-cost?
 display-path-cost?
-1
+0
 1
 -1000
 
 TEXTBOX
-17
-144
-167
-172
+244
+26
+394
+54
 Show distance to escape patches
 11
 0.0
 1
 
 SLIDER
-224
-161
-398
-194
+8
+229
+182
+262
 person_path_weight
 person_path_weight
 0
 3
-3.0
+2.0
 .1
 1
 NIL
 HORIZONTAL
 
 TEXTBOX
+9
+197
+159
 225
-129
-375
-157
 How much a person blocks a patch
 11
 0.0
@@ -677,6 +699,78 @@ set-fire?
 1
 1
 -1000
+
+BUTTON
+4
+430
+114
+463
+NIL
+reset-defaults
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+TEXTBOX
+223
+280
+373
+298
+People Speeds
+11
+0.0
+1
+
+SLIDER
+217
+301
+389
+334
+Slow-Speed
+Slow-Speed
+0.01
+.99
+0.1
+.01
+1
+NIL
+HORIZONTAL
+
+SLIDER
+217
+341
+389
+374
+Medium-Speed
+Medium-Speed
+.01
+.99
+0.4
+.01
+1
+NIL
+HORIZONTAL
+
+SLIDER
+217
+380
+389
+413
+Fast-Speed
+Fast-Speed
+.01
+.99
+0.8
+.01
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
