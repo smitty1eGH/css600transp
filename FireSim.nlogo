@@ -1,5 +1,5 @@
 extensions [array table]
-turtles-own [speed]
+turtles-own [speed ]
 globals [
   xdim
   ydim
@@ -12,6 +12,10 @@ globals [
   speed_color_table
   safety_color
 
+  ;mean ticks till escape metrics
+  total-escaped
+  total-ticks-till-escaped
+  mean-escape-time
   ;p-valids   ; Valid Patches for moving not wall)
  ; Start      ; Starting patch
  ; Final-Cost ; The final cost of the path given by A*
@@ -161,9 +165,20 @@ to go
 
     burn-patches
   ]
+
+  calc-mean-escape-time
+
   tick
 
 
+end
+
+to calc-mean-escape-time
+  ifelse total-escaped = 0[
+    set mean-escape-time 0
+  ][
+    set mean-escape-time (total-ticks-till-escaped / total-escaped )
+  ]
 end
 
 to burn-patches
@@ -174,6 +189,8 @@ end
 
 to move-turtles
   ask turtles [
+
+
     ;ask patch-here [set cost (cost - person_path_weight)]
 
     ; move towards the least cost
@@ -208,7 +225,7 @@ end
 to evac-turtles
   ask turtles [
     if pcolor = safety_color [ask patch-here [set cost 0]]
-    if pcolor = safety_color [die]
+    if pcolor = safety_color [set total-escaped (total-escaped + 1) set total-ticks-till-escaped (total-ticks-till-escaped + ticks ) die  ]
   ]
 end
 to setup-agents
@@ -525,10 +542,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-867
-276
-1039
-309
+873
+310
+1045
+343
 Fire_Speed
 Fire_Speed
 0
@@ -692,10 +709,10 @@ How much a person blocks a patch
 1
 
 SWITCH
-868
-237
-971
-270
+874
+271
+977
+304
 set-fire?
 set-fire?
 1
@@ -781,7 +798,7 @@ SWITCH
 235
 people-wait?
 people-wait?
-1
+0
 1
 -1000
 
@@ -794,6 +811,17 @@ People will try to wait for a better path
 11
 0.0
 1
+
+MONITOR
+872
+195
+986
+240
+NIL
+mean-escape-time
+17
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
