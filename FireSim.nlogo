@@ -184,10 +184,12 @@ to move-turtles
     ; this wont work because people can see past walls and the get stuck to walls
     ;let patch_to_move one-of  patches in-radius 2 with [cost != -2 ] with-min [cost]
 
-    let this-cost cost
+    ;add a scaling factor for determining if a person should move
+    let this-cost ( cost - ( person_path_weight / 2 ) )
     ; dont move if its more expensive
 
-    if  ( [cost] of patch_to_move < this-cost) [
+    if  (not people-wait? ) or ( [cost] of patch_to_move < this-cost) [
+
 
       set heading towards patch_to_move
 
@@ -650,7 +652,7 @@ SWITCH
 88
 display-path-cost?
 display-path-cost?
-0
+1
 1
 -1000
 
@@ -771,6 +773,27 @@ Fast-Speed
 1
 NIL
 HORIZONTAL
+
+SWITCH
+238
+202
+408
+235
+people-wait?
+people-wait?
+1
+1
+-1000
+
+TEXTBOX
+241
+169
+391
+197
+People will try to wait for a better path
+11
+0.0
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
