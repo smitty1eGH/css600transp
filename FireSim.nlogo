@@ -104,6 +104,10 @@ to reset-defaults
   set Slow-Speed .1
   set Medium-Speed .4
   set Fast-Speed .8
+
+  set add-person-spacing? True
+  set people-wait? True
+  set equal-diagonal-weight? true
 end
 to display-weights
   ask patches [set plabel cost]
@@ -127,7 +131,12 @@ to calc-weights
     ;show current-distance
     let next-patches no-patches
     ask current-patches [
-      let patch_neighbors neighbors with [cost = -1]
+      let patch_neighbors no-patches
+      ifelse equal-diagonal-weight?[
+        set patch_neighbors neighbors4 with [cost = -1]
+      ][
+        set patch_neighbors neighbors with [cost = -1]
+      ]
 
       ask patch_neighbors [set cost (current-distance + 1)]
       set next-patches (patch-set patch_neighbors next-patches)
@@ -143,6 +152,7 @@ to calc-weights
   ask turtles [
 
     ask patch-here [set cost (cost + person_path_weight)]
+    ; todo make this weight scaling factor variable
     if add-person-spacing? [
       ask neighbors4 with [cost != -2] [set cost (cost + (person_path_weight / 10 ) ) ] ; divide neighbor weights by scaling factor of person weight
     ]
@@ -202,6 +212,7 @@ to move-turtles
     ;let patch_to_move one-of  patches in-radius 2 with [cost != -2 ] with-min [cost]
 
     ;add a scaling factor for determining if a person should move
+    ;todo make this person path weight scalable
     let this-cost ( cost - ( person_path_weight / 2 ) )
     ; dont move if its more expensive
 
@@ -493,10 +504,10 @@ ticks
 30.0
 
 BUTTON
-13
-30
-76
-63
+26
+28
+89
+61
 NIL
 setup
 NIL
@@ -510,10 +521,10 @@ NIL
 1
 
 BUTTON
-127
-29
-190
-62
+140
+27
+203
+60
 NIL
 go
 T
@@ -527,10 +538,10 @@ NIL
 1
 
 SLIDER
-9
-143
-181
-176
+17
+180
+189
+213
 People
 People
 0
@@ -557,30 +568,30 @@ NIL
 HORIZONTAL
 
 CHOOSER
-13
-75
-151
-120
+17
+126
+155
+171
 map-file
 map-file
-"a.map" "b.map" "c.map"
-2
+"a.map" "b.map" "c.map" "obstacles.map"
+3
 
 TEXTBOX
-13
-283
-163
-301
+19
+319
+169
+337
 People Speed Distribution
 11
 0.0
 1
 
 SLIDER
-9
-302
-181
-335
+15
+338
+187
+371
 Slow
 Slow
 0
@@ -592,30 +603,30 @@ NIL
 HORIZONTAL
 
 SLIDER
-9
-341
-181
-374
+15
+377
+187
+410
 Medium
 Medium
 0
 100
-0.0
+33.0
 1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-9
-379
-181
-412
+15
+415
+187
+448
 Fast
 Fast
 0
 100
-0.0
+33.0
 1
 1
 NIL
@@ -642,31 +653,31 @@ PENS
 "Fast People" 1.0 0 -15040220 true "" "plot count turtles with [ color = table:get speed_color_table \"fast\" ]"
 
 SWITCH
-239
-127
-410
-160
+229
+124
+400
+157
 add-person-spacing?
 add-person-spacing?
-1
+0
 1
 -1000
 
 TEXTBOX
-240
-96
-390
-124
+230
+93
+380
+121
 People try to give each other space
 11
 0.0
 1
 
 SWITCH
-239
-55
-411
-88
+229
+52
+401
+85
 display-path-cost?
 display-path-cost?
 1
@@ -674,20 +685,20 @@ display-path-cost?
 -1000
 
 TEXTBOX
-244
-26
-394
-54
+234
+23
+384
+51
 Show distance to escape patches
 11
 0.0
 1
 
 SLIDER
-8
-229
-182
-262
+16
+266
+190
+299
 person_path_weight
 person_path_weight
 0
@@ -699,10 +710,10 @@ NIL
 HORIZONTAL
 
 TEXTBOX
-9
-197
-159
-225
+17
+234
+167
+262
 How much a person blocks a patch
 11
 0.0
@@ -720,10 +731,10 @@ set-fire?
 -1000
 
 BUTTON
-4
-430
-114
-463
+16
+85
+126
+118
 NIL
 reset-defaults
 NIL
@@ -737,20 +748,20 @@ NIL
 1
 
 TEXTBOX
-223
-280
-373
-298
+229
+316
+379
+334
 People Speeds
 11
 0.0
 1
 
 SLIDER
-217
-301
-389
-334
+223
+337
+395
+370
 Slow-Speed
 Slow-Speed
 0.01
@@ -762,10 +773,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-217
-341
-389
-374
+223
+377
+395
+410
 Medium-Speed
 Medium-Speed
 .01
@@ -777,10 +788,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-217
-380
-389
-413
+223
+416
+395
+449
 Fast-Speed
 Fast-Speed
 .01
@@ -792,10 +803,10 @@ NIL
 HORIZONTAL
 
 SWITCH
-238
-202
-408
-235
+228
+199
+398
+232
 people-wait?
 people-wait?
 0
@@ -803,10 +814,10 @@ people-wait?
 -1000
 
 TEXTBOX
-241
-169
-391
-197
+231
+166
+381
+194
 People will try to wait for a better path
 11
 0.0
@@ -822,6 +833,27 @@ mean-escape-time
 17
 1
 11
+
+SWITCH
+227
+271
+397
+304
+equal-diagonal-weight?
+equal-diagonal-weight?
+0
+1
+-1000
+
+TEXTBOX
+228
+241
+378
+269
+Treat diagonals as the same distance as 4 main directions
+11
+0.0
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
