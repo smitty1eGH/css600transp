@@ -7,7 +7,7 @@ by Justin Downes and Chris Smith
 
 prepared for Prof. Dale Rothman
 
-The goal is to simulate the emergency evacuation of a floorplan, for example in the case of fire. 
+The goal is to simulate the emergency evacuation of a floorplan, for example in the case of fire.
 
 The environment patches include rooms, corridors, and exit areas, as well as patches in normal, burning, and burnt states.
 
