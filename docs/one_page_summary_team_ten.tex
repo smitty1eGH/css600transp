@@ -16,13 +16,13 @@
 The inherent dangers in doing live simulations of emergency evacuations has led to an increasing reliance on computer simulations to understand emergent behaviors of crowds under strenuous conditions\cite{almeidaCrowdSimulationModeling2013}.  Our project will seek to understand crowd evacuation behaviors through the modeling of a variety of environmental and agent factors in the NetLogo simulation suite. While NetLogo may be simpler environment then current state of the art modeling tools it is our hope that the simulation we develop will have reuseability for computationally similar problems such as fluid dynamics and other flow based environments. Another goal of our simulation will be to set a foundation for further downstream tasks such as an environment for reinforcement learning or as a playground for experimenting with pathing algorithms.
 
 \section {Experiments todo flesh out}
-todo we are not doing behavioral modeling of the agents as reffed here  https://tsapps.nist.gov/publication/get\_pdf.cfm?pub\_id=861543
+The bulk of our simulations will explore the physical properties of the environment, which is in contrast to an equally deep field of studying the behavioral theory of evacuation modeling\cite{kuligowskil}.  Should we achieve our primary modeling goals as laid out in the following we hope to explore more the more qualitative aspects of this domain. These next experiments are our initial attempts to outline what we think are feasible problems that we can evaluate in the time frame and with the selected tooling.
 
 \begin{itemize}
 \item Evaluate the affect of floor plans and exit doors on escape rates
 \item Determine maximum occupancies as function of design and area
 \item Evaluate the impact of fire spread on escape rates
-\item Evaluate the impact of distribution of agent speeds impacts agent subgroups (speeds) mean escape time
+\item Evaluate the impact of distribution of agent speeds on agent subgroups (speed disadvantaged) mean escape time
 \item Stretch Goals
 \begin{itemize}
 \item Floorplan editor--(Excel worksheet tab, use cell styles, VBA macro wites .map file. I've got this)
@@ -36,81 +36,14 @@ todo we are not doing behavioral modeling of the agents as reffed here  https://
 
 \section {Environment}
 
-We plan on developing a simulation environment that exposes as many parameters as possible to the experimenter. Since one of our parameters is the layout (floor plan) of a given building we will also allow for users to develop their own layouts and easily load different map files in between simulations through the UI. Parameters of the simulation can be broadly broken up into two groups, those of the people agents and those of the environment that they move around in. The agents are driven by a heuristic of moving towards the exit which, in turn, is largely driven by our path generating algorithms\cite{caparriniGeneralSolverNetLogo2018}.  The parameters that go into the pathing algorithm will be exposed for modification and allow for a more thorough understanding of evacuation behaviors. 
+We plan on developing a simulation environment that exposes as many parameters as possible to the experimenter. Since one of our parameters is the layout (floor plan) of a given building we will also allow for users to develop their own layouts and easily load different map files in between simulations through the UI. Parameters of the simulation can be broadly broken up into two groups, those of the people agents and those of the environment that they move around in. The agents are driven by a heuristic of moving towards the exit which, in turn, is largely driven by our path generating algorithms\cite{caparriniGeneralSolverNetLogo2018, kneidl}.  The parameters that go into the pathing algorithm will be exposed for modification and allow for a more thorough understanding of evacuation behaviors. 
 
 
 
 \section {Deliverables}
 We will deliver a formal paper describing our experiments, the simulation software we created, our results, and the conclusions we can generate from those results. In addition we will develop presentation material to communicate concisely our overall project that will include live simulations or video recordings of previous simulations.
 
-\
 
-NOTES
-
-\
-
-
-Fire Sim models emergency evacuation of a chosen floorplan, for example in the case of fire.
-
-The environment patches include rooms, corridors, and exit areas, as well as patches in normal, burning, and burnt states.
-
-Agents are randomply placed people moving at various speeds and directions, but which can die and block each other.
-
-Maps are editable for layout, patch flammability, number of agents, initial fire locations, agent speed range and plancement.
-
-
-
-
-
-
-
-HOW IT WORKS
-
-Simulation Req's:
-
-Environment- patches
-
-    exit area
-
-    Flammable patches
-
--- walls
-
--- floors
-
--- grass
-
-    Burning
-
-    burnt
-
-Agent actions
-
-    agents have variable speeds
-
-    agents can die
-
-    agents move towards exit area
-
-    agents cant move through each other
-
-    the number of agents is variable
-
-    agents are randomly placed on floor patches
-
-    is there a way to specify agent placement through the UI?
-
-Sim UI features:
-
-    can specify the map
-
-    can control flamability of patches
-
-    number of agents
-
-    starting fire spots
-
-    agent speed distribution
 \bibliographystyle{plain}
 \bibliography{css600}
 
