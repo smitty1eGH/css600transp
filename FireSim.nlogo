@@ -359,7 +359,7 @@ People
 People
 0
 500
-500.0
+200.0
 1
 1
 NIL
@@ -740,28 +740,55 @@ Agent actions
 
 Sim UI features:
 
-- can specify the map
-
 - can control flamability of patches
 
-- number of agents
-
 - starting fire spots
-
-- agent speed distribution
 
 
 ### Buttons
 
+setup ; prepare model
+
+go ; run model
+
+reset-defaults ; undo temporary parameter changes
+
 
 ### Sliders
 
+people ; participant count
+
+person_path_weight ; how much a person blocks a path
+
+People Speed Distribution 
+- Slow
+- Medium
+- Fast
+
+People Speeds ; movement rate coefficients
+- Slow
+- Medium
+- Fast
 
 ### Switches
 
+map-file ; select floor layouts
+
+display-path-cost ; show distance to escape patches
+
+add-person-spacing ; are people socially distancing?
+
+people-wait ; are people waiting for a better path
+
+set-fire ; whether it's burning
+
+Fire_Speed ; consumption rate
 
 ### Plots
 
+People
+- y count of people in each speed category remaining
+- x time
 
 ## THINGS TO NOTICE
 
