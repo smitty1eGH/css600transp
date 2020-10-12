@@ -204,10 +204,13 @@ to move-turtles
     ;let patch_to_move one-of  patches in-radius 2 with [cost != -2 ] with-min [cost]
 
     ;add a scaling factor for determining if a person should move
+    ; reduce this patches cost by person path weight / by some scaling factor
+    ; this is to reflect that it can be advantageous to stay still
     ;todo make this person path weight scalable
     let this-cost ( cost - ( person_path_weight / 2 ) )
-    ; dont move if its more expensive
 
+
+    ; dont move if its more expensive
     if  (not people-wait? ) or ( [cost] of patch_to_move < this-cost) [
 
 
@@ -286,8 +289,6 @@ to load-map
   file-close
 end
 
-
-
 @#$#@#$#@
 GRAPHICS-WINDOW
 414
@@ -359,7 +360,7 @@ People
 People
 0
 500
-200.0
+500.0
 1
 1
 NIL
@@ -387,8 +388,8 @@ CHOOSER
 171
 map-file
 map-file
-"a.map" "b.map" "c.map" "obstacles.map"
-3
+"a.map" "b.map" "c.map" "obstacles.map" "blank.map"
+4
 
 TEXTBOX
 19
@@ -424,7 +425,7 @@ Medium
 Medium
 0
 100
-33.0
+0.0
 1
 1
 NIL
@@ -439,7 +440,7 @@ Fast
 Fast
 0
 100
-33.0
+0.0
 1
 1
 NIL
@@ -493,7 +494,7 @@ SWITCH
 85
 display-path-cost?
 display-path-cost?
-1
+0
 1
 -1000
 
@@ -618,7 +619,7 @@ HORIZONTAL
 SWITCH
 228
 199
-398
+399
 232
 people-wait?
 people-wait?
