@@ -2,5 +2,4 @@
 docs/one_page_summary_team_ten.aux
 docs/one_page_summary_team_ten.log
 .FireSim.tmp.nlogo
-/scripts/__pycache__/constants.cpython-38.pyc
-/scripts/__pycache__/functions.cpython-38.pyc
+__pycache__/
