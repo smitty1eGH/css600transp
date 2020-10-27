@@ -288,7 +288,6 @@ to load-map
   ]
   file-close
 end
-
 @#$#@#$#@
 GRAPHICS-WINDOW
 414
@@ -1119,6 +1118,58 @@ NetLogo 6.1.1
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
+<experiments>
+  <experiment name="FireSim" repetitions="1" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>go</go>
+    <metric>count turtles</metric>
+    <enumeratedValueSet variable="map-file">
+      <value value="&quot;blank.map&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="person_path_weight">
+      <value value="2"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="Medium">
+      <value value="0"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="add-person-spacing?">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="equal-diagonal-weight?">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="display-path-cost?">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="Fire_Speed">
+      <value value="50"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="Fast-Speed">
+      <value value="0.8"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="Slow">
+      <value value="33"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="people-wait?">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="set-fire?">
+      <value value="false"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="Slow-Speed">
+      <value value="0.1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="People">
+      <value value="500"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="Fast">
+      <value value="0"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="Medium-Speed">
+      <value value="0.4"/>
+    </enumeratedValueSet>
+  </experiment>
+</experiments>
 @#$#@#$#@
 @#$#@#$#@
 default

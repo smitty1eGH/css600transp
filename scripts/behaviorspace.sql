@@ -1,0 +1,11 @@
+CREATE TABLE experiments (primary_key BIGINT UNSIGNED PRIMARY KEY,seq INT UNSIGNED);
+CREATE TABLE experiment (primary_key BIGINT UNSIGNED PRIMARY KEY,seq INT UNSIGNED,foreign_key_experiments BIGINT UNSIGNED,name BLOB);
+CREATE TABLE setup (primary_key BIGINT UNSIGNED PRIMARY KEY,seq INT UNSIGNED,foreign_key_experiment BIGINT UNSIGNED,PCDATA BLOB);
+CREATE TABLE go (primary_key BIGINT UNSIGNED PRIMARY KEY,seq INT UNSIGNED,foreign_key_experiment BIGINT UNSIGNED,PCDATA BLOB);
+CREATE TABLE final (primary_key BIGINT UNSIGNED PRIMARY KEY,seq INT UNSIGNED,foreign_key_experiment BIGINT UNSIGNED,PCDATA BLOB);
+CREATE TABLE timeLimit (primary_key BIGINT UNSIGNED PRIMARY KEY,seq INT UNSIGNED,foreign_key_experiment BIGINT UNSIGNED,steps BLOB);
+CREATE TABLE exitCondition (primary_key BIGINT UNSIGNED PRIMARY KEY,seq INT UNSIGNED,foreign_key_experiment BIGINT UNSIGNED,PCDATA BLOB);
+CREATE TABLE metric (primary_key BIGINT UNSIGNED PRIMARY KEY,seq INT UNSIGNED,foreign_key_experiment BIGINT UNSIGNED,PCDATA BLOB);
+CREATE TABLE steppedValueSet (primary_key BIGINT UNSIGNED PRIMARY KEY,seq INT UNSIGNED,foreign_key_experiment BIGINT UNSIGNED,variable BLOB,first BLOB,step BLOB,last BLOB);
+CREATE TABLE enumeratedValueSet (primary_key BIGINT UNSIGNED PRIMARY KEY,seq INT UNSIGNED,foreign_key_experiment BIGINT UNSIGNED,variable BLOB);
+CREATE TABLE value (primary_key BIGINT UNSIGNED PRIMARY KEY,seq INT UNSIGNED,foreign_key_enumeratedValueSet BIGINT UNSIGNED,value BLOB);
