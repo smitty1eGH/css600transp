@@ -2,9 +2,51 @@ from sqlalchemy import Index, Column, CheckConstraint
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.types import *
 from sqlalchemy.schema import PrimaryKeyConstraint, ForeignKey
+import stringcase
 
 Base = declarative_base()
 
+def get_result_table(result_table_name,result_table_fields):
+    '''Calculate a SQLAlchemy Class for the desired experiment.
+       Return: the calculated name, the class, and a map of how the data fields
+         in the NetLogo output map to what the python class's members are named.
+    '''
+    def fix_name(f):
+        return f.replace('-','_').replace('?','_p')
+
+    attr_dict={'__tablename__':result_table_name
+             ,f'{result_table_name}_id':Column(Integer,primary_key=True) }
+
+    result_field_map = {}
+    for f in result_table_fields:
+        g=fix_name(f)
+        result_field_map[f]=g
+        attr_dict[g]=Column(Float)
+
+    result_name =stringcase.pascalcase(fix_name(result_table_name).replace('_',''))
+    assert result_name
+    result_type = type(result_name,(Base,), attr_dict)
+    assert result_type
+    assert result_field_map
+    return result_name, result_type, result_field_map
+
+def add_commit(sess,obj):
+    sess.add(obj)
+    sess.commit()
+
+def get_exp_header(exp):
+    name = repetitions = runMetricsEveryStep = setup = go = metric = None
+    name = exp.attrs["name"]
+    repetitions = exp.repetitions
+    runMetricsEveryStep=exp.runMetricsEveryStep
+    for c in exp.children:
+        if c.name == 'setup':
+            setup = c.string
+        elif c.name == 'go':
+            go = c.string
+        elif c.name == 'metric':
+            metric = c.string
+    return name, repetitions, runMetricsEveryStep, setup, go, metric
 
 class Experiments(Base):
     __tablename__ = "experiments"
