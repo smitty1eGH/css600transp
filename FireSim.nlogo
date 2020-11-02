@@ -99,6 +99,7 @@ to reset-defaults
   set add-person-spacing? True
   set people-wait? True
   set equal-diagonal-weight? true
+  set display-path-cost? false
 end
 to display-weights
   ask patches [set plabel cost]
@@ -388,7 +389,7 @@ CHOOSER
 map-file
 map-file
 "a.map" "b.map" "c.map" "obstacles.map" "blank.map"
-4
+3
 
 TEXTBOX
 19
@@ -493,7 +494,7 @@ SWITCH
 85
 display-path-cost?
 display-path-cost?
-0
+1
 1
 -1000
 
