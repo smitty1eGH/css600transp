@@ -2,8 +2,8 @@
 
 
 \usepackage{hyperref}
-
-
+\usepackage{amsmath}
+\usepackage{listings}
 
 
 \begin{document}
@@ -29,11 +29,70 @@ blah blah blah
 \cite{zhouSimulationPedestrianEvacuation2019}
 
 \section {Methodology}
+this introductory section will discuss how we approached the problem
 \subsection{Environment}
+this section will discuss the netlogo environment, how maps are loaded, the different patch types, the different agent speeds
+\subsection{Movement Mechanisms}
+this section will discuss agent and fire movement algorithms
+
+The cost algorithm, where $P_s$ is a safety patch, where $A_w$ is the person path weight, a weight that a person adds to a patch due to blocking (this is configurable by the user)
+\begin{align}
+cost(P)  = distance(P_s, P) + Agent(P) * A_w \nonumber \\
+Agent(P)=
+\begin{cases}
+1, & \text{Agent Present}  \\
+0, & \text{Agent Not Present} 
+\end{cases}
+\end{align}
+
+this can be configured through equal diagonal weight flag. if False the Distance is the Manhattan distance \footnote{ https://www.sciencedirect.com/topics/mathematics/manhattan-distance}. If true the distance is the Chebyshev Distance \footnote{https://en.wikipedia.org/wiki/Chebyshev\_distance}
+\begin{align}
+distance(P_1, P_2)  = \nonumber\\
+equal-diagonal-weight?=
+\begin{cases}
+	max(|x_1-x_2|, |y_1-y_2|), & True \\
+	|x_1-x_2|+ |y_1-y_2|, & False
+\end{cases}
+\end{align}
+
+
+patch to move to algorithm, where $A_p$ is the patch for a given agent, $P_x$ \& $P_y$ are the $X$ \& $Y$ coordinates for a given patch
+\begin{align}
+neighbors_4 (P)  = \{patch(P_x - 1, P_y -1), patch(P_x + 1, P_y -1), \nonumber \\ 
+patch(P_x - 1, P_y + 1),patch(P_x + 1, P_y + 1)\}   
+\end{align}
+
+\begin{equation}
+move(A) = min(cost(neighbors_4 (A_p)))
+\end{equation}
+
+Person will wait for a better patch.  This is configurable by the user. If it is on then a person will wait for a patch that is less cost than it's current
+\begin{equation}
+people-wait?=
+\begin{cases}
+min(cost(A_p), move(A)), & True\\
+move(A), & False
+\end{cases}
+\end{equation}
+
+add person spacing algorithm, people try to avoid each other, configurable through the $add-person-spacing?$ flag and the $person\_path\_weight$, $A_w$, parameter.
+
+\begin{equation}
+add-person-spacing?=
+\begin{cases}
+	cost(P) \sum Agent(neighbors_4(P)) * A_w / 10, & True \\
+	cost(P), & False
+\end{cases}
+\end{equation}
+
 \cite{mirahmadiNovelAlgorithmRealtime2012}
 \footnote{http://www.cs.us.es/~fsancho/?e=131}
 \subsection{Experiments}
+experiments that are based on layouts
 
+experiments that are based on agent mechanisms
+
+experiments that are based on patch parameters.
 \section{Results}
 
 
