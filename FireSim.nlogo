@@ -99,7 +99,6 @@ to reset-defaults
   set add-person-spacing? True
   set people-wait? True
   set equal-diagonal-weight? true
-  set display-path-cost? false
 end
 to display-weights
   ask patches [set plabel cost]
@@ -389,7 +388,7 @@ CHOOSER
 map-file
 map-file
 "a.map" "b.map" "c.map" "obstacles.map" "blank.map"
-3
+0
 
 TEXTBOX
 19
@@ -494,7 +493,7 @@ SWITCH
 85
 display-path-cost?
 display-path-cost?
-1
+0
 1
 -1000
 
@@ -1123,7 +1122,9 @@ NetLogo 6.1.1
   <experiment name="FireSim" repetitions="1" runMetricsEveryStep="true">
     <setup>setup</setup>
     <go>go</go>
+    <exitCondition>not any? turtles</exitCondition>
     <metric>count turtles</metric>
+    <metric>mean-escape-time</metric>
     <enumeratedValueSet variable="map-file">
       <value value="&quot;blank.map&quot;"/>
     </enumeratedValueSet>
