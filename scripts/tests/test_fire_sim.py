@@ -70,7 +70,7 @@ def people():
 
     Integer between 1 and 500
     """
-    people = 300
+    people = 100
     return f'<enumeratedValueSet variable="People"> <value value="{people}"/> </enumeratedValueSet>'
 
 
