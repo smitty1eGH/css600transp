@@ -388,7 +388,7 @@ CHOOSER
 map-file
 map-file
 "a.map" "b.map" "c.map" "obstacles.map" "blank.map"
-4
+0
 
 TEXTBOX
 19
@@ -1122,7 +1122,9 @@ NetLogo 6.1.1
   <experiment name="FireSim" repetitions="1" runMetricsEveryStep="true">
     <setup>setup</setup>
     <go>go</go>
+    <exitCondition>not any? turtles</exitCondition>
     <metric>count turtles</metric>
+    <metric>mean-escape-time</metric>
     <enumeratedValueSet variable="map-file">
       <value value="&quot;blank.map&quot;"/>
     </enumeratedValueSet>
