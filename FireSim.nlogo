@@ -221,6 +221,7 @@ to move-turtles
       if pcolor = block_patch [
         back ( speed  )
       ]
+
     ]
 
 
@@ -383,12 +384,12 @@ HORIZONTAL
 CHOOSER
 17
 126
-155
+159
 171
 map-file
 map-file
-"a.map" "b.map" "c.map" "obstacles.map" "blank.map"
-0
+"exit_dims_0.map" "exit_dims_1.map" "exit_dims_2.map" "exit_dims_3.map" "exit_dims_4.map" "a.map" "b.map" "c.map" "obstacles.map" "blank.map"
+3
 
 TEXTBOX
 19
@@ -493,7 +494,7 @@ SWITCH
 85
 display-path-cost?
 display-path-cost?
-0
+1
 1
 -1000
 
