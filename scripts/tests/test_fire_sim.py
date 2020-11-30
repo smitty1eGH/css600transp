@@ -48,9 +48,20 @@ def map_file():
     map file names:
     "a.map" ,"b.map" ,"c.map" ,"obstacles.map" ,"blank.map"
     """
-    cur_map = "a.map"
+    map = "a.map"
     return f'<enumeratedValueSet variable="map-file"> <value value="&quot;{cur_map}&quot;"/> </enumeratedValueSet>'
 
+
+@pytest.fixture
+def map_file_interp():
+    """
+    "a.map" ,"b.map" ,"c.map" ,"obstacles.map" ,"blank.map"
+    """
+    return '<enumeratedValueSet variable="map-file"> <value value="&quot;%s&quot;"/> </enumeratedValueSet>'
+
+@pytest.fixture
+def map_file_list():
+    return ["a.map" ,"b.map" ,"c.map" ,"obstacles.map" ,"blank.map"]
 
 @pytest.fixture
 def people():
@@ -209,6 +220,35 @@ def get_beshp_xml(
   </experiment> </experiments>
     """
 
+@pytest.fixture
+def reps():
+    return 30
+
+@pytest.fixture
+def get_beshp_xml_interp(
+    reps,
+    map_file_interp,
+    people,
+    person_path_weight,
+    people_speed,
+    display_path_cost_p,
+    add_person_spacing_p,
+    people_wait_p,
+    equal_diagonal_weight_p,
+    people_move_rates,
+    set_fire_p,
+    fire_speed,
+):
+    return f"""<experiments>
+  <experiment name="FireSim" repetitions="{reps}" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>go</go>
+    <exitCondition>not any? turtles</exitCondition>
+    <metric>count turtles</metric>
+    <metric>mean-escape-time</metric>
+    {map_file_interp}{people}{person_path_weight}{people_speed}{display_path_cost_p}{add_person_spacing_p}{people_wait_p}{equal_diagonal_weight_p}{people_move_rates}{set_fire_p}{fire_speed}
+  </experiment> </experiments>
+    """
 
 # ==Housekeeping fixtures==
 @pytest.fixture
@@ -371,7 +411,7 @@ def test_fire_sim(netlogo_sh, netlogo_args, sess, get_beshp_xml, result_field_ma
         add_commit(sess, x)
         sess.add(x)
 
-
+@pytest.mark.skip
 def test_fire_sim_persist(
     netlogo_sh, netlogo_args, sess_file, get_beshp_xml, result_field_map
 ):
@@ -411,3 +451,34 @@ def test_fire_sim_persist(
         x = ResultsFireSim(**line)
         add_commit(sess_file, x)
         sess_file.add(x)
+
+def test_fire_sim_persist_interp(
+    netlogo_sh, netlogo_args, sess_file, get_beshp_xml_interp, result_field_map, map_file_list
+):
+    START_DATA = 8
+    ELIDE_LAST = -1
+
+    args = [netlogo_sh]
+    for k, v in netlogo_args.items():
+        args.append(f"--{k}")
+        args.append(v)
+
+    for m in map_file_list:
+        print(f'working on map {m}')
+        with open("setup-file.xml", "w") as f:
+            f.write(get_beshp_xml_interp % m)
+
+        result = subprocess.run(args, capture_output=True)
+        lines = f"{result.stdout=}".split("\\n")[START_DATA:]
+
+        fnames = result_field_map.values()
+        dr = DictReader(lines[:ELIDE_LAST], fieldnames=fnames, restkey="restkey")
+
+        for line in dr:
+            if "restkey" in line:
+                del line["restkey"]
+            fix_bools(line)
+
+            x = ResultsFireSim(**line)
+            add_commit(sess_file, x)
+            sess_file.add(x)

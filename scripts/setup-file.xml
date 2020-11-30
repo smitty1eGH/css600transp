@@ -1,11 +1,11 @@
 <experiments>
-  <experiment name="FireSim" repetitions="1" runMetricsEveryStep="true">
+  <experiment name="FireSim" repetitions="30" runMetricsEveryStep="true">
     <setup>setup</setup>
     <go>go</go>
     <exitCondition>not any? turtles</exitCondition>
     <metric>count turtles</metric>
     <metric>mean-escape-time</metric>
-    <enumeratedValueSet variable="map-file"> <value value="&quot;a.map&quot;"/> </enumeratedValueSet><enumeratedValueSet variable="People"> <value value="300"/> </enumeratedValueSet><enumeratedValueSet variable="person_path_weight"> <value value="2.0"/> </enumeratedValueSet><enumeratedValueSet variable="Slow"> <value value="25"/> </enumeratedValueSet>
+    <enumeratedValueSet variable="map-file"> <value value="&quot;blank.map&quot;"/> </enumeratedValueSet><enumeratedValueSet variable="People"> <value value="300"/> </enumeratedValueSet><enumeratedValueSet variable="person_path_weight"> <value value="2.0"/> </enumeratedValueSet><enumeratedValueSet variable="Slow"> <value value="25"/> </enumeratedValueSet>
     <enumeratedValueSet variable="Medium"> <value value="50"/> </enumeratedValueSet>
     <enumeratedValueSet variable="Fast"> <value value="25"/> </enumeratedValueSet>
     <enumeratedValueSet variable="display-path-cost?"> <value value="false"/> </enumeratedValueSet><enumeratedValueSet variable="add-person-spacing?"> <value value="false"/> </enumeratedValueSet><enumeratedValueSet variable="people-wait?"> <value value="true"/> </enumeratedValueSet><enumeratedValueSet variable="equal-diagonal-weight?"> <value value="true"/> </enumeratedValueSet><enumeratedValueSet variable="Slow-Speed"> <value value="0.3"/> </enumeratedValueSet>
