@@ -7,21 +7,8 @@ import stringcase
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine, inspect
 
-# Generate an NGA College data model using SQL Alchemy from an existing, loaded server.
-
 CONSTR_PKONLY = True
 CONSTR_MULTI = False
-
-# TODO: Need to manage the dialect-specific full-text part, if there is any interest
-#  in moving away from MySQL
-# Full text search keyword management
-fts = {
-    "FULLTEXT": "mysql",
-    "mysql": "FULLTEXT",
-    "postgresql": "",
-    "dialect_options": "",
-}
-dialect_keys = ["dialect_options", "type"]
 
 
 def get_pkname(t, inspector):
@@ -120,7 +107,26 @@ def get_reserved_words(source="mysql+pymysql", target="base"):
     return mysql_reserved_words - base_reserved_words
 
 
-def main(conn_method, keep_dialect, stand_alone):
+def get_fields(t):
+    fs = []
+    for c in inspector.get_columns(t):
+
+        # Python keyword handling
+        maybe_underscore = ""
+        if keyword.iskeyword(c["name"]):
+            maybe_underscore = "_"
+
+        # Primary key handling
+        pk = ""
+        if pkname[0] == CONSTR_PKONLY and str(pkname[1]) == c["name"]:
+            pk = ",primary_key=True"
+
+        fld = f"""{c['name']}{maybe_underscore} = Column('{c['name']}',{get_type(c['type'],c["name"])}{pk})\n"""
+        fs.append(fld.replace(" UNSIGNED", ""))
+    return "    ".join(fs)
+
+
+def main(conn_method, keep_dialect, stand_alone=True):
     """Make a straight dump, or optionally fliter out dialect keywords if KEEP_DIALECT
       is set to false.
 
@@ -131,49 +137,21 @@ def main(conn_method, keep_dialect, stand_alone):
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.types import *
 from sqlalchemy.schema import PrimaryKeyConstraint
+from sqlalchemy.dialects.mysql import ENUM,MEDIUMTEXT,TINYINT
+#from sqlalchemy.dialects.postgresql import ENUM
 
 Base = declarative_base()\n"""
 
     print(file_header)
     res_words = get_reserved_words(conn_method)
-    connstr = conn_method + "behaviorspace.db"
-    engine = create_engine(connstr)
-    inspector = inspect(engine)
     pp = pprint.PrettyPrinter(indent=4)
-
-    for t in inspector.get_table_names():
-        """There were no check constraints found in the legacy NGC schema via
-        inds=inspector.get_check_constraints(t)
-        """
-        pkname = get_pkname(t, inspector)
-
-        """FIELD MANAGEMENT
-        """
-
-        def get_fields(t):
-            fs = []
-            for c in inspector.get_columns(t):
-
-                # Python keyword handling
-                maybe_underscore = ""
-                if keyword.iskeyword(c["name"]):
-                    maybe_underscore = "_"
-
-                # Primary key handling
-                pk = ""
-                if pkname[0] == CONSTR_PKONLY and str(pkname[1]) == c["name"]:
-                    pk = ",primary_key=True"
-
-                fld = f"""{c['name']}{maybe_underscore} = Column('{c['name']}',{get_type(c['type'],c["name"])}{pk})\n"""
-                fs.append(fld.replace(" UNSIGNED", ""))
-            return "    ".join(fs)
-
-        cldef = f"""class {stringcase.pascalcase(t)}(Base):
+    pkname = get_pkname(t, inspector)
+    cldef = f"""class {stringcase.pascalcase(t)}(Base):
     __tablename__={get_table_meta_and_indexes(t,pkname,keep_dialect,res_words,inspector)}
     {get_fields(t)}\n"""
-        print(cldef)
+    print(cldef)
 
 
 if __name__ == "__main__":
     # main(conn_method='mysql+pymysql',keep_dialect=True,stand_alone=True)
-    main(conn_method="sqlite:///", keep_dialect=False, stand_alone=True)
+    main(conn_method="mysql+pymysql", keep_dialect=False, stand_alone=True)
