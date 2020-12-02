@@ -16,6 +16,7 @@ globals [
   total-escaped
   total-ticks-till-escaped
   mean-escape-time
+  max-escape-time
 
 ]
 
@@ -175,6 +176,8 @@ to go
 
 end
 
+
+
 to calc-mean-escape-time
   ifelse total-escaped = 0[
     set mean-escape-time 0
@@ -232,7 +235,8 @@ end
 to evac-turtles
   ask turtles [
     if pcolor = safety_color [ask patch-here [set cost 0]]
-    if pcolor = safety_color [set total-escaped (total-escaped + 1) set total-ticks-till-escaped (total-ticks-till-escaped + ticks ) die  ]
+    if pcolor = safety_color [set total-escaped (total-escaped + 1) set total-ticks-till-escaped (total-ticks-till-escaped + ticks ) set max-escape-time ticks die  ]
+
   ]
 end
 to setup-agents
@@ -367,10 +371,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-873
-310
-1045
-343
+870
+422
+1042
+455
 Fire_Speed
 Fire_Speed
 0
@@ -384,12 +388,12 @@ HORIZONTAL
 CHOOSER
 17
 126
-159
+173
 171
 map-file
 map-file
-"exit_dims_0.map" "exit_dims_1.map" "exit_dims_2.map" "exit_dims_3.map" "exit_dims_4.map" "a.map" "b.map" "c.map" "obstacles.map" "blank.map"
-3
+"exit_dims_2_a.map" "exit_dims_2_b.map" "exit_dims_2_c.map" "exit_dims_4_a.map" "exit_dims_4_b.map" "exit_dims_4_c.map" "exit_dims_6_a.map" "exit_dims_6_b.map" "exit_dims_6_c.map" "exit_dims_8_a.map" "exit_dims_8_b.map" "exit_dims_8_c.map" "better_exit.map" "chokepoint.map" "a.map" "b.map" "c.map" "obstacles.map" "blank.map"
+9
 
 TEXTBOX
 19
@@ -534,10 +538,10 @@ How much a person blocks a patch
 1
 
 SWITCH
-874
-271
-977
-304
+872
+380
+975
+413
 set-fire?
 set-fire?
 1
@@ -623,7 +627,7 @@ SWITCH
 232
 people-wait?
 people-wait?
-0
+1
 1
 -1000
 
@@ -668,6 +672,17 @@ Treat diagonals as the same distance as 4 main directions
 11
 0.0
 1
+
+MONITOR
+871
+247
+979
+292
+NIL
+max-escape-time
+17
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
