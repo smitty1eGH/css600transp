@@ -69,39 +69,6 @@ def sql_aggr(sql_runs1):
                WHERE    map_file='%s'
                GROUP BY step''' % (x[0],x[1]) for x in sql_runs1]
 
-def test_connectivity(conn):
-     with conn:
-        cur = conn.cursor()
-        y = cur.execute('select count(*) from fs100.results_fire_sim;')
-        assert y.fetchone()[0] == 27264
-
-def test_union(conn,sql_union):
-     with conn:
-        cur = conn.cursor()
-        y = cur.execute(sql_union)
-        z = y.fetchone()
-        assert z == (1, 6, 'a.map', 100, 2.0, 25, 50, 25, 0, 0, 1, 1, 0.3, 1.0, 0.75, 0, 50, 0, 100, 0.0)
-
-def test_one_run_len(conn,sql_runs2):
-    assert len(sql_runs2[0]) == 127
-
-def test_one_run_load(conn,sql_runs2):
-    # (6, 0, 100, 0.0)
-     with conn:
-        cur = conn.cursor()
-        y = cur.execute(sql_runs2[0]).fetchall()
-        arr = np.fromiter(y, dtype='i4,i4,f4')
-        arr.dtype.names = ['step', 'count_turtles', 'mean_escape_time']
-        assert len(arr) == 3950
-
-def test_one_run_filter(conn,sql_runs2):
-     crit = ' AND run_number=1;'
-     with conn:
-        cur = conn.cursor()
-        y = cur.execute(sql_runs2[0].replace(';',crit)).fetchall()
-        arr = np.fromiter(y, dtype='i4,i4,f4')
-        arr.dtype.names = ['step', 'count_turtles', 'mean_escape_time']
-        assert len(arr) == 143
 
 @pytest.mark.skip
 def test_one_run_plot(conn,sql_runs2):
@@ -122,6 +89,7 @@ def test_one_run_plot(conn,sql_runs2):
         plt.savefig(f'{out_dir}scrap.png')
 
 
+@pytest.mark.skip
 def test_one_run_full_map(conn,map_file_list,sql_runs2,sql_aggr):
     '''Query for the first run. Polyfit the data. Plot the data, with the polyfit overlaid.
     '''
@@ -151,6 +119,7 @@ def test_one_run_full_map(conn,map_file_list,sql_runs2,sql_aggr):
     ax.set_title(f'a.map, all runs with aggregate')
     plt.savefig(f'{out_dir}scrap_{i}.png')
 
+@pytest.mark.skip
 def test_one_run_full_map(conn,map_file_list,sql_runs2,sql_aggr):
     '''Show the aggregates for the files for each map
     '''

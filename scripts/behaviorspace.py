@@ -158,8 +158,8 @@ class ResultsFireSim(Base):
     set_fire_p = Column("set_fire_p", Boolean)
     fire_speed = Column("fire_speed", Integer)
 
-    step = Column("step", Integer)
-    count_turtles = Column("count_turtles", Integer)
+    #step = Column("step", Integer)
+    #count_turtles = Column("count_turtles", Integer)
     mean_escape_time = Column("mean_escape_time", Float)
     # test_number             = Column('test_number',Integer)
 

@@ -48,7 +48,7 @@ def map_file():
     map file names:
     "a.map" ,"b.map" ,"c.map" ,"obstacles.map" ,"blank.map"
     """
-    map = "a.map"
+    cur_map = "chokepoint_1_a.map"
     return f'<enumeratedValueSet variable="map-file"> <value value="&quot;{cur_map}&quot;"/> </enumeratedValueSet>'
 
 
@@ -61,7 +61,15 @@ def map_file_interp():
 
 @pytest.fixture
 def map_file_list():
-    return ["a.map" ,"b.map" ,"c.map" ,"obstacles.map" ,"blank.map"]
+    #return ["a.map" ,"b.map" ,"c.map" ,"obstacles.map" ,"blank.map"]
+    choke_nums=[1,2,3]
+    choke_lets=['a','b','c','d']
+    choke_temp='chokepoint_%s_%s.map'
+    exits_nums=[2,4,6,8]
+    exits_lets=['a','b','c']
+    exits_temp='exit_dims_%s_%s.map'
+    return choke_nums, choke_lets, choke_temp, exits_nums, exits_lets, exits_temp,
+
 
 @pytest.fixture
 def people():
@@ -187,7 +195,7 @@ def get_beshp_xml(
     fire_speed,
 ):
     """<experiments>
-    <experiment name="FireSim" repetitions="1" runMetricsEveryStep="true">
+    <experiment name="FireSim" repetitions="1" runMetricsEveryStep="false">
       <setup>setup</setup>
       <go>go</go>
       <exitCondition>not any? turtles</exitCondition>
@@ -208,13 +216,13 @@ def get_beshp_xml(
       <enumeratedValueSet variable="Slow"> <value value="33"/> </enumeratedValueSet>
       <enumeratedValueSet variable="Medium"> <value value="0"/> </enumeratedValueSet>
       <enumeratedValueSet variable="Fast"> <value value="0"/> </enumeratedValueSet>
+    <metric>count turtles</metric>
     """
     return f"""<experiments>
-  <experiment name="FireSim" repetitions="1" runMetricsEveryStep="true">
+  <experiment name="FireSim" repetitions="1" runMetricsEveryStep="false">
     <setup>setup</setup>
     <go>go</go>
     <exitCondition>not any? turtles</exitCondition>
-    <metric>count turtles</metric>
     <metric>mean-escape-time</metric>
     {map_file}{people}{person_path_weight}{people_speed}{display_path_cost_p}{add_person_spacing_p}{people_wait_p}{equal_diagonal_weight_p}{people_move_rates}{set_fire_p}{fire_speed}
   </experiment> </experiments>
@@ -222,7 +230,8 @@ def get_beshp_xml(
 
 @pytest.fixture
 def reps():
-    return 30
+    return 10
+
 
 @pytest.fixture
 def get_beshp_xml_interp(
@@ -237,14 +246,18 @@ def get_beshp_xml_interp(
     equal_diagonal_weight_p,
     people_move_rates,
     set_fire_p,
-    fire_speed,
+        fire_speed,
 ):
+    '''NOTE: map_file_interp has a % in it for later inerpolation
+       def map_file_interp():
+           ~eturn '<enumeratedValueSet variable="map-file"> <value value="&quot;%s&quot;"/> </enumeratedValueSet>'
+    <metric>count turtles</metric>
+    '''
     return f"""<experiments>
-  <experiment name="FireSim" repetitions="{reps}" runMetricsEveryStep="true">
+  <experiment name="FireSim" repetitions="{reps}" runMetricsEveryStep="false">
     <setup>setup</setup>
     <go>go</go>
     <exitCondition>not any? turtles</exitCondition>
-    <metric>count turtles</metric>
     <metric>mean-escape-time</metric>
     {map_file_interp}{people}{person_path_weight}{people_speed}{display_path_cost_p}{add_person_spacing_p}{people_wait_p}{equal_diagonal_weight_p}{people_move_rates}{set_fire_p}{fire_speed}
   </experiment> </experiments>
@@ -307,7 +320,10 @@ def try_result_name():
 
 @pytest.fixture
 def result_field_map():
-    """Recent pythons have an ordered dictionary, so we can be comfortable with these columns"""
+    """Recent pythons have an ordered dictionary, so we can be comfortable with these columns
+        "count turtles": "count_turtles",
+        "[step]": "step",
+    """
     return {
         "[run number]": "run_number",
         "map-file": "map_file",
@@ -324,9 +340,7 @@ def result_field_map():
         "Medium-Speed": "medium_speed",
         "Fast-Speed": "fast_speed",
         "set-fire?": "set_fire_p",
-        "Fire_Speed": "fire_speed",
-        "[step]": "step",
-        "count turtles": "count_turtles",
+        "Fire_Speed": "fire_speed" ,
         "mean-escape-time": "mean_escape_time",
     }
 
@@ -345,71 +359,25 @@ def fix_bools(line):
         else:
             line[f] = True
 
+def get_map_files(map_file_list):
+    for x in map_file_list[0]:
+        for y in map_file_list[1]:
+            yield map_file_list[2] % (x,y)
+        if x==1:
+            yield map_file_list[2] % (x,'e')
+            yield map_file_list[2] % (x,'f')
+        elif x==2:
+            yield map_file_list[2] % (x,'e')
+
+    for x in map_file_list[3]:
+        for y in map_file_list[4]:
+            yield map_file_list[5] % (x,y)
 
 # ==Simulation Driver==
 @pytest.mark.skip
-def test_get_beshp_xml(get_beshp_xml):
-    """Show what the setup-file.xml content will be."""
-    print(get_beshp_xml)
-
-
-@pytest.mark.skip
-def test_netlogo_invocation(netlogo_sh, netlogo_args, sess, get_beshp_xml):
-    """Generate setup-file.xml and see if it crashes NetLogo"""
-    START_DATA = 8
-    ELIDE_LAST = -1
-    args = [netlogo_sh]
-    for k, v in netlogo_args.items():
-        args.append(f"--{k}")
-        args.append(v)
-    with open("setup-file.xml", "w") as f:
-        f.write(get_beshp_xml)
-    result = subprocess.run(args, capture_output=True)
-    print(result)
-
-
-@pytest.mark.skip
-def test_fire_sim(netlogo_sh, netlogo_args, sess, get_beshp_xml, result_field_map):
-    """This is a memory-only test of whether the thing works, without persisting the data.
-
-    1. Build the NetLogo args vector for invocation
-    2. Write a setup-file to contain the model arguments
-    3. Invoke NetLogo
-    4. Write captured output do Db
-    """
-    START_DATA = 8
-    ELIDE_LAST = -1
-
-    # 1.
-    args = [netlogo_sh]
-    for k, v in netlogo_args.items():
-        args.append(f"--{k}")
-        args.append(v)
-
-    # 2.
-    with open("setup-file.xml", "w") as f:
-        f.write(get_beshp_xml)
-
-    # 3.
-    result = subprocess.run(args, capture_output=True)
-    print(result)
-    lines = f"{result.stdout=}".split("\\n")[START_DATA:]
-
-    # 4.
-    fnames = result_field_map.values()
-    print(f"{fnames=}")
-    dr = DictReader(lines[:ELIDE_LAST], fieldnames=fnames, restkey="restkey")
-
-    for line in dr:
-        if "restkey" in line:
-            del line["restkey"]
-        fix_bools(line)
-        print(line)
-
-        x = ResultsFireSim(**line)
-        # print(x.insert())
-        add_commit(sess, x)
-        sess.add(x)
+def test_get_map_files(map_file_list):
+    for f in get_map_files(map_file_list):
+        print(f)
 
 @pytest.mark.skip
 def test_fire_sim_persist(
@@ -438,20 +406,23 @@ def test_fire_sim_persist(
     # 3.
     result = subprocess.run(args, capture_output=True)
     lines = f"{result.stdout=}".split("\\n")[START_DATA:]
+    print(f'{lines=}')
 
     # 4.
     fnames = result_field_map.values()
+    print(f'{fnames=}')
     dr = DictReader(lines[:ELIDE_LAST], fieldnames=fnames, restkey="restkey")
 
-    for line in dr:
-        if "restkey" in line:
-            del line["restkey"]
-        fix_bools(line)
+   # for line in dr:
+   #     if "restkey" in line:
+   #         del line["restkey"]
+   #     fix_bools(line)
 
-        x = ResultsFireSim(**line)
-        add_commit(sess_file, x)
-        sess_file.add(x)
+   #     x = ResultsFireSim(**line)
+   #     add_commit(sess_file, x)
+   #     sess_file.add(x)
 
+#@pytest.mark.skip
 def test_fire_sim_persist_interp(
     netlogo_sh, netlogo_args, sess_file, get_beshp_xml_interp, result_field_map, map_file_list
 ):
@@ -463,7 +434,7 @@ def test_fire_sim_persist_interp(
         args.append(f"--{k}")
         args.append(v)
 
-    for m in map_file_list:
+    for m in get_map_files(map_file_list):
         print(f'working on map {m}')
         with open("setup-file.xml", "w") as f:
             f.write(get_beshp_xml_interp % m)
