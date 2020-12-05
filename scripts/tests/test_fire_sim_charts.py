@@ -37,15 +37,54 @@ def sql_stats():
 
 @pytest.fixture
 def conn():
-    return sqlite3.connect('../fire_sim.db')
+    return sqlite3.connect('fire_sim.db')
 
 
 @pytest.fixture
 def filter_bits():
-    return [('chokepoint_',[1,2,3]),('exit_dims_',[2,4,6,8])]
+    """       i[0]            j  in the tests below
+    """
+    return [('chokepoint_%s',[1,2,3]),('exit_dims_%s',[2,4,6,8])]
 
-def test_do_filter(conn,sql_stats,filter_bits):
+def test_do_partition(conn,sql_stats,filter_bits):
+    '''Partition the output into lists of tuples of related stats.
+    '''
     with conn:
         cur = conn.cursor()
-        y = cur.execute(sql_stats).fetchall()
-        [print(z) for z in y]
+        rows = cur.execute(sql_stats).fetchall()
+        for i in filter_bits:
+            for j in i[1]:
+                l = [m for m in rows if m[0].startswith( i[0] % j )]
+                print(l)
+                print()
+
+
+def test_do_charts0(conn,sql_stats,filter_bits):
+    '''Partition the output into lists of tuples of related stats.
+
+    sample value for l below:
+               MAP               MIN    AVG    MAX    VAR
+         [ ('exit_dims_2_a.map', 472.0, 491.6, 516.0, 120.4888888888888)
+         , ('exit_dims_2_b.map', 474.0, 496.5, 522.0, 184.94444444444443)
+         , ('exit_dims_2_c.map', 473.0, 496.0, 524.0, 213.33333333333334)]
+    '''
+    out_dir ='../docs/figures/'
+
+    with conn:
+        cur = conn.cursor()
+        rows = cur.execute(sql_stats).fetchall()
+        for i in filter_bits:
+            for j in i[1]:
+                range_=[]
+                domain=[]
+                l = [m for m in rows if m[0].startswith( i[0] % j )]
+                for n in l:
+                    range_.append(n[2])
+                    domain.append(n[0][:-4][-1:]) #just the letter the right of the period
+                #print(f'{range_=}\n{domain=}')
+                fig, ax = plt.subplots()
+                ax.scatter(domain,range_)
+                ax.set_ylabel('average escape steps')
+                ax.set_xlabel('map letter')
+                ax.set_title(f'map {i[0] % j}')
+                plt.savefig(f'{out_dir}chart_{i[0] % j}.png')
