@@ -88,6 +88,7 @@ def test_do_charts0(conn,sql_stats,filter_bits):
         rows = cur.execute(sql_stats).fetchall()
         for i in filter_bits:
             for j in i[1]:
+                out.write(f'{i[0] % j}\n')
                 data=[]
                 labels=[]
                 l = [m for m in rows if m[0].startswith( i[0] % j )]
