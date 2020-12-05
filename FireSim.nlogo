@@ -393,7 +393,8 @@ CHOOSER
 map-file
 map-file
 "exit_dims_2_a.map" "exit_dims_2_b.map" "exit_dims_2_c.map" "exit_dims_4_a.map" "exit_dims_4_b.map" "exit_dims_4_c.map" "exit_dims_6_a.map" "exit_dims_6_b.map" "exit_dims_6_c.map" "exit_dims_8_a.map" "exit_dims_8_b.map" "exit_dims_8_c.map" "chokepoint_1_a.map" "chokepoint_1_b.map" "chokepoint_1_c.map" "chokepoint_1_d.map" "chokepoint_1_e.map" "chokepoint_1_f.map" "chokepoint_2_a.map" "chokepoint_2_b.map" "chokepoint_2_c.map" "chokepoint_2_d.map" "chokepoint_2_e.map" "chokepoint_3_a.map" "chokepoint_3_b.map" "chokepoint_3_c.map" "chokepoint_3_d.map" "better_exit.map" "chokepoint.map" "a.map" "b.map" "c.map" "obstacles.map" "blank.map"
-7
+12
+
 
 TEXTBOX
 19
@@ -672,17 +673,6 @@ Treat diagonals as the same distance as 4 main directions
 11
 0.0
 1
-
-MONITOR
-871
-247
-979
-292
-NIL
-max-escape-time
-17
-1
-11
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -1139,7 +1129,6 @@ NetLogo 6.1.1
     <setup>setup</setup>
     <go>go</go>
     <exitCondition>not any? turtles</exitCondition>
-    <metric>count turtles</metric>
     <metric>mean-escape-time</metric>
     <enumeratedValueSet variable="map-file">
       <value value="&quot;blank.map&quot;"/>
