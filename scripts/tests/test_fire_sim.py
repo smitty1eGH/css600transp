@@ -101,8 +101,8 @@ def people_speed():
     <enumeratedValueSet variable="Medium"> <value value=""/> </enumeratedValueSet>
     <enumeratedValueSet variable="Fast"> <value value=""/> </enumeratedValueSet>
     """
-    slow = 25
-    medium = 50
+    slow = 100
+    medium = 0
     fast = 100 - medium - slow
     assert slow + medium + fast == 100
     return f"""<enumeratedValueSet variable="Slow"> <value value="{slow}"/> </enumeratedValueSet>
@@ -125,7 +125,7 @@ def add_person_spacing_p():
     """
     <enumeratedValueSet variable="add-person-spacing?"> <value value="true"/> </enumeratedValueSet>
     """
-    return '<enumeratedValueSet variable="add-person-spacing?"> <value value="false"/> </enumeratedValueSet>'
+    return '<enumeratedValueSet variable="add-person-spacing?"> <value value="true"/> </enumeratedValueSet>'
 
 
 @pytest.fixture
