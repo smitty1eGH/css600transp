@@ -4,6 +4,7 @@
 \usepackage{hyperref}
 \usepackage{amsmath}
 \usepackage{listings}
+\usepackage{graphicx}
 
 
 \begin{document}
@@ -14,27 +15,54 @@
 \maketitle
 
 \begin{abstract}
-blah blah blah
-
+Simulating large scale evacuation is cost-prohibitive in terms of realism and
+required man-hours. Agent-based simulation supports laying out a floorplan,
+modeling behaviors and at least capturing some flavor of how a real evacuation
+might play out. This research uses NetLogo to vary floorplans and capture the
+average escape times for the agents.
 \end{abstract}
 \section {Introduction}
-
-
-
 \section {Background}
 \subsection{Previous Work}
+The literature abounds with previous efforts in this area.
 \cite{almeidaCrowdSimulationModeling2013} 
 \cite{kneidl}
 \cite{kuligowskil}
 \cite{abmEvac}
 \cite{zhouSimulationPedestrianEvacuation2019}
 
-This paper is key as it is extremely similar and a netlogo implementation.  we should know this paper and incorporate into our paper \cite{prioritEvac}
+This paper is key as it is extremely similar and a NetLogo implementation.  We should know this paper and incorporate into our paper \cite{prioritEvac}
 
 \section {Methodology}
-this introductory section will discuss how we approached the problem
+The simulation itself is straightforward, and makes novel use of the Behavior
+Space facility, which we wrapped in a Python driver making use of pytest which
+is laid out in scripts/tests/test_fire_sim.py
 \subsection{Environment}
-this section will discuss the netlogo environment, how maps are loaded, the different patch types, the different agent speeds
+For the map files in use, there were 10 runs against the map files, capturing
+mean-escape-time for the agents.
+\begin{figure}
+  \includegraphics[width=\linewidth]{./figures/fire_sim_ui.png}
+  \caption{FireSim UI}
+\end{figure}
+
+\begin{tabular}{ l | l }
+map-file & Name of map file to set up. \\
+People & Number  of people. Held constant at 500. \\
+person_path_weight & Agent blockage factor for patch \\
+Slow & Percentage moving at this rate, which we set to 100 \\
+Medium & Set to 0 \\
+Fast & Set to 0 \\
+Slow-Speed & 0.3 patches \\
+Medium-Speed & 0.75 patches \\
+Fast-Speed & 1.0 patches \\
+add-person-spacing? & true \\
+equal-diagonal-weight? & true \\
+display-path-cost? & false \\
+people-wait? & true \\
+set-fire? & false \\
+Fire_Speed & 50 \\
+mean-escape-time & output \\
+\end{tabular}
 
 need to talk about patch parameters
 \subsection{Movement Mechanisms}

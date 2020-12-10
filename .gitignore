@@ -4,3 +4,8 @@ docs/one_page_summary_team_ten.log
 .FireSim.tmp.nlogo
 __pycache__/
 *.pyc
+docs/*.aux
+docs/*.bbl
+docs/*.blg
+docs/*.log
+docs/*.out
