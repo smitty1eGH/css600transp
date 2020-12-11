@@ -34,21 +34,120 @@ The literature abounds with previous efforts in this area.
 This paper is key as it is extremely similar and a NetLogo implementation.  We should know this paper and incorporate into our paper \cite{prioritEvac}
 
 \section {Methodology}
-The simulation itself is straightforward, and makes novel use of the Behavior
-Space facility, which we wrapped in a Python driver making use of pytest which
-is laid out in scripts/tests/test_fire_sim.py
+
+Here we give a brief introduction into our approach for tackling the problem.  Priorities and tradoffs of our work. layout an intro to the environment, the experiments and our hopeful conclusions
+
+%The simulation itself is straightforward, and makes novel use of the Behavior Space facility, which we wrapped in a Python driver making use of pytest which is laid out in scripts/tests/test\_fire\_sim.py
 \subsection{Environment}
-For the map files in use, there were 10 runs against the map files, capturing
-mean-escape-time for the agents.
+This section talks about the simulation environment.  therfor netlogo, the patch world, and loading patches
+
 \begin{figure}
   \includegraphics[width=\linewidth]{./figures/fire_sim_ui.png}
   \caption{FireSim UI}
 \end{figure}
 
+
+
+need to talk about patch parameters
+\subsection{Movement Mechanisms}
+This section discusses agent movement algorithms.
+
+The cost algorithm, where $P_s$ is a safety patch, where $A_w$ is the person path weight, a weight that a person adds to a patch due to blocking (this is configurable by the user)
+\begin{align}
+cost(P)  = distance(P_s, P) + Agent(P) * A_w \nonumber \\
+Agent(P)=
+\begin{cases}
+1, & \text{Agent Present}  \\
+0, & \text{Agent Not Present} 
+\end{cases}
+\end{align}
+
+This can be configured through equal diagonal weight flag. if False the Distance is the Manhattan distance \footnote{ https://www.sciencedirect.com/topics/mathematics/manhattan-distance}. If true the distance is the Chebyshev Distance \footnote{https://en.wikipedia.org/wiki/Chebyshev\_distance}
+\begin{align}
+distance(P_1, P_2)  = \nonumber\\
+equal-diagonal-weight?=
+\begin{cases}
+	max(|x_1-x_2|, |y_1-y_2|), & True \\
+	|x_1-x_2|+ |y_1-y_2|, & False
+\end{cases}
+\end{align}
+
+
+Patch to move to algorithm, where $A_p$ is the patch for a given agent, $P_x$ \& $P_y$ are the $X$ \& $Y$ coordinates for a given patch
+\begin{align}
+neighbors_4 (P)  = \{patch(P_x - 1, P_y -1), patch(P_x + 1, P_y -1), \nonumber \\ 
+patch(P_x - 1, P_y + 1),patch(P_x + 1, P_y + 1)\}   
+\end{align}
+
+\begin{equation}
+move(A) = min(cost(neighbors_4 (A_p)))
+\end{equation}
+
+Person will wait for a better patch.  This is configurable by the user. If it is on then a person will wait for a patch that is less cost than its current
+\begin{equation}
+people-wait?=
+\begin{cases}
+min(cost(A_p), move(A)), & True\\
+move(A), & False
+\end{cases}
+\end{equation}
+
+Add person spacing algorithm, people try to avoid each other, configurable through the $add-person-spacing?$ flag and the $person\_path\_weight$, $A_w$, parameter.  here, $A_w$, is scaled by a factor of 10 since it is not the weight of being in the same square as another but of being next to another person.
+
+\begin{equation}
+add-person-spacing?=
+\begin{cases}
+	cost(P) \sum Agent(neighbors_4(P)) * A_w / 10, & True \\
+	cost(P), & False
+\end{cases}
+\end{equation}
+
+\cite{mirahmadiNovelAlgorithmRealtime2012}
+\footnote{http://www.cs.us.es/~fsancho/?e=131}
+
+\subsection{Experiments}
+
+This should be about the underlying approach to devising and goals of our experiments
+
+\subsubsection{Experimental Environment}
+This section describes our experiment harness that we built using NetLogo's
+Behavior Space functionality.
+
+Behavior Space supports supplying simulation arguments via an XML document,
+invoking the NetLogo engine via a script pointing to the XML, and then capturing
+the results via the standard output.
+
+This lends itself to scripting via Python \footnote{https://www.python.org/}. The goal had been to extract the
+initial Behavior Space XML content directly from the .nlogo file, and then craft
+a SQLAlchemy \footnote{https://www.sqlalchemy.org/} model on the fly that would support storing results in an RDBMS,
+e.g. SQLite \footnote{https://sqlite.org/index.html}. That proved out of reach due to the advanced nature of SQLAlchemy,
+so a hand-crafted model was used, which makes alterations to the underlying
+model more maintenance intensive.
+
+While we stored the results in a local SQLAlchemy file, a mere update to the
+connection string would allow storing results in an enterprise RDBMS to good
+effect.
+
+Another Open Source tool that was used extensively was PyTest \footnote{https://docs.pytest.org/en/stable/}. Billed as a
+unit testing framework, PyTest supports breaking the problem down into granular
+fixtures and then combing them in a Lego-like fashion that lends itself to the
+problem space. For example, while Behavior Space allows stepped alteration of
+numerical parameters in a model, swapping out map file names is not directly
+supported. Implementing a Python function to generate the map file names and
+then re-writing the XML was far more convenient than having distinct
+experiments for each map.
+
+And then Python's data science facilities are well-known \footnote{https://www.scipy.org/index.html}, supporting arbitrary
+visualization pipelines.
+
+\subsubsection{Experimental Parameters}
+For the map files in use, there were 10 runs against the map files, capturing
+mean-escape-time for the agents.
+
 \begin{tabular}{ l | l }
 map-file & Name of map file to set up. \\
 People & Number  of people. Held constant at 500. \\
-person_path_weight & Agent blockage factor for patch \\
+person\_path\_weight & Agent blockage factor for patch \\
 Slow & Percentage moving at this rate, which we set to 100 \\
 Medium & Set to 0 \\
 Fast & Set to 0 \\
@@ -60,99 +159,10 @@ equal-diagonal-weight? & true \\
 display-path-cost? & false \\
 people-wait? & true \\
 set-fire? & false \\
-Fire_Speed & 50 \\
+Fire\_Speed & 50 \\
 mean-escape-time & output \\
 \end{tabular}
 
-need to talk about patch parameters
-\subsection{Movement Mechanisms}
-This section discusses agent and fire movement algorithms.
-
-The cost algorithm, where $P_s$ is a safety patch, where $A_w$ is the person path weight, a weight that a person adds to a patch due to blocking (this is configurable by the user)
-\begin{align}
-cost(P)  = distance(P_s, P) + Agent(P) * A_w \nonumber \\
-Agent(P)=
-\begin{cases}
-1, & \text{Agent Present}  \\
-0, & \text{Agent Not Present} 
-\end{cases}
-\end{align}
-
-This can be configured through equal diagonal weight flag. if False the Distance is the Manhattan distance \footnote{ https://www.sciencedirect.com/topics/mathematics/manhattan-distance}. If true the distance is the Chebyshev Distance \footnote{https://en.wikipedia.org/wiki/Chebyshev\_distance}
-\begin{align}
-distance(P_1, P_2)  = \nonumber\\
-equal-diagonal-weight?=
-\begin{cases}
-	max(|x_1-x_2|, |y_1-y_2|), & True \\
-	|x_1-x_2|+ |y_1-y_2|, & False
-\end{cases}
-\end{align}
-
-
-Patch to move to algorithm, where $A_p$ is the patch for a given agent, $P_x$ \& $P_y$ are the $X$ \& $Y$ coordinates for a given patch
-\begin{align}
-neighbors_4 (P)  = \{patch(P_x - 1, P_y -1), patch(P_x + 1, P_y -1), \nonumber \\ 
-patch(P_x - 1, P_y + 1),patch(P_x + 1, P_y + 1)\}   
-\end{align}
-
-\begin{equation}
-move(A) = min(cost(neighbors_4 (A_p)))
-\end{equation}
-
-Person will wait for a better patch.  This is configurable by the user. If it is on then a person will wait for a patch that is less cost than its current
-\begin{equation}
-people-wait?=
-\begin{cases}
-min(cost(A_p), move(A)), & True\\
-move(A), & False
-\end{cases}
-\end{equation}
-
-Add person spacing algorithm, people try to avoid each other, configurable through the $add-person-spacing?$ flag and the $person\_path\_weight$, $A_w$, parameter.  here, $A_w$, is scaled by a factor of 10 since it is not the weight of being in the same square as another but of being next to another person.
-
-\begin{equation}
-add-person-spacing?=
-\begin{cases}
-	cost(P) \sum Agent(neighbors_4(P)) * A_w / 10, & True \\
-	cost(P), & False
-\end{cases}
-\end{equation}
-
-\cite{mirahmadiNovelAlgorithmRealtime2012}
-\footnote{http://www.cs.us.es/~fsancho/?e=131}
-
-\subsection{Experiments}
-
-This section describes our experiment harness that we built using NetLogo's
-Behavior Space functionality.
-
-Behavior Space supports supplying simulation arguments via an XML document,
-invoking the NetLogo engine via a script pointing to the XML, and then capturing
-the results via the standard output.
-
-This lends itself to scripting via Python \footnote{https://www.python.org/}. The goal had been to extract the
-initial Behavior Space XML content directly from the .nlogo file, and then craft
-a SQLAlchemy \footnote{https://www.sqlalchemy.org/} model on the fly that would support storing results in an RDBMS,
-e.g. SQLite \footnote{https://sqlite.org/index.html}. That proved out of reach due to the advanced nature of SQLAlchemy,
-so a hand-crafted model was used, which makes alterations to the underlying
-model more maintenance intensive.
-
-While we stored the results in a local SQLAlchemy file, a mere update to the
-connection string would allow storing results in an enterprise RDBMS to good
-effect.
-
-Another Open Source tool that was used extensively was PyTest \footnote{https://docs.pytest.org/en/stable/}. Billed as a
-unit testing framework, PyTest supports breaking the problem down into granular
-fixtures and then combing them in a Lego-like fashion that lends itself to the
-problem space. For example, while Behavior Space allows stepped alteration of
-numerical parameters in a model, swapping out map file names is not directly
-supported. Implementing a Python function to generate the map file names and
-then re-writing the XML was far more convenient than having distinct
-experiments for each map.
-
-And then Python's data science facilities are well-known \footnote{https://www.scipy.org/index.html}, supporting arbitrary
-visualization pipelines.
-
 \subsubsection{Experiments Based on Layouts}
 The length of the exit passage was increased gradually
 \begin{figure}
@@ -167,6 +177,8 @@ The length of the exit passage was increased gradually
   \includegraphics[width=\linewidth]{./figures/exit_dims_summary.png}
   \caption{Exit Dimensions Overview/Results}
 \end{figure}
+
+
 \subsubsection{Experiments Replicating Emergent Crowd Behaviors}
 - mainly from this paper \cite{almeidaCrowdSimulationModeling2013}  .  
 
@@ -179,130 +191,130 @@ The length of the exit passage was increased gradually
 if we can show that we achieve similar results even though we use a simplified pathing algorithm and abm environment i think that would be insightful
 
 
-\section{Results}
-
-The results showed that adding more length to the chokepoint pipeline did not
-result in a linear increase in the exit time. Rather, the Actors resembled a
-fluid dynamics problem, reaching a uniform flow and making good their escape.
-
-More exits is better, especially if not on the same side, but there is not a
-linear increase with additional exits.
-
-
-
-need to talk about patch parameters
-\subsection{Movement Mechanisms}
-This section discusses agent and fire movement algorithms.
-
-The cost algorithm, where $P_s$ is a safety patch, where $A_w$ is the person path weight, a weight that a person adds to a patch due to blocking (this is configurable by the user)
-\begin{align}
-cost(P)  = distance(P_s, P) + Agent(P) * A_w \nonumber \\
-Agent(P)=
-\begin{cases}
-1, & \text{Agent Present}  \\
-0, & \text{Agent Not Present} 
-\end{cases}
-\end{align}
-
-This can be configured through equal diagonal weight flag. if False the Distance is the Manhattan distance \footnote{ https://www.sciencedirect.com/topics/mathematics/manhattan-distance}. If true the distance is the Chebyshev Distance \footnote{https://en.wikipedia.org/wiki/Chebyshev\_distance}
-\begin{align}
-distance(P_1, P_2)  = \nonumber\\
-equal-diagonal-weight?=
-\begin{cases}
-	max(|x_1-x_2|, |y_1-y_2|), & True \\
-	|x_1-x_2|+ |y_1-y_2|, & False
-\end{cases}
-\end{align}
-
-
-Patch to move to algorithm, where $A_p$ is the patch for a given agent, $P_x$ \& $P_y$ are the $X$ \& $Y$ coordinates for a given patch
-\begin{align}
-neighbors_4 (P)  = \{patch(P_x - 1, P_y -1), patch(P_x + 1, P_y -1), \nonumber \\ 
-patch(P_x - 1, P_y + 1),patch(P_x + 1, P_y + 1)\}   
-\end{align}
-
-\begin{equation}
-move(A) = min(cost(neighbors_4 (A_p)))
-\end{equation}
-
-Person will wait for a better patch.  This is configurable by the user. If it is on then a person will wait for a patch that is less cost than its current
-\begin{equation}
-people-wait?=
-\begin{cases}
-min(cost(A_p), move(A)), & True\\
-move(A), & False
-\end{cases}
-\end{equation}
-
-Add person spacing algorithm, people try to avoid each other, configurable through the $add-person-spacing?$ flag and the $person\_path\_weight$, $A_w$, parameter.  here, $A_w$, is scaled by a factor of 10 since it is not the weight of being in the same square as another but of being next to another person.
-
-\begin{equation}
-add-person-spacing?=
-\begin{cases}
-	cost(P) \sum Agent(neighbors_4(P)) * A_w / 10, & True \\
-	cost(P), & False
-\end{cases}
-\end{equation}
-
-\cite{mirahmadiNovelAlgorithmRealtime2012}
-\footnote{http://www.cs.us.es/~fsancho/?e=131}
-
-\subsection{Experiments}
-
-This section describes our experiment harness that we built using NetLogo's
-Behavior Space functionality.
-
-Behavior Space supports supplying simulation arguments via an XML document,
-invoking the NetLogo engine via a script pointing to the XML, and then capturing
-the results via the standard output.
-
-This lends itself to scripting via Python \footnote{https://www.python.org/}. The goal had been to extract the
-initial Behavior Space XML content directly from the .nlogo file, and then craft
-a SQLAlchemy \footnote{https://www.sqlalchemy.org/} model on the fly that would support storing results in an RDBMS,
-e.g. SQLite \footnote{https://sqlite.org/index.html}. That proved out of reach due to the advanced nature of SQLAlchemy,
-so a hand-crafted model was used, which makes alterations to the underlying
-model more maintenance intensive.
-
-While we stored the results in a local SQLAlchemy file, a mere update to the
-connection string would allow storing results in an enterprise RDBMS to good
-effect.
-
-Another Open Source tool that was used extensively was PyTest \footnote{https://docs.pytest.org/en/stable/}. Billed as a
-unit testing framework, PyTest supports breaking the problem down into granular
-fixtures and then combing them in a Lego-like fashion that lends itself to the
-problem space. For example, while Behavior Space allows stepped alteration of
-numerical parameters in a model, swapping out map file names is not directly
-supported. Implementing a Python function to generate the map file names and
-then re-writing the XML was far more convenient than having distinct
-experiments for each map.
-
-And then Python's data science facilities are well-known \footnote{https://www.scipy.org/index.html}, supporting arbitrary
-visualization pipelines.
-
-\subsubsection{Experiments Based on Layouts}
-The length of the exit passage was increased gradually
-\begin{figure}
-  \includegraphics[width=\linewidth]{./figures/chokepoints_summary.png}
-  \caption{Chokepoint Overview}
-\end{figure}
-\begin{figure}
-  \includegraphics[width=\linewidth]{./figures/chokepoints_chart.png}
-  \caption{Chokepoint Results}
-\end{figure}
-\begin{figure}
-  \includegraphics[width=\linewidth]{./figures/exit_dims_summary.png}
-  \caption{Exit Dimensions Overview/Results}
-\end{figure}
-\subsubsection{Experiments Replicating Emergent Crowd Behaviors}
-- mainly from this paper \cite{almeidaCrowdSimulationModeling2013}  .  
-
-\begin{figure}
-  \includegraphics[width=\linewidth]{./figures/herding_clogging.png}
-  \caption{}
-\end{figure}
-
-
-if we can show that we achieve similar results even though we use a simplified pathing algorithm and abm environment i think that would be insightful
+%\section{Results}
+%
+%The results showed that adding more length to the chokepoint pipeline did not
+%result in a linear increase in the exit time. Rather, the Actors resembled a
+%fluid dynamics problem, reaching a uniform flow and making good their escape.
+%
+%More exits is better, especially if not on the same side, but there is not a
+%linear increase with additional exits.
+%
+%
+%
+%need to talk about patch parameters
+%\subsection{Movement Mechanisms}
+%This section discusses agent and fire movement algorithms.
+%
+%The cost algorithm, where $P_s$ is a safety patch, where $A_w$ is the person path weight, a weight that a person adds to a patch due to blocking (this is configurable by the user)
+%\begin{align}
+%cost(P)  = distance(P_s, P) + Agent(P) * A_w \nonumber \\
+%Agent(P)=
+%\begin{cases}
+%1, & \text{Agent Present}  \\
+%0, & \text{Agent Not Present} 
+%\end{cases}
+%\end{align}
+%
+%This can be configured through equal diagonal weight flag. if False the Distance is the Manhattan distance \footnote{ https://www.sciencedirect.com/topics/mathematics/manhattan-distance}. If true the distance is the Chebyshev Distance \footnote{https://en.wikipedia.org/wiki/Chebyshev\_distance}
+%\begin{align}
+%distance(P_1, P_2)  = \nonumber\\
+%equal-diagonal-weight?=
+%\begin{cases}
+%	max(|x_1-x_2|, |y_1-y_2|), & True \\
+%	|x_1-x_2|+ |y_1-y_2|, & False
+%\end{cases}
+%\end{align}
+%
+%
+%Patch to move to algorithm, where $A_p$ is the patch for a given agent, $P_x$ \& $P_y$ are the $X$ \& $Y$ coordinates for a given patch
+%\begin{align}
+%neighbors_4 (P)  = \{patch(P_x - 1, P_y -1), patch(P_x + 1, P_y -1), \nonumber \\ 
+%patch(P_x - 1, P_y + 1),patch(P_x + 1, P_y + 1)\}   
+%\end{align}
+%
+%\begin{equation}
+%move(A) = min(cost(neighbors_4 (A_p)))
+%\end{equation}
+%
+%Person will wait for a better patch.  This is configurable by the user. If it is on then a person will wait for a patch that is less cost than its current
+%\begin{equation}
+%people-wait?=
+%\begin{cases}
+%min(cost(A_p), move(A)), & True\\
+%move(A), & False
+%\end{cases}
+%\end{equation}
+%
+%Add person spacing algorithm, people try to avoid each other, configurable through the $add-person-spacing?$ flag and the $person\_path\_weight$, $A_w$, parameter.  here, $A_w$, is scaled by a factor of 10 since it is not the weight of being in the same square as another but of being next to another person.
+%
+%\begin{equation}
+%add-person-spacing?=
+%\begin{cases}
+%	cost(P) \sum Agent(neighbors_4(P)) * A_w / 10, & True \\
+%	cost(P), & False
+%\end{cases}
+%\end{equation}
+%
+%\cite{mirahmadiNovelAlgorithmRealtime2012}
+%\footnote{http://www.cs.us.es/~fsancho/?e=131}
+%
+%\subsection{Experiments}
+%
+%This section describes our experiment harness that we built using NetLogo's
+%Behavior Space functionality.
+%
+%Behavior Space supports supplying simulation arguments via an XML document,
+%invoking the NetLogo engine via a script pointing to the XML, and then capturing
+%the results via the standard output.
+%
+%This lends itself to scripting via Python \footnote{https://www.python.org/}. The goal had been to extract the
+%initial Behavior Space XML content directly from the .nlogo file, and then craft
+%a SQLAlchemy \footnote{https://www.sqlalchemy.org/} model on the fly that would support storing results in an RDBMS,
+%e.g. SQLite \footnote{https://sqlite.org/index.html}. That proved out of reach due to the advanced nature of SQLAlchemy,
+%so a hand-crafted model was used, which makes alterations to the underlying
+%model more maintenance intensive.
+%
+%While we stored the results in a local SQLAlchemy file, a mere update to the
+%connection string would allow storing results in an enterprise RDBMS to good
+%effect.
+%
+%Another Open Source tool that was used extensively was PyTest \footnote{https://docs.pytest.org/en/stable/}. Billed as a
+%unit testing framework, PyTest supports breaking the problem down into granular
+%fixtures and then combing them in a Lego-like fashion that lends itself to the
+%problem space. For example, while Behavior Space allows stepped alteration of
+%numerical parameters in a model, swapping out map file names is not directly
+%supported. Implementing a Python function to generate the map file names and
+%then re-writing the XML was far more convenient than having distinct
+%experiments for each map.
+%
+%And then Python's data science facilities are well-known \footnote{https://www.scipy.org/index.html}, supporting arbitrary
+%visualization pipelines.
+%
+%\subsubsection{Experiments Based on Layouts}
+%The length of the exit passage was increased gradually
+%\begin{figure}
+%  \includegraphics[width=\linewidth]{./figures/chokepoints_summary.png}
+%  \caption{Chokepoint Overview}
+%\end{figure}
+%\begin{figure}
+%  \includegraphics[width=\linewidth]{./figures/chokepoints_chart.png}
+%  \caption{Chokepoint Results}
+%\end{figure}
+%\begin{figure}
+%  \includegraphics[width=\linewidth]{./figures/exit_dims_summary.png}
+%  \caption{Exit Dimensions Overview/Results}
+%\end{figure}
+%\subsubsection{Experiments Replicating Emergent Crowd Behaviors}
+%- mainly from this paper \cite{almeidaCrowdSimulationModeling2013}  .  
+%
+%\begin{figure}
+%  \includegraphics[width=\linewidth]{./figures/herding_clogging.png}
+%  \caption{}
+%\end{figure}
+%
+%
+%if we can show that we achieve similar results even though we use a simplified pathing algorithm and abm environment i think that would be insightful
 
 
 \section{Results}
@@ -323,7 +335,6 @@ d & 1217.5 & 1234.0 & 1210.0 & 1231.1 \\
 e & 1202.4 & 1243.0 & 1200.0 & 1226.0 \\
 f & 1183.1 & 1212.0 & 1179.0 & 1206.3 \\
 \end{tabular}
-
 \\
 chokepoint2
 \begin{tabular}{ r | r | r | r | r }
@@ -333,7 +344,6 @@ c & 1036.3 & 1071.0 & 1017.0 & 1071.5 \\
 d & 1039.3 & 1071.0 & 1034.0 & 1065.5 \\
 e & 1034.8 & 1055.0 & 1024.0 & 1051.2 \\
 \end{tabular}
-
 \\
 chokepoint3
 \begin{tabular}{ r | r | r | r | r }
@@ -342,15 +352,13 @@ b &  886.9 & 919.0 & 880.0 & 911.2 \\
 c &  905.2 & 952.0 & 900.0 & 937.3 \\
 d &  902.3 & 925.0 & 894.0 & 919.2 \\
 \end{tabular}            
-
 \\
 exitdims2
 \begin{tabular}{ r | r | r | r | r }
 a & 480.6 & 516.0 & 472.0 & 502.5 \\
 b & 482.9 & 522.0 & 474.0 & 510.0 \\
 c & 481.3 & 524.0 & 473.0 & 510.6 \\
-\end{tabular}
-                          
+\end{tabular}                          
 \\
 exitdims4
 \begin{tabular}{ r | r | r | r | r }
@@ -358,7 +366,6 @@ a & 348.4 & 368.0 & 342.0 & 367.3 \\
 b & 319.2 & 344.0 & 317.0 & 336.3 \\
 c & 334.3 & 365.0 & 328.0 & 358.8 \\
 \end{tabular}
-
 \\
 exitdims6
 \begin{tabular}{ r | r | r | r | r }
@@ -366,7 +373,6 @@ a & 292.0 & 302.0 & 287.0 & 301.7 \\
 b & 262.0 & 285.0 & 258.0 & 277.9 \\
 c & 265.8 & 290.0 & 265.0 & 280.3 \\
 \end{tabular}
-
 \\
 exitdims8
 \begin{tabular}{ r | r | r | r | r }
