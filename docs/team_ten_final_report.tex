@@ -106,11 +106,11 @@ add-person-spacing?=
 \cite{mirahmadiNovelAlgorithmRealtime2012}
 \footnote{http://www.cs.us.es/~fsancho/?e=131}
 
-\subsection{Experiments}
+\section{Experiments}
 
 This should be about the underlying approach to devising and goals of our experiments
 
-\subsubsection{Experimental Environment}
+\subsection{Experimental Environment}
 This section describes our experiment harness that we built using NetLogo's
 Behavior Space functionality.
 
@@ -141,7 +141,7 @@ experiments for each map.
 And then Python's data science facilities are well-known \footnote{https://www.scipy.org/index.html}, supporting arbitrary
 visualization pipelines.
 
-\subsubsection{Experimental Parameters}
+\subsection{Experimental Parameters}
 For the map files in use, there were 10 runs against the map files, capturing
 mean-escape-time for the agents.
 
@@ -164,16 +164,24 @@ Fire\_Speed & 50 \\
 mean-escape-time & output \\
 \end{tabular}
 
-\subsubsection{Experiments Based on Layouts}
-The length of the exit passage was increased gradually
-\begin{figure}
-  \includegraphics[width=\linewidth]{./figures/chokepoints_summary.png}
-  \caption{Chokepoint Overview}
-\end{figure}
+\subsection{Experiments Based on Layouts}
+This section will describe the different layout based experiments.  How we set them up to narrow parameters to just measure the layouts impact
+
+\subsubsection{Chokepoint}
+chokepoint experiment
+%\begin{figure}
+% \includegraphics[width=\linewidth]{./figures/chokepoints_summary.png}
+%\caption{Chokepoint Overview}
+%\end{figure}
+
+\subsubsection{Exit Dimensions}
+exit dimensions experiment
+\subsection{Experiments Based on Agent Features}
+
+This section will cover our experiments based on modifying the agent's speed distributions.
 
 
-
-\subsubsection{Experiments Replicating Emergent Crowd Behaviors}
+\subsection{Experiments Replicating Emergent Crowd Behaviors}
 - mainly from this paper \cite{almeidaCrowdSimulationModeling2013}  .  This section will cover how we hope to see these emergent behaviors in our environments even though we use a simplified pathing strategy.  This could lead to simpler models with less resource requirements.
 
 
