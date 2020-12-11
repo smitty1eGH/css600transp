@@ -42,6 +42,9 @@ Here we give a brief introduction into our approach for tackling the problem.  P
 \subsection{Environment}
 This section talks about the simulation environment.  therefor netlogo, the patch world, and loading patches
 
+This paper talks about procedurally generating worlds \cite{mirahmadiNovelAlgorithmRealtime2012}
+
+
 \begin{figure}
   \includegraphics[width=\linewidth]{./figures/fire_sim_ui.png}
   \caption{FireSim UI}
@@ -51,9 +54,9 @@ This section talks about the simulation environment.  therefor netlogo, the patc
 
 need to talk about patch parameters
 \subsection{Movement Mechanisms}
-This section discusses agent movement algorithms.
+In this section we will go over the mechanisms which dictate how our agents move throughout the environment.  Traditionally, in an environment where an agent is moving towards a goal, each agent's path to that goal will be calculated individually through the environment\footnote{http://www.cs.us.es/~fsancho/?e=131}.  In our situation we implemented a simplified pathing algorithm which instead calculates global weights for each environmental patch in which all agents flow to the lowest weight.  These weights grow in relation to their distance to the safety patches and as agents move over them by imparting their own weight to the patch.  This simplified pathing allows for much quicker computation of routes and therefor quicker executions of simulations for our experiments.
 
-The cost algorithm, where $P_s$ is a safety patch, where $A_w$ is the person path weight, a weight that a person adds to a patch due to blocking (this is configurable by the user)
+The following will provide an overview of how the weighting mechanisms work and the choices agents make on whether to move.  The foundation of movement is the weight of a given patch, or the cost as described below. The cost metric is defined as the distance from the patch to be considered $P$ and the nearest safety patch $P_s$.  While there may be many safety patches, for the sake of brevity, we assume that $P_s$ is resolved \emph{a priori} as the closest.  We can confidently declare this since the weighting implementation iteratively grows from each safety patch such that when it reaches a candidate patch it has been reached by the closest one.  This distance cost is also modified by the presence of an agent, $Agent(P)$, on that patch.  This agent's weight, $A_w$, is configurable by the user.  Of important note is that the weight is calculated independently of agents that may reside on patches between a patch and the safety patch.  This is the simplified pathing mechanism at work in that only local environment calculations are conducted.
 \begin{align}
 cost(P)  = distance(P_s, P) + Agent(P) * A_w \nonumber \\
 Agent(P)=
@@ -63,7 +66,7 @@ Agent(P)=
 \end{cases}
 \end{align}
 
-This can be configured through equal diagonal weight flag. if False the Distance is the Manhattan distance \footnote{ https://www.sciencedirect.com/topics/mathematics/manhattan-distance}. If true the distance is the Chebyshev Distance \footnote{https://en.wikipedia.org/wiki/Chebyshev\_distance}
+The distance measurement is not as simple as calculating the Euclidean distance.  Since our environment is a grid world that is inhabited by blocking obstacles we can only consider movement in either the 4 cardinal directions or the 8 neighboring directions.  These two options, which are additionally configurable by the user, determine how the distance between patches are measured.  The distance between 2 points $P_1$ \& $P_2$ is optionally defined by the flag $equal-diagonal-weight?$.  If false the distance is the Manhattan distance \footnote{ https://www.sciencedirect.com/topics/mathematics/manhattan-distance}. If true the distance is the Chebyshev distance \footnote{https://en.wikipedia.org/wiki/Chebyshev\_distance}. While this algorithm for distance works in an open world it doesn't account for the blocking obstacles.  This is another side effect of how the actual implementation works.  By growing outward from the safety patches and around obstacles the actual distance calculation is only ever considered for patches that are next to each other.  This makes our implementation a narrow case of the algorithm below in that all distances we calculate equal 1 and the real choice is how we choose the next patches as either the Manhattan or the Chebyshev neighborhood.
 \begin{align}
 distance(P_1, P_2)  = \nonumber\\
 equal-diagonal-weight?=
@@ -73,38 +76,39 @@ equal-diagonal-weight?=
 \end{cases}
 \end{align}
 
+Now that we have our patch weights to inform our movement decisions it is time to actually make the decision of where to move to.  For this choice we simply choose the neighbor patch that has the lowest cost, where the neighbors are defined as the 4 patches above, below, right, and left of our current patch.  Once we know which patch is lowest we take the vector at that patch and multiply it by our agent's speed.  So, for a given agent $A$ the vector to move is given by the vector of the lowest cost neighbor patch times our agent's speed. 
 
-Patch to move to algorithm, where $A_p$ is the patch for a given agent, $P_x$ \& $P_y$ are the $X$ \& $Y$ coordinates for a given patch
+
+\begin{equation}
+move(A) = V( min(cost(neighbors_4 (A_p))) ) * S_a
+\end{equation}
+
 \begin{align}
 neighbors_4 (P)  = \{patch(P_x - 1, P_y -1), patch(P_x + 1, P_y -1), \nonumber \\ 
 patch(P_x - 1, P_y + 1),patch(P_x + 1, P_y + 1)\}   
 \end{align}
 
-\begin{equation}
-move(A) = min(cost(neighbors_4 (A_p)))
-\end{equation}
 
-Person will wait for a better patch.  This is configurable by the user. If it is on then a person will wait for a patch that is less cost than its current
+We have an additional parameter to account for situations where the cost of all neighboring patches is greater than the current patch. The flag $people-wait?$ allows simulators to decide whether or not to stay put and wait for a better patch or to always move even if the new patch has a higher cost.  This flag redefines the $move(A)$ function as $move(A)$ if the flag is false and if the cost of the current patch is less than $move(A)$ then to not move.
 \begin{equation}
 people-wait?=
 \begin{cases}
-min(cost(A_p), move(A)), & True\\
+min(cost(A_p), move(A)), & True \\
 move(A), & False
 \end{cases}
 \end{equation}
 
-Add person spacing algorithm, people try to avoid each other, configurable through the $add-person-spacing?$ flag and the $person\_path\_weight$, $A_w$, parameter.  here, $A_w$, is scaled by a factor of 10 since it is not the weight of being in the same square as another but of being next to another person.
+Another phenomena we wished to capture is the ability for agent's to give each other space.  This is configurable through the $add-person-spacing?$ flag.  When the flag is true the cost of a patch is redefined to be the normal cost plus the sum of all the neighbors with agents times the agent's weight divided by 10.  This scaling factor of $1/10$ has been determined through trial and error and is something that could be exposed to user control in the future.  For ease of implementation and increased computation time the actual calculation is done from the perspective of the agent in that each agent has their scaled weight applied to its patch neighbors.
 
-\begin{equation}
-add-person-spacing?=
+\begin{align}
+add-person-spacing?= \nonumber  \\
 \begin{cases}
-	cost(P) \sum Agent(neighbors_4(P)) * A_w / 10, & True \\
+	cost(P) + \sum Agent(neighbors_4(P)) * A_w / 10, & True \\
 	cost(P), & False
 \end{cases}
-\end{equation}
+\end{align}
 
-\cite{mirahmadiNovelAlgorithmRealtime2012}
-\footnote{http://www.cs.us.es/~fsancho/?e=131}
+The grid world, while maybe too much of a simplification of real world dynamics, enables us to implement complex behaviors through simple straightforward algorithms.  These complex behaviors have enabled us to conduct a few interesting experiments described in the following sections.
 
 \section{Experiments}
 
