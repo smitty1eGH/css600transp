@@ -6,6 +6,7 @@
 \usepackage{listings}
 \usepackage{graphicx}
 
+\usepackage{subfig}
 
 \begin{document}
 \title{Evac Sim: Fall 2020 CSS600 }
@@ -16,9 +17,9 @@
 
 \begin{abstract}
 Simulating large scale evacuation is cost-prohibitive in terms of realism and
-required man-hours. Agent-based simulation supports laying out a floorplan,
+required man-hours. Agent-based simulation supports laying out a floor plan,
 modeling behaviors and at least capturing some flavor of how a real evacuation
-might play out. This research uses NetLogo to vary floorplans and capture the
+might play out. This research uses NetLogo to vary floor plans and capture the
 average escape times for the agents.
 \end{abstract}
 \section {Introduction}
@@ -35,11 +36,11 @@ This paper is key as it is extremely similar and a NetLogo implementation.  We s
 
 \section {Methodology}
 
-Here we give a brief introduction into our approach for tackling the problem.  Priorities and tradoffs of our work. layout an intro to the environment, the experiments and our hopeful conclusions
+Here we give a brief introduction into our approach for tackling the problem.  Priorities and trade-offs of our work. layout an intro to the environment, the experiments and our hopeful conclusions
 
 %The simulation itself is straightforward, and makes novel use of the Behavior Space facility, which we wrapped in a Python driver making use of pytest which is laid out in scripts/tests/test\_fire\_sim.py
 \subsection{Environment}
-This section talks about the simulation environment.  therfor netlogo, the patch world, and loading patches
+This section talks about the simulation environment.  therefor netlogo, the patch world, and loading patches
 
 \begin{figure}
   \includegraphics[width=\linewidth]{./figures/fire_sim_ui.png}
@@ -170,21 +171,34 @@ The length of the exit passage was increased gradually
   \caption{Chokepoint Overview}
 \end{figure}
 \begin{figure}
-  \includegraphics[width=\linewidth]{./figures/chokepoints_chart.png}
+  \includegraphics[width=\linewidth]{./figures/chokepoint_graph.png}
   \caption{Chokepoint Results}
 \end{figure}
 \begin{figure}
-  \includegraphics[width=\linewidth]{./figures/exit_dims_summary.png}
+  \includegraphics[width=\linewidth]{./figures/exit_dims_graph.png}
   \caption{Exit Dimensions Overview/Results}
 \end{figure}
 
 
 \subsubsection{Experiments Replicating Emergent Crowd Behaviors}
-- mainly from this paper \cite{almeidaCrowdSimulationModeling2013}  .  
+- mainly from this paper \cite{almeidaCrowdSimulationModeling2013}  .  This section will cover how we hope to see these emergent behaviors in our environments even though we use a simplified pathing strategy.  This could lead to simpler models with less resource requirements.
 
-\begin{figure}
-  \includegraphics[width=\linewidth]{./figures/herding_clogging.png}
-  \caption{}
+
+
+\begin{figure}[!tbp]
+  \centering
+  \subfloat[Evacuation with no herding ]{\includegraphics[width=0.4\textwidth]{./figures/Herding1.png}\label{fig:f1}}
+  \hfill
+  \subfloat[Evacuation with herding (i.e. ignoring viable exit)]{\includegraphics[width=0.4\textwidth]{./figures/Herding-2.png}\label{fig:f2}}
+  \caption{Herding behavior replicated through residual escape pathing from agents that never considered the alternative route.}
+\end{figure}
+
+\begin{figure}[!tbp]
+  \centering
+  \subfloat[No clogging due to people not blocking paths ]{\includegraphics[width=0.4\textwidth]{./figures/clogging1_clean.png}\label{fig:f1}}
+  \hfill
+  \subfloat[Clogging due to increased weight per person on a patch]{\includegraphics[width=0.4\textwidth]{./figures/clogging2_clean.png}\label{fig:f2}}
+  \caption{Clogging behavior replicated through a weight attribute calculated for each patch an agent is on as well as a configurable additional weight for each agent's neighboring patch. }
 \end{figure}
 
 
@@ -380,6 +394,9 @@ a& 264.7& 279.0& 263.0& 276.2 \\
 b& 230.4& 243.0& 228.0& 240.3 \\
 c& 231.4& 250.0& 231.0& 242.7 \\
 \end{tabular}
+
+\section{Future Work}
+Here we can expand on improvements we would make, additional features we could add (smoke multi-floor etc.), additional experiments, and porting to other environments
 \section {Conclusion}
 
 The simpler the layout, with more and diversified exit options, the more optimal
