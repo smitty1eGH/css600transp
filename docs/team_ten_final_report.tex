@@ -36,7 +36,8 @@ This paper is key as it is extremely similar and a NetLogo implementation.  We s
 
 \section {Methodology}
 
-Here we give a brief introduction into our approach for tackling the problem.  Priorities and trade-offs of our work. layout an intro to the environment, the experiments and our hopeful conclusions
+Our main goal was to hone in on the narrow situations in which we can detect patterns given our constrained simulation environment.  Due to the constraints of the  NetLogo environment, described further below, we are force to simplify various aspects of our model.  These simplifications though, provide us the opportunity to explore where emergent properties may arise \ref{emergentBehavior}.
+
 
 %The simulation itself is straightforward, and makes novel use of the Behavior Space facility, which we wrapped in a Python driver making use of pytest which is laid out in scripts/tests/test\_fire\_sim.py
 \subsection{Environment}
@@ -231,7 +232,7 @@ This section will describe the different layout based experiments.  How we set t
 This section will cover our experiments based on modifying the agent's speed distributions.
 
 
-\subsection{Experiments Replicating Emergent Crowd Behaviors}
+\subsection{Experiments Replicating Emergent Crowd Behaviors} \label{emergentBehavior}
 - mainly from this paper \cite{almeidaCrowdSimulationModeling2013}  .  This section will cover how we hope to see these emergent behaviors in our environments even though we use a simplified pathing strategy.  This could lead to simpler models with less resource requirements.
 
 
