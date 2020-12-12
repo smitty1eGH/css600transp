@@ -150,6 +150,7 @@ For the map files in use, there were 10 runs against the map files, capturing
 mean-escape-time for the agents.
 
 \begin{tabular}{ l | l }
+VARIABLE & MEANING / VALUE \\
 map-file & Name of map file to set up. \\
 People & Number  of people. Held constant at 500. \\
 person\_path\_weight & Agent blockage factor for patch \\
@@ -171,15 +172,60 @@ mean-escape-time & output \\
 \subsection{Experiments Based on Layouts}
 This section will describe the different layout based experiments.  How we set them up to narrow parameters to just measure the layouts impact
 
-\subsubsection{Chokepoint}
-chokepoint experiment
-%\begin{figure}
-% \includegraphics[width=\linewidth]{./figures/chokepoints_summary.png}
-%\caption{Chokepoint Overview}
-%\end{figure}
+\subsubsection{Chokepoint Experiment}
+
+\begin{figure*}[ht]
+  \centering
+  \begin{minipage}[b]{\linewidth}
+    \includegraphics[width=0.15\textwidth]{./figures/chokepoint_1_a.png}
+    \includegraphics[width=0.15\textwidth]{./figures/chokepoint_1_b.png}
+    \includegraphics[width=0.15\textwidth]{./figures/chokepoint_1_c.png}
+    \includegraphics[width=0.15\textwidth]{./figures/chokepoint_1_d.png}
+    \includegraphics[width=0.15\textwidth]{./figures/chokepoint_1_e.png}
+    \includegraphics[width=0.15\textwidth]{./figures/chokepoint_1_f.png}
+  \end{minipage}
+  \begin{minipage}[b]{\linewidth}
+    \includegraphics[width=0.15\textwidth]{./figures/chokepoint_2_a.png}
+    \includegraphics[width=0.15\textwidth]{./figures/chokepoint_2_b.png}
+    \includegraphics[width=0.15\textwidth]{./figures/chokepoint_2_c.png}
+    \includegraphics[width=0.15\textwidth]{./figures/chokepoint_2_d.png}
+    \includegraphics[width=0.15\textwidth]{./figures/chokepoint_2_e.png}
+  \end{minipage}
+  \begin{minipage}[b]{\linewidth}
+    \includegraphics[width=0.15\textwidth]{./figures/chokepoint_3_a.png}
+    \includegraphics[width=0.15\textwidth]{./figures/chokepoint_3_b.png}
+    \includegraphics[width=0.15\textwidth]{./figures/chokepoint_3_c.png}
+    \includegraphics[width=0.15\textwidth]{./figures/chokepoint_3_d.png}
+  \end{minipage}
+  \caption{Chokepoint Maps}
+\end{figure*}
 
 \subsubsection{Exit Dimensions}
-exit dimensions experiment
+
+\begin{figure*}[ht]
+  \centering
+  \begin{minipage}[b]{\linewidth}
+    \includegraphics[width=0.15\textwidth]{./figures/exit_dims_2_a.png}
+    \includegraphics[width=0.15\textwidth]{./figures/exit_dims_2_b.png}
+    \includegraphics[width=0.15\textwidth]{./figures/exit_dims_2_c.png}
+  \end{minipage}
+  \begin{minipage}[b]{\linewidth}
+    \includegraphics[width=0.15\textwidth]{./figures/exit_dims_4_a.png}
+    \includegraphics[width=0.15\textwidth]{./figures/exit_dims_4_b.png}
+    \includegraphics[width=0.15\textwidth]{./figures/exit_dims_4_c.png}
+  \end{minipage}
+  \begin{minipage}[b]{\linewidth}
+    \includegraphics[width=0.15\textwidth]{./figures/exit_dims_6_a.png}
+    \includegraphics[width=0.15\textwidth]{./figures/exit_dims_6_b.png}
+    \includegraphics[width=0.15\textwidth]{./figures/exit_dims_6_c.png}
+  \end{minipage}
+  \begin{minipage}[b]{\linewidth}
+    \includegraphics[width=0.15\textwidth]{./figures/exit_dims_8_a.png}
+    \includegraphics[width=0.15\textwidth]{./figures/exit_dims_8_b.png}
+    \includegraphics[width=0.15\textwidth]{./figures/exit_dims_8_c.png}
+  \end{minipage}
+  \caption{Exit Dimensions Maps}
+\end{figure*}
 \subsection{Experiments Based on Agent Features}
 
 This section will cover our experiments based on modifying the agent's speed distributions.
@@ -356,6 +402,7 @@ linear increase with additional exits.
 
 chokepoint1
 \begin{tabular}{ r | r | r | r | r }
+map & MIN  & AVG    & MAX    & VAR    \\
 a &  966.4 & 1006.0 &  963.0 &  995.6 \\
 b & 1155.6 & 1190.0 & 1149.0 & 1181.6 \\
 c & 1207.0 & 1243.0 & 1198.0 & 1234.9 \\
@@ -366,48 +413,54 @@ f & 1183.1 & 1212.0 & 1179.0 & 1206.3 \\
 \\
 chokepoint2
 \begin{tabular}{ r | r | r | r | r }
+map & MIN  & AVG    & MAX    & VAR    \\
 a &  790.8 &  833.0 &  781.0 &  819.8 \\
 b &  975.7 & 1025.0 &  970.0 & 1015.7 \\
 c & 1036.3 & 1071.0 & 1017.0 & 1071.5 \\
-d & 1039.3 & 1071.0 & 1034.0 & 1065.5 \\
-e & 1034.8 & 1055.0 & 1024.0 & 1051.2 \\
+d &  103 9.3 & 10710 & 134.0 & 165.5 \\
+e & 10 34. 8 & 1055.0& 102.0 & 105.2 \\  
 \end{tabular}
 \\
 chokepoint3
 \begin{tabular}{ r | r | r | r | r }
-a &  717.6 & 758.0 & 704.0 & 751.9 \\
-b &  886.9 & 919.0 & 880.0 & 911.2 \\
-c &  905.2 & 952.0 & 900.0 & 937.3 \\
-d &  902.3 & 925.0 & 894.0 & 919.2 \\
-\end{tabular}            
-\\
-exitdims2
+map &  MIN   & AVG   & MAX   & VAR   \\
+a   &  717.6 & 758.0 & 704.0 & 751.9 \\
+b   &  886.9 & 919.0 & 880.0 & 911.2 \\
+c   &  905.2 & 952.0 & 900.0 & 937.3 \\
+d   &  902.3 & 925.0 & 894.0 & 919.2 \\
+\end{tabular}          
+\\  
+extdims2
 \begin{tabular}{ r | r | r | r | r }
-a & 480.6 & 516.0 & 472.0 & 502.5 \\
-b & 482.9 & 522.0 & 474.0 & 510.0 \\
-c & 481.3 & 524.0 & 473.0 & 510.6 \\
+map & MIN   & AVG   & MAX   & VAR   \\
+a   & 480.6 & 516.0 & 472.0 & 502.5 \\
+b   & 482.9 & 522.0 & 474.0 & 510.0 \\
+c   & 481.3 & 524.0 & 473.0 & 510.6 \\
 \end{tabular}                          
 \\
 exitdims4
 \begin{tabular}{ r | r | r | r | r }
-a & 348.4 & 368.0 & 342.0 & 367.3 \\
-b & 319.2 & 344.0 & 317.0 & 336.3 \\
-c & 334.3 & 365.0 & 328.0 & 358.8 \\
+map & MIN   & AVG   & MAX   & VAR   \\
+a   & 348.4 & 368.0 & 342.0 & 367.3 \\
+b   & 319.2 & 344.0 & 317.0 & 336.3 \\
+c   & 334.3 & 365.0 & 328.0 & 358.8 \\
 \end{tabular}
 \\
 exitdims6
 \begin{tabular}{ r | r | r | r | r }
-a & 292.0 & 302.0 & 287.0 & 301.7 \\
-b & 262.0 & 285.0 & 258.0 & 277.9 \\
-c & 265.8 & 290.0 & 265.0 & 280.3 \\
+map & MIN   & AVG   & MAX   & VAR   \\
+a   & 292.0 & 302.0 & 287.0 & 301.7 \\    
+b   & 262.0 & 285.0 & 258.0 & 277.9 \\
+c   & 265.8 & 290.0 & 265.0 & 280.3 \\
 \end{tabular}
 \\
 exitdims8
 \begin{tabular}{ r | r | r | r | r }
-a& 264.7& 279.0& 263.0& 276.2 \\
-b& 230.4& 243.0& 228.0& 240.3 \\
-c& 231.4& 250.0& 231.0& 242.7 \\
-\end{tabular}
+map &  MIN   &  AVG  & MAX   & VAR   \\
+a   &  264.7 & 279.0 & 263.0 & 276.2 \\
+b   &  230.4 & 243.0 & 228.0 & 240.3 \\
+c   &  231.4 & 250.0 & 231.0 & 242.7 \\
+\end{tabular}  
 
 \section{Future Work}
 Here we can expand on improvements we would make, additional features we could add (smoke multi-floor etc.), additional experiments, and porting to other environments

@@ -81,6 +81,14 @@ def people():
     people = 500
     return f'<enumeratedValueSet variable="People"> <value value="{people}"/> </enumeratedValueSet>'
 
+@pytest.fixture
+def people():
+    """
+    <enumeratedValueSet variable="People"> <value value="500"/> </enumeratedValueSet>
+
+    Integer between 1 and 500
+    """
+    return f'<enumeratedValueSet variable="People"> <value value="%s"/> </enumeratedValueSet>'
 
 @pytest.fixture
 def person_path_weight():
@@ -110,6 +118,18 @@ def people_speed():
     <enumeratedValueSet variable="Fast"> <value value="{fast}"/> </enumeratedValueSet>
     """
 
+@pytest.fixture
+def people_speed_interp():
+    """People Speed Distribution, integer from 0 to 100 representing a percentage of PEOPLE
+
+    <enumeratedValueSet variable="Slow"> <value value=""/> </enumeratedValueSet>
+    <enumeratedValueSet variable="Medium"> <value value=""/> </enumeratedValueSet>
+    <enumeratedValueSet variable="Fast"> <value value=""/> </enumeratedValueSet>
+    """
+    return f"""<enumeratedValueSet variable="Slow"> <value value="%s"/> </enumeratedValueSet>
+    <enumeratedValueSet variable="Medium"> <value value="%s"/> </enumeratedValueSet>
+    <enumeratedValueSet variable="Fast"> <value value="%s"/> </enumeratedValueSet>
+    """
 
 # Predicates
 @pytest.fixture
@@ -263,6 +283,35 @@ def get_beshp_xml_interp(
   </experiment> </experiments>
     """
 
+@pytest.fixture
+def get_beshp_xml_interp2(
+    reps,
+    map_file_interp,
+    people_interp,
+    person_path_weight,
+    people_speed_interp,
+    display_path_cost_p,
+    add_person_spacing_p,
+    people_wait_p,
+    equal_diagonal_weight_p,
+    people_move_rates,
+    set_fire_p,
+        fire_speed,
+):
+    '''NOTE: map_file_interp has a % in it for later inerpolation
+       def map_file_interp():
+           ~eturn '<enumeratedValueSet variable="map-file"> <value value="&quot;%s&quot;"/> </enumeratedValueSet>'
+    <metric>count turtles</metric>
+    '''
+    return f"""<experiments>
+  <experiment name="FireSim" repetitions="{reps}" runMetricsEveryStep="false">
+    <setup>setup</setup>
+    <go>go</go>
+    <exitCondition>not any? turtles</exitCondition>
+    <metric>mean-escape-time</metric>
+    {map_file_interp}{people_interp}{person_path_weight}{people_speed_interp}{display_path_cost_p}{add_person_spacing_p}{people_wait_p}{equal_diagonal_weight_p}{people_move_rates}{set_fire_p}{fire_speed}
+  </experiment> </experiments>
+    """
 # ==Housekeeping fixtures==
 @pytest.fixture
 def netlogo_sh():
@@ -422,7 +471,7 @@ def test_fire_sim_persist(
    #     add_commit(sess_file, x)
    #     sess_file.add(x)
 
-#@pytest.mark.skip
+@pytest.mark.skip
 def test_fire_sim_persist_interp(
     netlogo_sh, netlogo_args, sess_file, get_beshp_xml_interp, result_field_map, map_file_list
 ):
@@ -453,3 +502,33 @@ def test_fire_sim_persist_interp(
             x = ResultsFireSim(**line)
             add_commit(sess_file, x)
             sess_file.add(x)
+
+@pytest.mark.skip
+def test_fire_sim_chokepoint(
+    netlogo_sh, netlogo_args, sess_file, get_beshp_xml_interp2, result_field_map
+):
+    START_DATA = 8
+    ELIDE_LAST = -1
+
+    args = [netlogo_sh]
+    for k, v in netlogo_args.items():
+        args.append(f"--{k}")
+        args.append(v)
+
+    with open("setup-file.xml", "w") as f:
+        f.write(get_beshp_xml_interp2 % 'chokepoint.map')
+
+    result = subprocess.run(args, capture_output=True)
+    lines = f"{result.stdout=}".split("\\n")[START_DATA:]
+
+    fnames = result_field_map.values()
+    dr = DictReader(lines[:ELIDE_LAST], fieldnames=fnames, restkey="restkey")
+
+    for line in dr:
+        if "restkey" in line:
+            del line["restkey"]
+        fix_bools(line)
+
+        x = ResultsFireSim(**line)
+        add_commit(sess_file, x)
+        sess_file.add(x)
