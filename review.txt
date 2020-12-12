@@ -1,0 +1,6 @@
+\cite{almeidaCrowdSimulationModeling2013} Makes they point that thre are three points for simulating: to generate observable phenomena, to test theories, and to test design strategies. They note that people tend to follow the path of least resistance while moving. The stress of emergencies leads to herding and flocking behavior, to the point of missing optimal escape routes, or engaging in inefficient "arching" to get through an escape, which is one of our avenues of inquiry.
+
+\cite{kuligowskil} Outlines a requirement for a comprehensive fire evacuation model design capturing human behavior. The effort here was to capture the various theories and "behavioral facts" suitable for embedding in modeling tools, and then argued for including behavioral models in evacuation models.
+
+\cite{kneidl} Emphasizes that behavioral aspects of crowds are  important, including behavior, locomotion, and navigation. These had been modeled previously. This research relied upon graph-based methods to plot the exit course, whereas this model uses values attached to patches to drive the movement decisions for the Agents. In both this and our model, the presence of other agents affects movement calculations.
+
