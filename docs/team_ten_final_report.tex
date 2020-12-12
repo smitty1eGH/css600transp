@@ -77,7 +77,7 @@ to load-map
     foreach line [
       
       [x] ->
-      ask patch col row [ set pcolor table:get map_table x  ]
+      ask patch col row [ set pcolor table:get map_table x ]
       set col (col + 1)
     ]
   set row (row - 1)
@@ -92,14 +92,17 @@ end
 [3 0 0 2 1 1 1 2 1 1 1 1 2 1 1 1 1 1 2 1 1 1 1 1 2 0 0]
 \end{lstlisting}
 
-Since our map needs were constrained to the few experiments that we planned to execute we did not implement a procedural way to generate maps.  This functionality, while one of our stretch goals, had to be dropped in the interests of deadlines.  If one were to expand upon our work then there are number of mechanisms to generate layouts \cite{mirahmadiNovelAlgorithmRealtime2012} such that further experiments could be devised without the human intensive effort of generating maps by hand.  Such possibilities include evaluations of optimal floor plans through a guided search or ablative studies on the subtle modifications of ideal floor plans.
+Since our map creation needs were constrained to the few experiments that we planned to execute we did not implement a procedural way to generate maps.  This functionality, while one of our stretch goals, had to be dropped in the interests of deadlines.  If one were to expand upon our work then there are number of mechanisms to generate layouts \cite{mirahmadiNovelAlgorithmRealtime2012} such that further experiments could be devised without the human intensive effort of generating maps by hand.  Such possibilities include evaluations of optimal floor plans through a guided search or ablative studies on the subtle modifications of ideal floor plans.
 
-need to talk about patch parameters and agent parameters
+Our simulation grid world is governed by the patch type.  The safety patch (pink) is used as the foundation for our pathing algorithm described here\ref{move}.  The grass and floor patches (green and brown) are areas in which agents can  move freely.  The two different types of patches are not just for aesthetics but are a residual from original plans to implement a fire aspect which would have burnt differently on different patches.  The final patch type is the wall (light brown) which blocks agents from moving through.
 
+The agent's themselves are also defined fairly simply.  They have the speed at which they move, a value greater than 0 and less than 1.  They also have an internal counter for how long they have been on the map which is used to calculate the mean escape time.  This value increments on each global tick unless the agent has reached a safety patch.  In order to allow for ease of experimentation there are 3 groups of agents labeled slow, medium, and fast.  Despite the label semantics, each group can be assigned its own speed depending on the wishes of the experimenter.  During each movement step the agent moves the speed of the group that they are assigned to.  The experimenter can also set the number of agents in the environment from 0 to 500 before each simulation as expressed by the parameter $P$ below.  A helper function that we provide is the ability to maintain the ratio of numbers of slow, medium, and fast agents no matter the total number of agents.  This ratio is calculated in the following algorithm where $S$, $M$, and $F$ are the values specified by the experimenter in sliding values between 0 and 10.
 
+\begin{equation}
+\text{count of slow people} =\frac { S} {S + M + F} * P
+\end{equation}
 
-
-\subsection{Movement Mechanisms}
+\subsection{Movement Mechanisms} \label{move}
 In this section we will go over the mechanisms which dictate how our agents move throughout the environment.  Traditionally, in an environment where an agent is moving towards a goal, each agent's path to that goal will be calculated individually through the environment\footnote{http://www.cs.us.es/~fsancho/?e=131}.  In our situation we implemented a simplified pathing algorithm which instead calculates global weights for each environmental patch in which all agents flow to the lowest weight.  These weights grow in relation to their distance to the safety patches and as agents move over them by imparting their own weight to the patch.  This simplified pathing allows for much quicker computation of routes and therefor quicker executions of simulations for our experiments.
 
 The following will provide an overview of how the weighting mechanisms work and the choices agents make on whether to move.  The foundation of movement is the weight of a given patch, or the cost as described below. The cost metric is defined as the distance from the patch to be considered $P$ and the nearest safety patch $P_s$.  While there may be many safety patches, for the sake of brevity, we assume that $P_s$ is resolved \emph{a priori} as the closest.  We can confidently declare this since the weighting implementation iteratively grows from each safety patch such that when it reaches a candidate patch it has been reached by the closest one.  This distance cost is also modified by the presence of an agent, $Agent(P)$, on that patch.  This agent's weight, $A_w$, is configurable by the user.  Of important note is that the weight is calculated independently of agents that may reside on patches between a patch and the safety patch.  This is the simplified pathing mechanism at work in that only local environment calculations are conducted.
@@ -250,25 +253,25 @@ This section will describe the different layout based experiments.  How we set t
 
 \begin{figure*}[ht]
   \centering
-  \begin{minipage}[b]{\linewidth}
-    \includegraphics[width=0.15\textwidth]{./figures/exit_dims_2_a.png}
-    \includegraphics[width=0.15\textwidth]{./figures/exit_dims_2_b.png}
-    \includegraphics[width=0.15\textwidth]{./figures/exit_dims_2_c.png}
+  \begin{minipage}[b]{.75\linewidth}
+    \includegraphics[width=0.3\textwidth]{./figures/exit_dims_2_a.png}
+    \includegraphics[width=0.3\textwidth]{./figures/exit_dims_2_b.png}
+    \includegraphics[width=0.3\textwidth]{./figures/exit_dims_2_c.png}
   \end{minipage}
-  \begin{minipage}[b]{\linewidth}
-    \includegraphics[width=0.15\textwidth]{./figures/exit_dims_4_a.png}
-    \includegraphics[width=0.15\textwidth]{./figures/exit_dims_4_b.png}
-    \includegraphics[width=0.15\textwidth]{./figures/exit_dims_4_c.png}
+  \begin{minipage}[b]{.75\linewidth}
+    \includegraphics[width=0.3\textwidth]{./figures/exit_dims_4_a.png}
+    \includegraphics[width=0.3\textwidth]{./figures/exit_dims_4_b.png}
+    \includegraphics[width=0.3\textwidth]{./figures/exit_dims_4_c.png}
   \end{minipage}
-  \begin{minipage}[b]{\linewidth}
-    \includegraphics[width=0.15\textwidth]{./figures/exit_dims_6_a.png}
-    \includegraphics[width=0.15\textwidth]{./figures/exit_dims_6_b.png}
-    \includegraphics[width=0.15\textwidth]{./figures/exit_dims_6_c.png}
+  \begin{minipage}[b]{.75\linewidth}
+    \includegraphics[width=0.3\textwidth]{./figures/exit_dims_6_a.png}
+    \includegraphics[width=0.3\textwidth]{./figures/exit_dims_6_b.png}
+    \includegraphics[width=0.3\textwidth]{./figures/exit_dims_6_c.png}
   \end{minipage}
-  \begin{minipage}[b]{\linewidth}
-    \includegraphics[width=0.15\textwidth]{./figures/exit_dims_8_a.png}
-    \includegraphics[width=0.15\textwidth]{./figures/exit_dims_8_b.png}
-    \includegraphics[width=0.15\textwidth]{./figures/exit_dims_8_c.png}
+  \begin{minipage}[b]{.75\linewidth}
+    \includegraphics[width=0.3\textwidth]{./figures/exit_dims_8_a.png}
+    \includegraphics[width=0.3\textwidth]{./figures/exit_dims_8_b.png}
+    \includegraphics[width=0.3\textwidth]{./figures/exit_dims_8_c.png}
   \end{minipage}
   \caption{Exit Dimensions Maps}
 \end{figure*}
