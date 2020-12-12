@@ -55,12 +55,11 @@ Our simulations utilized the NetLogo modeling environment \footnote{https://ccl.
   \caption{Evac Sim UI implemented in NetLogo}
 \end{figure}
 
-One of the foundations of our simulation efforts was the ability to run experiments on a variety of maps, which mostly incrementally changed a key feature.  In order to accomplish this we implemented a custom map loader in NetLogo such that we could quickly develop custom layouts externally and procedurally load them at experiment time \ref{expEnv}.  The method of loading maps involves reading a file in line by  line which reflected a NetLogo list.  This list was then used to sequentially set the patch to the corresponding state, be it safety patch, grass, floor, or wall.  The code for loading a map and an sample of a map file are provided below.
+One of the foundations of our simulation efforts was the ability to run experiments on a variety of maps, which mostly incrementally changed a key feature.  In order to accomplish this we implemented a custom map loader in NetLogo such that we could quickly develop custom layouts externally and procedurally load them at experiment time \ref{expEnv}.  The method of loading maps involves reading a file in line by  line which reflected a NetLogo list.  This list was then used to sequentially set the patch to the corresponding state, be it safety patch, grass, floor, or wall.  The code for loading a map is provided below.
 
 
 
-\begin{lstlisting}[language=lisp, caption={Map loading procedure in NetLogo},captionpos=b]
-
+\begin{lstlisting}[language=lisp, caption={Map loading procedure in NetLogo},captionpos=b, frame=single]
 to load-map
   file-open map-file
   let row  ydim
@@ -68,17 +67,16 @@ to load-map
   [
     ; read each line in	
     let linestr file-read-line
-
     ; load line into list variable
     let line read-from-string linestr
     let col  0 - xdim
-
-    ; for each element in list set the patch color to a value
-    ; from a table of color mappings
-    foreach line [
-      
+    ; for each element in list set the patch color 
+    ; to a value from a table of color mappings
+    foreach line [      
       [x] ->
-      ask patch col row [ set pcolor table:get map_table x ]
+      ask patch col row [ 
+            set pcolor table:get map_table x 
+      ]
       set col (col + 1)
     ]
   set row (row - 1)
@@ -87,7 +85,9 @@ to load-map
 end
 \end{lstlisting}
 
-\begin{lstlisting}[language=lisp, caption={Example map file, 3 rows},captionpos=b]
+Users may create map files in a separate text editor. Each cell reflects the desired patch state in the world, where 3 = safety, 0 = grass, 1 = floor, and 2 = wall. An important note is the beginning and ending brackets '[ ]'.  These are necessary for NetLogo to correctly load each line as a list structure from the line's string representation.  Below is an example portion of a map file.  
+
+\begin{lstlisting}[language=lisp, caption={Example map file, 3 rows},captionpos=b, frame=single]
 [3 0 0 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 0 0]
 [3 0 0 1 1 1 1 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 0 0]
 [3 0 0 2 1 1 1 2 1 1 1 1 2 1 1 1 1 1 2 1 1 1 1 1 2 0 0]
