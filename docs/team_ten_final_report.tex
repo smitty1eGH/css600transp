@@ -1,11 +1,12 @@
 \documentclass[12pt,letterpaper]{article}
 
+\usepackage{listings}
 
 \usepackage{hyperref}
 \usepackage{amsmath}
 \usepackage{listings}
 \usepackage{graphicx}
-
+\usepackage{textcomp}
 \usepackage{subfig}
 
 \begin{document}
@@ -23,7 +24,8 @@ might play out. This research uses NetLogo to vary floor plans and capture the
 average escape times for the agents.
 \end{abstract}
 \section {Introduction}
-\section {Background}
+Talk about problem background
+ 
 \subsection{Previous Work}
 The literature abounds with previous efforts in this area.
 \cite{almeidaCrowdSimulationModeling2013} 
@@ -33,27 +35,70 @@ The literature abounds with previous efforts in this area.
 \cite{zhouSimulationPedestrianEvacuation2019}
 
 This paper is key as it is extremely similar and a NetLogo implementation.  We should know this paper and incorporate into our paper \cite{prioritEvac}
-
+\subsection {Approaches}
+Talk about various modeling approaches to this problem   . mainly this paper \cite{almeidaCrowdSimulationModeling2013} 
 \section {Methodology}
 
-Our main goal was to hone in on the narrow situations in which we can detect patterns given our constrained simulation environment.  Due to the constraints of the  NetLogo environment, described further below, we are force to simplify various aspects of our model.  These simplifications though, provide us the opportunity to explore where emergent properties may arise \ref{emergentBehavior}.
+Our main goal was to hone in on the narrow situations in which we can detect patterns given our constrained simulation environment.  Due to the constraints of the  NetLogo environment, described further below, we are force to simplify various aspects of our model.  These simplifications though, provide us the opportunity to explore where emergent properties may arise in our agent's behavior\ref{emergentBehavior}.
 
 
 %The simulation itself is straightforward, and makes novel use of the Behavior Space facility, which we wrapped in a Python driver making use of pytest which is laid out in scripts/tests/test\_fire\_sim.py
 \subsection{Environment}
-This section talks about the simulation environment.  therefor netlogo, the patch world, and loading patches
 
-This paper talks about procedurally generating worlds \cite{mirahmadiNovelAlgorithmRealtime2012}
+Our simulations utilized the NetLogo modeling environment \footnote{https://ccl.northwestern.edu/netlogo/}.  NetLogo was developed to provide an easy environment to simulate multi-agent models for educators and researchers with non programming backgrounds \cite{netlogo}.  The environment is made up of patches and agents.  The patches can be thought of the properties of the world which are accessed per cell in a grid layout.  The agents are objects that can interact with the world as well as each other.  While both agents and patches can maintain their own states, only agents can move around through the world and so can change their relationship to patches.
 
 
-\begin{figure}
+\begin{figure}[!h]
+  \centering
   \includegraphics[width=\linewidth]{./figures/fire_sim_ui.png}
-  \caption{FireSim UI}
+  \caption{Evac Sim UI implemented in NetLogo}
 \end{figure}
 
+One of the foundations of our simulation efforts was the ability to run experiments on a variety of maps, which mostly incrementally changed a key feature.  In order to accomplish this we implemented a custom map loader in NetLogo such that we could quickly develop custom layouts externally and procedurally load them at experiment time \ref{expEnv}.  The method of loading maps involves reading a file in line by  line which reflected a NetLogo list.  This list was then used to sequentially set the patch to the corresponding state, be it safety patch, grass, floor, or wall.  The code for loading a map and an sample of a map file are provided below.
 
 
-need to talk about patch parameters
+
+\begin{lstlisting}[language=lisp, caption={Map loading procedure in NetLogo},captionpos=b]
+
+to load-map
+  file-open map-file
+  let row  ydim
+  while [not file-at-end?]
+  [
+    ; read each line in	
+    let linestr file-read-line
+
+    ; load line into list variable
+    let line read-from-string linestr
+    let col  0 - xdim
+
+    ; for each element in list set the patch color to a value
+    ; from a table of color mappings
+    foreach line [
+      
+      [x] ->
+      ask patch col row [ set pcolor table:get map_table x  ]
+      set col (col + 1)
+    ]
+  set row (row - 1)
+  ]
+  file-close
+end
+\end{lstlisting}
+
+\begin{lstlisting}[language=lisp, caption={Example map file, 3 rows},captionpos=b]
+[3 0 0 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 0 0]
+[3 0 0 1 1 1 1 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 0 0]
+[3 0 0 2 1 1 1 2 1 1 1 1 2 1 1 1 1 1 2 1 1 1 1 1 2 0 0]
+\end{lstlisting}
+
+Since our map needs were constrained to the few experiments that we planned to execute we did not implement a procedural way to generate maps.  This functionality, while one of our stretch goals, had to be dropped in the interests of deadlines.  If one were to expand upon our work then there are number of mechanisms to generate layouts \cite{mirahmadiNovelAlgorithmRealtime2012} such that further experiments could be devised without the human intensive effort of generating maps by hand.  Such possibilities include evaluations of optimal floor plans through a guided search or ablative studies on the subtle modifications of ideal floor plans.
+
+need to talk about patch parameters and agent parameters
+
+
+
+
 \subsection{Movement Mechanisms}
 In this section we will go over the mechanisms which dictate how our agents move throughout the environment.  Traditionally, in an environment where an agent is moving towards a goal, each agent's path to that goal will be calculated individually through the environment\footnote{http://www.cs.us.es/~fsancho/?e=131}.  In our situation we implemented a simplified pathing algorithm which instead calculates global weights for each environmental patch in which all agents flow to the lowest weight.  These weights grow in relation to their distance to the safety patches and as agents move over them by imparting their own weight to the patch.  This simplified pathing allows for much quicker computation of routes and therefor quicker executions of simulations for our experiments.
 
@@ -115,7 +160,7 @@ The grid world, while maybe too much of a simplification of real world dynamics,
 
 This should be about the underlying approach to devising and goals of our experiments
 
-\subsection{Experimental Environment}
+\subsection{Experimental Environment} \label{expEnv}
 This section describes our experiment harness that we built using NetLogo's
 Behavior Space functionality.
 
