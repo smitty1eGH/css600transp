@@ -1,4 +1,5 @@
 from csv import DictReader
+import itertools
 import keyword
 from pathlib import Path
 import re
@@ -82,7 +83,7 @@ def people():
     return f'<enumeratedValueSet variable="People"> <value value="{people}"/> </enumeratedValueSet>'
 
 @pytest.fixture
-def people():
+def people_interp():
     """
     <enumeratedValueSet variable="People"> <value value="500"/> </enumeratedValueSet>
 
@@ -126,6 +127,7 @@ def people_speed_interp():
     <enumeratedValueSet variable="Medium"> <value value=""/> </enumeratedValueSet>
     <enumeratedValueSet variable="Fast"> <value value=""/> </enumeratedValueSet>
     """
+
     return f"""<enumeratedValueSet variable="Slow"> <value value="%s"/> </enumeratedValueSet>
     <enumeratedValueSet variable="Medium"> <value value="%s"/> </enumeratedValueSet>
     <enumeratedValueSet variable="Fast"> <value value="%s"/> </enumeratedValueSet>
@@ -328,6 +330,7 @@ def netlogo_args():
         "model": "/home/smitty/proj/css600transp/css600transp/FireSim.nlogo",
         "setup-file": "setup-file.xml",
         "experiment": "FireSim",
+        "threads": "1",
         "table": "-",
     }
 
@@ -355,7 +358,7 @@ def sess():
 
 @pytest.fixture
 def sess_file():
-    """Return a memory-only session instance"""
+    """Return a filesystem connection"""
     engine = create_engine("sqlite:///fire_sim.db", echo=True)
     Base.metadata.create_all(engine)
     sess = sessionmaker(bind=engine)()
@@ -503,32 +506,60 @@ def test_fire_sim_persist_interp(
             add_commit(sess_file, x)
             sess_file.add(x)
 
-@pytest.mark.skip
+#@pytest.mark.skip
 def test_fire_sim_chokepoint(
     netlogo_sh, netlogo_args, sess_file, get_beshp_xml_interp2, result_field_map
 ):
+    def generate_speed_distro():
+        '''Calculate a vector of distribution ranges, which we will then
+             take as combinations against slow, medium and fast people.
+
+           VBAR=(s+m+f)/3
+           3*33-(s+m)=f
+           99-(a[0]+a[1])=f
+        '''
+        VBAR  = 100 
+        MAX_I = 35
+        MAX_X = 61
+        j = (i for i in range(4,MAX_I,4))
+        y = (x for x in range(5,MAX_X,5))
+
+        out0 = []
+        for a in itertools.product(j,y):
+            b = VBAR - a[0] - a[1]
+            assert b > 0
+            out0.append([a[0],a[1],b])
+
+        return out0
+
     START_DATA = 8
     ELIDE_LAST = -1
+
+    people = (i for i in range(100,401,100))
 
     args = [netlogo_sh]
     for k, v in netlogo_args.items():
         args.append(f"--{k}")
         args.append(v)
 
-    with open("setup-file.xml", "w") as f:
-        f.write(get_beshp_xml_interp2 % 'chokepoint.map')
+    for p in people:
+        print(f'{people=}')
+        for g in generate_speed_distro():
+            with open("setup-file.xml", "w") as f:
+                f.write(get_beshp_xml_interp2 % ('chokepoint.map',p,g[0],g[1],g[2]))
 
-    result = subprocess.run(args, capture_output=True)
-    lines = f"{result.stdout=}".split("\\n")[START_DATA:]
+            result = subprocess.run(args, capture_output=True)
+            lines = f"{result.stdout=}".split("\\n")[START_DATA:]
 
-    fnames = result_field_map.values()
-    dr = DictReader(lines[:ELIDE_LAST], fieldnames=fnames, restkey="restkey")
+            fnames = result_field_map.values()
+            dr = DictReader(lines[:ELIDE_LAST], fieldnames=fnames, restkey="restkey")
 
-    for line in dr:
-        if "restkey" in line:
-            del line["restkey"]
-        fix_bools(line)
+            for line in dr:
+                if "restkey" in line:
+                    del line["restkey"]
+                fix_bools(line)
 
-        x = ResultsFireSim(**line)
-        add_commit(sess_file, x)
-        sess_file.add(x)
+                x = ResultsFireSim(**line)
+                add_commit(sess_file, x)
+                sess_file.add(x)
+

@@ -4,9 +4,9 @@
     <go>go</go>
     <exitCondition>not any? turtles</exitCondition>
     <metric>mean-escape-time</metric>
-    <enumeratedValueSet variable="map-file"> <value value="&quot;exit_dims_8_c.map&quot;"/> </enumeratedValueSet><enumeratedValueSet variable="People"> <value value="500"/> </enumeratedValueSet><enumeratedValueSet variable="person_path_weight"> <value value="2.0"/> </enumeratedValueSet><enumeratedValueSet variable="Slow"> <value value="100"/> </enumeratedValueSet>
-    <enumeratedValueSet variable="Medium"> <value value="0"/> </enumeratedValueSet>
-    <enumeratedValueSet variable="Fast"> <value value="0"/> </enumeratedValueSet>
+    <enumeratedValueSet variable="map-file"> <value value="&quot;chokepoint.map&quot;"/> </enumeratedValueSet><enumeratedValueSet variable="People"> <value value="100"/> </enumeratedValueSet><enumeratedValueSet variable="person_path_weight"> <value value="2.0"/> </enumeratedValueSet><enumeratedValueSet variable="Slow"> <value value="4"/> </enumeratedValueSet>
+    <enumeratedValueSet variable="Medium"> <value value="5"/> </enumeratedValueSet>
+    <enumeratedValueSet variable="Fast"> <value value="91"/> </enumeratedValueSet>
     <enumeratedValueSet variable="display-path-cost?"> <value value="false"/> </enumeratedValueSet><enumeratedValueSet variable="add-person-spacing?"> <value value="true"/> </enumeratedValueSet><enumeratedValueSet variable="people-wait?"> <value value="true"/> </enumeratedValueSet><enumeratedValueSet variable="equal-diagonal-weight?"> <value value="true"/> </enumeratedValueSet><enumeratedValueSet variable="Slow-Speed"> <value value="0.3"/> </enumeratedValueSet>
     <enumeratedValueSet variable="Medium-Speed"> <value value="0.75"/> </enumeratedValueSet>
     <enumeratedValueSet variable="Fast-Speed"> <value value="1.0"/> </enumeratedValueSet> <enumeratedValueSet variable="set-fire?"> <value value="false"/> </enumeratedValueSet><enumeratedValueSet variable="Fire_Speed"> <value value="50"/> </enumeratedValueSet>
