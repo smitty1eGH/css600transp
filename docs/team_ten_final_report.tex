@@ -285,7 +285,7 @@ This section will cover our experiments based on modifying the agent's speed dis
 
 
 
-\begin{figure}[!tbp]
+\begin{figure}[!htbp]
   \centering
   \subfloat[Evacuation with no herding ]{\includegraphics[width=0.4\textwidth]{./figures/Herding1.png}\label{fig:f1}}
   \hfill
@@ -293,7 +293,7 @@ This section will cover our experiments based on modifying the agent's speed dis
   \caption{Herding behavior replicated through residual escape pathing from agents that never considered the alternative route.}
 \end{figure}
 
-\begin{figure}[!tbp]
+\begin{figure}[!htbp]
   \centering
   \subfloat[No clogging due to people not blocking paths ]{\includegraphics[width=0.4\textwidth]{./figures/clogging1_clean.png}\label{fig:f1}}
   \hfill
@@ -441,11 +441,13 @@ More exits is better, especially if not on the same side, but there is not a
 linear increase with additional exits.
 
 \begin{figure}
-  \includegraphics[width=\linewidth]{./figures/chokepoint_graph.png}
+  \centering
+  \includegraphics[width=.9\linewidth]{./figures/chokepoint_graph.png}
   \caption{Chokepoint Results}
 \end{figure}
 \begin{figure}
-  \includegraphics[width=\linewidth]{./figures/exit_dims_graph.png}
+  \centering
+  \includegraphics[width=.75\linewidth]{./figures/exit_dims_graph.png}
   \caption{Exit Dimensions Overview/Results}
 \end{figure}
 
@@ -513,6 +515,15 @@ c   &  231.4 & 250.0 & 231.0 & 242.7 \\
 
 \section{Future Work}
 Here we can expand on improvements we would make, additional features we could add (smoke multi-floor etc.), additional experiments, and porting to other environments
+
+Add procedurally generated maps as mentioned in \ref{Environment}
+
+add multilevel or 3d component
+
+add smoke and fire spread
+
+port to mason \footnote{https://cs.gmu.edu/~eclab/projects/mason/} or Mesa \footnote{https://mesa.readthedocs.io/en/master/tutorials/intro\_tutorial.html}
+
 \section {Conclusion}
 
 The simpler the layout, with more and diversified exit options, the more optimal
