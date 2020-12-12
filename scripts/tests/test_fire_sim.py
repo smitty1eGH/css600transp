@@ -516,7 +516,7 @@ def test_fire_sim_chokepoint(
 
            VBAR=(s+m+f)/3
            3*33-(s+m)=f
-           99-(a[0]+a[1])=f
+           100-(a[0]+a[1])=f
         '''
         VBAR  = 100 
         MAX_I = 35
@@ -535,31 +535,34 @@ def test_fire_sim_chokepoint(
     START_DATA = 8
     ELIDE_LAST = -1
 
-    people = (i for i in range(100,401,100))
-
     args = [netlogo_sh]
     for k, v in netlogo_args.items():
         args.append(f"--{k}")
         args.append(v)
 
-    for p in people:
-        print(f'{people=}')
-        for g in generate_speed_distro():
-            with open("setup-file.xml", "w") as f:
-                f.write(get_beshp_xml_interp2 % ('chokepoint.map',p,g[0],g[1],g[2]))
+   #for p in range(100,501,100):
+       # for c,g in enumerate(generate_speed_distro()):
+       #     with open("setup-file.xml", "w") as f:
+       #         out=get_beshp_xml_interp2 % ('chokepoint.map',p,g[0],g[1],g[2])
+       #         f.write(out)
+       #         print(f'{c=}\n{out}\n\n')
+    for c,slow in enumerate(range(1,101,5)):
+        with open("setup-file.xml", "w") as f:
+            out=get_beshp_xml_interp2 % ('chokepoint.map',500,100-slow,slow,0)
+            f.write(out)
+            print(f'{c=}\n{out}\n\n')
+        result = subprocess.run(args, capture_output=True)
+        lines = f"{result.stdout=}".split("\\n")[START_DATA:]
 
-            result = subprocess.run(args, capture_output=True)
-            lines = f"{result.stdout=}".split("\\n")[START_DATA:]
+        fnames = result_field_map.values()
+        dr = DictReader(lines[:ELIDE_LAST], fieldnames=fnames, restkey="restkey")
 
-            fnames = result_field_map.values()
-            dr = DictReader(lines[:ELIDE_LAST], fieldnames=fnames, restkey="restkey")
+        for line in dr:
+            if "restkey" in line:
+                del line["restkey"]
+            fix_bools(line)
 
-            for line in dr:
-                if "restkey" in line:
-                    del line["restkey"]
-                fix_bools(line)
-
-                x = ResultsFireSim(**line)
-                add_commit(sess_file, x)
-                sess_file.add(x)
+            x = ResultsFireSim(**line)
+            add_commit(sess_file, x)
+            sess_file.add(x)
 
