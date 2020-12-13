@@ -27,15 +27,7 @@ In order to understand pedestrian evacuation dynamics, one must have the flexibi
 Our work utilizes the NetLogo framework to create an environment where we can run evacuation simulations.  NetLogo itself is meant for non technical practitioners or educational cases and we developed a number of key features, from loading various maps to developing an experimentation framework, that we hope are transferable to other NetLogo simulation environments.  Due to this simplified nature of NetLogo we had to make certain trade-offs with our implementation which this paper goes over in depth.  The constraint of our modeling environment drove the experiments that we chose in that the simulations are meant to explore discreet components or behaviors encountered with pedestrian evacuations instead of compound ones such as dynamic pedestrian decision making.  
 
 
-%There were three aspects of evacuation we investigated. The first is choke points, and the
-%length of the passage to the exit. Second, the number and placement of exits,
-%and finally, speed and number of agent variations for a choke point map.
-%The physical aspects of the maps themselves were a major variable in the model,
-%as well as the number and speed of the Agents.
-%
-%BehaviorSpace was crucial to managing the system, although some aspects, like
-%varying maps, were more easily implemented using the netlogo-headless.sh
-%facility, and having a driver script produce the setup-file.xml input.
+%There were three aspects of evacuation we investigated. The first is choke points, and the length of the passage to the exit. Second, the number and placement of exits, and finally, speed and number of agent variations for a choke point map.  The physical aspects of the maps themselves were a major variable in the model, as well as the number and speed of the Agents.  BehaviorSpace was crucial to managing the system, although some aspects, like varying maps, were more easily implemented using the netlogo-headless.sh facility, and having a driver script produce the setup-file.xml input.
  
 \subsection{Previous Work}
 The literature abounds with previous efforts in this area. This project incorporated ideas from a variety of sources in the literature, from general crowd modeling reminders, to requirements and fully implemented models. A good overview is, \cite{almeidaCrowdSimulationModeling2013}, which makes they point that there are three points for simulating: to generate observable phenomena, to test theories, and to test design strategies. They note that people tend to follow the path of least resistance while moving. The stress of emergencies leads to herding and flocking behavior, to the point of missing optimal escape routes, or engaging in inefficient "arching" to get through an escape, which is one of our avenues of inquiry. Layouts matter too, as brought out by \cite{mirahmadiNovelAlgorithmRealtime2012}, which points out that real-time generation of floor plans that are realistic is vital for systems such as  games. The offer a realistic house floorplan algorithm. This project focused more on office evacuation systems than residential applications.
@@ -334,7 +326,7 @@ The final group of experiments that we evaluated were situations where we attemp
 
 The first behavior we sought to mimic was the herding behavior.  Herding is caused by irrational behavior in emergency situations that causes people to flock together \cite{almeidaCrowdSimulationModeling2013}.  For our situation, since we don't have the complex agent behavior to recreate this, we had to rely on map layouts that may evoke a similar pattern to herding.
 
-\begin{figure}[!htbp]
+\begin{figure}[!ht]
   \centering
   \subfloat[Evacuation with no herding ]{\includegraphics[width=0.35\textwidth]{./figures/Herding1.png}\label{fig:f1}}
   \hfill
@@ -347,7 +339,7 @@ The layout that we found to replicate herding behavior is one that has multiple 
 The next behavior we tried to replicate was that of clogging.  This phenomena arises when people block a passageway from each other while waiting for others to pass through \cite{almeidaCrowdSimulationModeling2013}.  We sought to replicate this behavior by adding parameters that makes agents increase distance between each other as described here \ref{agentWeight} and here \ref{cost}.  The weight of a given agent is the cost that is directly added to a patches weight.  This by itself causes a majority of avoidance behavior that we see. The person spacing parameter, when turned on, increases a patches weight if it is next to a patch with a neighbor.  This makes patches next to people slightly more expensive to move to than other patches.  
 
 
-\begin{figure}[!htbp]
+\begin{figure}[!ht]
   \centering
   \subfloat[No clogging due to people not blocking paths ]{\includegraphics[width=0.35\textwidth]{./figures/clogging1_clean.png}\label{fig:f1}}
   \hfill
@@ -356,20 +348,24 @@ The next behavior we tried to replicate was that of clogging.  This phenomena ar
   \label{clogging}
 \end{figure}
 
-As seen in \ref{clogging} when there is no person weight, agents can follow the same path and move on top of each other.  As we turn the weight up we start to get clogging behavior.  At a certain point agents too near each other on a patch increase the weight to a point where agents must seek other paths.  This is analogous to the clogging behavior in that agents must weight for people to clear out when constrained from other alternative paths.
+As seen in \ref{clogging} when there is no person weight, agents can follow the same path and move on top of each other.  As we turn the weight up we start to get clogging behavior.  At a certain point agents too near each other on a patch increase the weight to a point where agents must seek other paths.  This is analogous to the clogging behavior in that agents must weight for people to clear out when constrained from other alternative paths.  Of interesting side note, usually with clogging comes arching behavior, or the formation of a semi circle around the exit as people evenly distribute.  Our model shows the formation of a triangle which is most likely the side effect of the distance calculations in a grid world versus Euclidean distance in a point world. 
 
 By exploring where we can and cannot replicate these emergent behaviors we can also explore the limitations of our modeling environment.  While herding highlights a limitation of our model, clogging is replicated fairly well in our simulations.  Other behaviors may necessitate the expansion of stateful information that agents maintain or the addition of more complex pathing solutions. 
 
 \section{Results}
 
-The results showed that adding more length to the chokepoint pipeline did not
-result in a linear increase in the exit time. Rather, the Actors resembled a
-fluid dynamics problem, reaching a uniform flow and making good their escape.
+Talk about the overall results that we found
 
-More exits is better, especially if not on the same side, but there is not a
-linear increase with additional exits.
+%The results showed that adding more length to the chokepoint pipeline did not
+%result in a linear increase in the exit time. Rather, the Actors resembled a
+%fluid dynamics problem, reaching a uniform flow and making good their escape.
+%
+%More exits is better, especially if not on the same side, but there is not a
+%linear increase with additional exits.
 
 \subsection{Choke Point Results}
+
+ What do these results mean?
 
 \begin{figure} [!ht]
   \centering
@@ -379,13 +375,20 @@ linear increase with additional exits.
 \end{figure}
 
 \subsection{Exit Dimensions Results}
+
+ What do these results mean?
+
 \begin{figure} [!ht]
   \centering
   \includegraphics[width=.75\linewidth]{./figures/exit_dims_graph.png}
   \caption{Exit dimensions results}
   \label{fig:exitdimsResults}
 \end{figure}
+
 \subsection{Agent Speed Distribution Results}
+
+ What do these results mean?
+
 \begin{figure} [!ht]
   \centering
   \includegraphics[width=.75\linewidth]{./figures/speed_dist_test.png}
