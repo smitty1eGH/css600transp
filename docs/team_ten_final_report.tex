@@ -147,6 +147,7 @@ equal-diagonal-weight?=
 	max(|x_1-x_2|, |y_1-y_2|), & True \\
 	|x_1-x_2|+ |y_1-y_2|, & False
 \end{cases}
+\label{cost}
 \end{align}
 
 Now that we have our patch weights to inform our movement decisions it is time to actually make the decision of where to move to.  For this choice we simply choose the neighbor patch that has the lowest cost, where the neighbors are defined as the 4 patches above, below, right, and left of our current patch.  Once we know which patch is lowest we take the vector at that patch and multiply it by our agent's speed.  So, for a given agent $A$ the vector to move is given by the vector of the lowest cost neighbor patch times our agent's speed. 
@@ -179,6 +180,7 @@ add-person-spacing?= \nonumber  \\
 	cost(P) + \sum Agent(neighbors_4(P)) * A_w / 10, & True \\
 	cost(P), & False
 \end{cases}
+\label{agentWeight}
 \end{align}
 
 The grid world, while maybe too much of a simplification of real world dynamics, enables us to implement complex behaviors through simple straightforward algorithms.  These complex behaviors have enabled us to conduct a few interesting experiments described in the following sections.
@@ -317,7 +319,7 @@ Our next layout based experiment evaluates how exit dimension size and place imp
     \includegraphics[width=0.24\textwidth]{./figures/exit_dims_8_c.png}
   \end{minipage}
 
-  \caption{Exit Dimensions Maps}
+  \caption{Exit dimensions maps}
 \end{figure*}
 
 Similar to the choke points experiment, we captured the mean escape time for a number of runs on each map, with the results provided below \ref{fig:exitdimsResults}.  In these experiments we hoped to gain some insight, when dimensions are held the same, can exit placements be beneficial to escaping pedestrians.  This is why the map itself is an empty room, so that the only layout impact we have is the size and placement of the exits.
@@ -343,7 +345,10 @@ The first behavior we sought to mimic was the herding behavior.  Herding is caus
   \caption{Herding behavior replicated through residual escape pathing from agents that never considered the alternative route.}
 \end{figure}
 
-The layout that we found to replicate herding behavior is one that has multiple exits with different distances to the safety patch.  As a residual of the pathing algorithm, at a certain point every agent who who would flow out of one of those exits has left while the other one still has evacuating agents.  While these agents could use the alternative exit, the flow of patch weights dictate that they continue on their current path.  This commitment to a path even if detrimental is the same observed behavior in herding.  But, since this only arises in specific map layouts in our simulation, this is not an viable area for further study with our models. 
+The layout that we found to replicate herding behavior is one that has multiple exits with different distances to the safety patch.  As a residual of the pathing algorithm, at a certain point every agent who who would flow out of one of those exits has left while the other one still has evacuating agents.  While these agents could use the alternative exit, the flow of patch weights dictate that they continue on their current path.  This commitment to a path even if detrimental is the same observed behavior in herding.  But, since this only arises in specific map layouts in our simulation, this is not a viable area for further study with our models. 
+
+The next behavior we tried to replicate was that of clogging.  This phenomena arises when people block a passageway from each other while waiting for others to pass through \cite{almeidaCrowdSimulationModeling2013}.  We sought to replicate this behavior by adding parameters that makes agents increase distance between each other as described here \ref{agentWeight} and here \ref{cost}.  The weight of a given agent is the cost that is directly added to a patches weight.  This by itself causes a majority of avoidance behavior that we see. The person spacing parameter, when turned on, increases a patches weight if it is next to a patch with a neighbor.  This makes patches next to people slightly more expensive to move to than other patches.  
+
 
 \begin{figure}[!htbp]
   \centering
@@ -351,12 +356,12 @@ The layout that we found to replicate herding behavior is one that has multiple 
   \hfill
   \subfloat[Clogging due to increased weight per person on a patch]{\includegraphics[width=0.35\textwidth]{./figures/clogging2_clean.png}\label{fig:f2}}
   \caption{Clogging behavior replicated through a weight attribute calculated for each patch an agent is on as well as a configurable additional weight for each agent's neighboring patch. }
+  \label{clogging}
 \end{figure}
 
+As seen in \ref{clogging} when there is no person weight, agents can follow the same path and move on top of each other.  As we turn the weight up we start to get clogging behavior.  At a certain point agents too near each other on a patch increase the weight to a point where agents must seek other paths.  This is analogous to the clogging behavior in that agents must weight for people to clear out when constrained from other alternative paths.
 
-if we can show that we achieve similar results even though we use a simplified pathing algorithm and abm environment i think that would be insightful
-
-
+By exploring where we can and cannot replicate these emergent behaviors we can also explore the limitations of our modeling environment.  While herding highlights a limitation of our model, clogging is replicated fairly well in our simulations.  Other behaviors may necessitate the expansion of stateful information that agents maintain or the addition of more complex pathing solutions. 
 
 \section{Results}
 
@@ -367,20 +372,20 @@ fluid dynamics problem, reaching a uniform flow and making good their escape.
 More exits is better, especially if not on the same side, but there is not a
 linear increase with additional exits.
 
-\begin{figure} 
+\begin{figure} [!ht]
   \centering
   \includegraphics[width=.9\linewidth]{./figures/chokepoint_graph.png}
   \caption{Choke point results}
   \label{fig:chokepointResults}
 \end{figure}
-\begin{figure}
+\begin{figure} [!ht]
   \centering
   \includegraphics[width=.75\linewidth]{./figures/exit_dims_graph.png}
   \caption{Exit dimensions results}
   \label{fig:exitdimsResults}
 \end{figure}
 
-\begin{figure}
+\begin{figure} [!ht]
   \centering
   \includegraphics[width=.75\linewidth]{./figures/speed_dist_test.png}
   \caption{Agent speed distribution results}
