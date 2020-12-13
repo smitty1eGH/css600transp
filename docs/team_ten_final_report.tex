@@ -17,17 +17,14 @@
 \maketitle
 
 \begin{abstract}
-Simulating large scale evacuation is cost-prohibitive in terms of realism and
-required man-hours. This model, creatively called ``Evac Sim'', provides an
-Agent-based simulation that supports choosing a floor plan,
-modeling behaviors and capturing some flavor of how a real evacuation
-might play out. This research uses NetLogo and its BehaviorSpace facility to capture the
-average escape times for the agents, focusing on the difference between two
-speeds of agents, slow and medium, as  the number of people was increased, the
-length of the passage to depart increased, the number of exits went up, and also
-at a single choke point bunching.
+Simulating large scale evacuation is cost-prohibitive in terms of realism and required man-hours. This model, creatively called ``Evac Sim'', provides an Agent-based simulation that supports choosing a floor plan, modeling behaviors and capturing some flavor of how a real evacuation might play out. This research uses NetLogo and its BehaviorSpace facility to create our evacuation environment and execute the experiments.  These models should provide a foundation for further exploration of pedestrian movement mechanics.
+%average escape times for the agents, focusing on the difference between two speeds of agents, slow and medium, as  the number of people was increased, the length of the passage to depart increased, the number of exits went up, and also at a single choke point bunching.
 \end{abstract}
 \section {Introduction}
+
+In order to understand pedestrian evacuation dynamics, one must have the flexibility to not only run multiple experiments in a variety of physical layouts but to control those pedestrian's behaviors through that environment.  These requirements make running such experiments in the real world prohibitive.  With the emergence of agent based simulation frameworks and the parallel increase of computation power not only are digital simulations a viable alternative they are becoming the main mechanism to explore these problems.
+
+Our work utilizes the NetLogo framework to create an environment where we can run evacuation simulations.  NetLogo itself is meant for non technical practitioners or educational cases and we developed a number of key features from loading various maps to developing an experimentation framework that we hope are transferable to other NetLogo simulation environments.  Due to this simplified nature of NetLogo we had to make certain trade-offs with our implementation which this paper goes over in depth.  This constraint drove the experiments that we chose in that the simulations are meant to explore discreet components or behaviors encountered with pedestrian evacuations instead of compound behaviors.  
 
 
 %There were three aspects of evacuation we investigated. The first is choke points, and the
