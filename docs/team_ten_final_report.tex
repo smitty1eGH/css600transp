@@ -62,6 +62,8 @@ One of the foundations of our simulation efforts was the ability to run experime
 \begin{lstlisting}[language=lisp, caption={Map loading procedure in NetLogo},captionpos=b, frame=single]
 to load-map
   file-open map-file
+  ; xdim and ydim are half the dimensions
+  ; in width and height
   let row  ydim
   while [not file-at-end?]
   [
