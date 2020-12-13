@@ -255,7 +255,7 @@ The layout of an environment is probably the largest factor that determines evac
 
 Our choke point experiments seek understand how choke points impact evacuation.  For our purposes a choke point is a narrowing of the map that people must travel through.  This is a subset of the often used definition of a choke point as a critical point at which people must move through\cite{evacOptions}.  We begin our map design with a map with one choke point close to the exit.  We expand upon this by adding more choke points to that map as well as starting new lines of maps that have their choke point start further away from the exit.
 
-\begin{figure*}[ht]
+\begin{figure*}[!ht]
   \centering
   \begin{minipage}[b]{\linewidth}
     \includegraphics[width=0.15\textwidth]{./figures/chokepoint_1_a.png}
@@ -287,7 +287,7 @@ For each map we executed a number of runs and captured the mean escape time, wit
 
 Our next layout based experiment evaluates how exit dimension size and place impacts evacuation speeds.  We varied the size of the exits as well as their placements alternating between states of one exit on one side, exit evenly split to opposite sides, and exit evenly split into 1 width wide exits all on one side.  As shown below, each column of maps has the same overall exit size while each row shows the various placement strategies.
 
-\begin{figure*}[ht]
+\begin{figure*}[!ht]
   \centering
   \begin{minipage}[b]{.75\linewidth}
     \includegraphics[width=0.24\textwidth]{./figures/exit_dims_2_a.png}
@@ -312,9 +312,12 @@ Our next layout based experiment evaluates how exit dimension size and place imp
 \end{figure*}
 
 Similar to the choke points experiment, we captured the mean escape time for a number of runs on each map, with the results provided below \ref{fig:exitdimsResults}.  In these experiments we hoped to gain some insight, when dimensions are held the same, can exit placements be beneficial to escaping pedestrians.  This is why the map itself is an empty room, so that the only layout impact we have is the size and placement of the exits.
+
 \subsection{Experiments Based on Agent Features} \label{expAgent}
 
-This section will cover our experiments based on modifying the agent's speed distributions.
+Experiments based on agent features explore how the properties of pedestrians affect escape times.  These properties maybe simple measures of speed of movement to complex behaviors such as knowledge of the layout.  In general, for all of our experiments, all agents have knowledge of the complete layout as derived from our global pathing algorithm which impacts each agent the same.  For our specific experiment we evaluated how speed distribution between agents impacts the escape times.  
+
+The goal of varying the distribution of speeds among the agents is to see if that people moving at different speeds introduces a negative factor, \emph{a la} a turbulence similar to fluid dynamics.  While we expect the average escape time to decrease while we move from more slow agents to faster agents, we are looking for a deviation from that expected decrease as shown below \ref{fig:speedResults}.  If various movement speed distributions do introduce this turbulence into the system we can begin further discussions and experiments on how to mitigate these impacts through more efficient designs.
 
 
 \subsection{Experiments Replicating Emergent Crowd Behaviors} \label{emergentBehavior}
@@ -369,6 +372,7 @@ linear increase with additional exits.
   \centering
   \includegraphics[width=.75\linewidth]{./figures/speed_dist_test.png}
   \caption{Agent speed distribution results}
+  \label{fig:speedResults}
 \end{figure}
 
 chokepoint1
