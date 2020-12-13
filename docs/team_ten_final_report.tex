@@ -28,21 +28,26 @@ length of the passage to depart increased, the number of exits went up, and also
 at a single chokepoint bunching.
 \end{abstract}
 \section {Introduction}
-There were three aspects of evacuation we investigated. The first is chokepoints, and the
-length of the passage to the exit. Second, the number and placement of exits,
-and finally, speed and number of agent variations for a chokepoint map.
-The physical aspects of the maps themselves were a major variable in the model,
-as well as the number and speed of the Agents.\\
-BehaviorSpace was crucial to managing the system, although some aspects, like
-varying maps, were more easily implemented using the netlogo-headless.sh
-facility, and having a driver script produce the setup-file.xml input.
+
+
+%There were three aspects of evacuation we investigated. The first is chokepoints, and the
+%length of the passage to the exit. Second, the number and placement of exits,
+%and finally, speed and number of agent variations for a chokepoint map.
+%The physical aspects of the maps themselves were a major variable in the model,
+%as well as the number and speed of the Agents.
+%
+%BehaviorSpace was crucial to managing the system, although some aspects, like
+%varying maps, were more easily implemented using the netlogo-headless.sh
+%facility, and having a driver script produce the setup-file.xml input.
  
 \subsection{Previous Work}
 The literature abounds with previous efforts in this area. This project incorporated ideas from a variety of sources in the literature, from general crowd modeling reminders, to requirements and fully implemented models. A good overview is, \cite{almeidaCrowdSimulationModeling2013}, which makes they point that there are three points for simulating: to generate observable phenomena, to test theories, and to test design strategies. They note that people tend to follow the path of least resistance while moving. The stress of emergencies leads to herding and flocking behavior, to the point of missing optimal escape routes, or engaging in inefficient "arching" to get through an escape, which is one of our avenues of inquiry. Layouts matter too, as brought out by \cite{mirahmadiNovelAlgorithmRealtime2012}, which points out that real-time generation of floor plans that are realistic is vital for systems such as  games. The offer a realistic house floorplan algorithm. This project focused more on office evacuation systems than residential applications.
+
 Moving on to fire-specific models, additional fire-specific requirements were discussed by \cite{kuligowskil}, which outlines a requirement for a comprehensive fire evacuation model design capturing human behavior. The effort here was to capture the various theories and "behavioral facts" suitable for embedding in modeling tools, and then argued for including behavioral models in evacuation models. Also, \cite{abmEvac} provides an overview of major evacuation factors and is helpful for developing Agent-based simulations such as this one. This includes a Fire Dynamics Simulator (FDS) employing computational fluid dynamics and Geographic Information System (GIS) for modeling human responses. This is far more realistic than NetLogo can support. The physical aspects are balanced by \cite{kneidl} emphasizes that behavioral aspects of crowds are  important, including behavior, locomotion, and navigation. These had been modeled previously. This research relied upon graph-based methods to plot the exit course, whereas this model uses values attached to patches to drive the movement decisions for the Agents. In both this and our model, the presence of other agents affects movement calculations.
+
 Two final models of note were one that was also implemented in NetLogo, \cite{prioritEvac} PrioritEvac. This is an Agent-based model that explores social science effects in evacuation response. Agents maintain distinct priorities supporting granular investigation of reactions. This is also a NetLogo model, and was validated against the Station fire, where pyrotechnics ended the career of the rock band Great White.
 Finally, one pertaining to public space, and not fires, was \cite{zhouSimulationPedestrianEvacuation2019} This study begins with thirty-six hours of video from a public square in Ningbo, China, which were used to develop a Large-Scale Public Place (LPS) evacuation model, building upon the Social Force Model (SFM). This was expressed in five strategies. Attention was paid to walking speed and diameter, and a the model was used to study the efficiency of evacuating the area. The idea of starting with the human movement and not a map of an enclosed space.
-This paper is key as it is extremely similar and a NetLogo implementation.  We should know this paper and incorporate into our paper \cite{prioritEvac}
+
 \subsection {Approaches}
 Talk about various modeling approaches to this problem   . mainly this paper \cite{almeidaCrowdSimulationModeling2013} 
 \section {Methodology}
@@ -327,100 +332,6 @@ This section will cover our experiments based on modifying the agent's speed dis
 if we can show that we achieve similar results even though we use a simplified pathing algorithm and abm environment i think that would be insightful
 
 
-%\section{Results}
-%
-%The results showed that adding more length to the chokepoint pipeline did not
-%result in a linear increase in the exit time. Rather, the Actors resembled a
-%fluid dynamics problem, reaching a uniform flow and making good their escape.
-%
-%More exits is better, especially if not on the same side, but there is not a
-%linear increase with additional exits.
-%
-%
-%
-%need to talk about patch parameters
-%\subsection{Movement Mechanisms}
-%This section discusses agent and fire movement algorithms.
-%
-%The cost algorithm, where $P_s$ is a safety patch, where $A_w$ is the person path weight, a weight that a person adds to a patch due to blocking (this is configurable by the user)
-%\begin{align}
-%cost(P)  = distance(P_s, P) + Agent(P) * A_w \nonumber \\
-%Agent(P)=
-%\begin{cases}
-%1, & \text{Agent Present}  \\
-%0, & \text{Agent Not Present} 
-%\end{cases}
-%\end{align}
-%
-%This can be configured through equal diagonal weight flag. if False the Distance is the Manhattan distance \footnote{ https://www.sciencedirect.com/topics/mathematics/manhattan-distance}. If true the distance is the Chebyshev Distance \footnote{https://en.wikipedia.org/wiki/Chebyshev\_distance}
-%\begin{align}
-%distance(P_1, P_2)  = \nonumber\\
-%equal-diagonal-weight?=
-%\begin{cases}
-%	max(|x_1-x_2|, |y_1-y_2|), & True \\
-%	|x_1-x_2|+ |y_1-y_2|, & False
-%\end{cases}
-%\end{align}
-%
-%
-%Patch to move to algorithm, where $A_p$ is the patch for a given agent, $P_x$ \& $P_y$ are the $X$ \& $Y$ coordinates for a given patch
-%\begin{align}
-%neighbors_4 (P)  = \{patch(P_x - 1, P_y -1), patch(P_x + 1, P_y -1), \nonumber \\ 
-%patch(P_x - 1, P_y + 1),patch(P_x + 1, P_y + 1)\}   
-%\end{align}
-%
-%\begin{equation}
-%move(A) = min(cost(neighbors_4 (A_p)))
-%\end{equation}
-%
-%Person will wait for a better patch.  This is configurable by the user. If it is on then a person will wait for a patch that is less cost than its current
-%\begin{equation}
-%people-wait?=
-%\begin{cases}
-%min(cost(A_p), move(A)), & True\\
-%move(A), & False
-%\end{cases}
-%\end{equation}
-%
-%Add person spacing algorithm, people try to avoid each other, configurable through the $add-person-spacing?$ flag and the $person\_path\_weight$, $A_w$, parameter.  here, $A_w$, is scaled by a factor of 10 since it is not the weight of being in the same square as another but of being next to another person.
-%
-%\begin{equation}
-%add-person-spacing?=
-%\begin{cases}
-%	cost(P) \sum Agent(neighbors_4(P)) * A_w / 10, & True \\
-%	cost(P), & False
-%\end{cases}
-%\end{equation}
-%
-%\cite{mirahmadiNovelAlgorithmRealtime2012}
-%\footnote{http://www.cs.us.es/~fsancho/?e=131}
-%
-%
-%\subsubsection{Experiments Based on Layouts}
-%The length of the exit passage was increased gradually
-%\begin{figure}
-%  \includegraphics[width=\linewidth]{./figures/chokepoints_summary.png}
-%  \caption{Chokepoint Overview}
-%\end{figure}
-%\begin{figure}
-%  \includegraphics[width=\linewidth]{./figures/chokepoints_chart.png}
-%  \caption{Chokepoint Results}
-%\end{figure}
-%\begin{figure}
-%  \includegraphics[width=\linewidth]{./figures/exit_dims_summary.png}
-%  \caption{Exit Dimensions Overview/Results}
-%\end{figure}
-%\subsubsection{Experiments Replicating Emergent Crowd Behaviors}
-%- mainly from this paper \cite{almeidaCrowdSimulationModeling2013}  .  
-%
-%\begin{figure}
-%  \includegraphics[width=\linewidth]{./figures/herding_clogging.png}
-%  \caption{}
-%\end{figure}
-%
-%
-%if we can show that we achieve similar results even though we use a simplified pathing algorithm and abm environment i think that would be insightful
-
 
 \section{Results}
 
@@ -434,12 +345,18 @@ linear increase with additional exits.
 \begin{figure}
   \centering
   \includegraphics[width=.9\linewidth]{./figures/chokepoint_graph.png}
-  \caption{Chokepoint Results}
+  \caption{Chokepoint results}
 \end{figure}
 \begin{figure}
   \centering
   \includegraphics[width=.75\linewidth]{./figures/exit_dims_graph.png}
-  \caption{Exit Dimensions Overview/Results}
+  \caption{Exit dimensions results}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=.75\linewidth]{./figures/speed_dist_test.png}
+  \caption{Agent speed distribution results}
 \end{figure}
 
 chokepoint1
@@ -513,89 +430,87 @@ c   &  231.4 & 250.0 & 231.0 & 242.7 \\
 \\
 chokepoint.map, 100 people, variance=17161
 \begin{tabular}{ r | r | r | r | r }
-slow & medium & MIN   & AVG   & MAX
-   4 & 96     & 107.0 & 128.0 & 153.0
-   9 & 91     & 127.0 & 140.0 & 154.0
-  14 & 86     & 147.0 & 156.0 & 166.0
-  19 & 81     & 159.0 & 167.0 & 175.0
-  24 & 76     & 166.0 & 181.0 & 196.0
-  29 & 71     & 174.0 & 188.0 & 195.0
-  34 & 66     & 183.0 & 201.0 & 216.0
-  39 & 61     & 189.0 & 208.0 & 219.0
-  44 & 56     & 209.0 & 224.0 & 234.0
-  49 & 51     & 216.0 & 228.0 & 250.0
-  54 & 46     & 210.0 & 235.0 & 256.0
-  59 & 41     & 235.0 & 245.0 & 261.0
-  64 & 36     & 240.0 & 255.0 & 268.0
-  69 & 31     & 243.0 & 257.0 & 268.0
-  74 & 26     & 248.0 & 267.0 & 291.0
-  79 & 21     & 260.0 & 272.0 & 279.0
-  84 & 16     & 274.0 & 285.0 & 296.0
-  89 & 11     & 267.0 & 278.0 & 293.0
-  94 &  6     & 270.0 & 290.0 & 311.0
-  99 &  1     & 272.0 & 294.0 & 316.0
+slow & medium & MIN   & AVG   & MAX \\
+   4 & 96     & 107.0 & 128.0 & 153.0 \\
+   9 & 91     & 127.0 & 140.0 & 154.0 \\
+  14 & 86     & 147.0 & 156.0 & 166.0 \\
+  19 & 81     & 159.0 & 167.0 & 175.0 \\
+  24 & 76     & 166.0 & 181.0 & 196.0 \\
+  29 & 71     & 174.0 & 188.0 & 195.0 \\
+  34 & 66     & 183.0 & 201.0 & 216.0 \\
+  39 & 61     & 189.0 & 208.0 & 219.0 \\
+  44 & 56     & 209.0 & 224.0 & 234.0 \\
+  49 & 51     & 216.0 & 228.0 & 250.0 \\
+  54 & 46     & 210.0 & 235.0 & 256.0 \\
+  59 & 41     & 235.0 & 245.0 & 261.0 \\
+  64 & 36     & 240.0 & 255.0 & 268.0 \\
+  69 & 31     & 243.0 & 257.0 & 268.0 \\
+  74 & 26     & 248.0 & 267.0 & 291.0 \\
+  79 & 21     & 260.0 & 272.0 & 279.0 \\
+  84 & 16     & 274.0 & 285.0 & 296.0 \\
+  89 & 11     & 267.0 & 278.0 & 293.0 \\
+  94 &  6     & 270.0 & 290.0 & 311.0 \\
+  99 &  1     & 272.0 & 294.0 & 316.0 \\
 \end{tabular}  
-\\
-\\
-
-200,34,66,0,0.3,1.0,0.75,269.0,292.0,317.0,29232.0
-200,39,61,0,0.3,1.0,0.75,291.0,309.0,330.0,29232.0
-200,44,56,0,0.3,1.0,0.75,300.0,318.0,334.0,29232.0
-200,49,51,0,0.3,1.0,0.75,309.0,327.0,343.0,29232.0
-200,54,46,0,0.3,1.0,0.75,330.0,350.0,363.0,29232.0
-200,59,41,0,0.3,1.0,0.75,336.0,357.0,374.0,29232.0
-200,64,36,0,0.3,1.0,0.75,357.0,369.0,394.0,29232.0
-200,69,31,0,0.3,1.0,0.75,356.0,375.0,398.0,29232.0
-200,74,26,0,0.3,1.0,0.75,347.0,384.0,417.0,29232.0
-200,79,21,0,0.3,1.0,0.75,368.0,390.0,415.0,29232.0
-200,84,16,0,0.3,1.0,0.75,379.0,398.0,422.0,29232.0
-200,89,11,0,0.3,1.0,0.75,367.0,401.0,433.0,29232.0
-200,94,6,0,0.3,1.0,0.75,378.0,408.0,448.0,29232.0
-200,99,1,0,0.3,1.0,0.75,391.0,430.0,463.0,29232.0
-
-\\
-\\
-300,39,61,0,0.3,1.0,0.75,357.0,379.0,402.0,39602.0
-300,44,56,0,0.3,1.0,0.75,379.0,401.0,426.0,39602.0
-300,49,51,0,0.3,1.0,0.75,387.0,413.0,439.0,39602.0
-300,54,46,0,0.3,1.0,0.75,395.0,429.0,468.0,39602.0
-300,59,41,0,0.3,1.0,0.75,382.0,431.0,466.0,39602.0
-300,64,36,0,0.3,1.0,0.75,421.0,450.0,477.0,39602.0
-300,69,31,0,0.3,1.0,0.75,427.0,465.0,495.0,39602.0
-300,74,26,0,0.3,1.0,0.75,442.0,473.0,500.0,39602.0
-300,79,21,0,0.3,1.0,0.75,468.0,490.0,513.0,39602.0
-300,84,16,0,0.3,1.0,0.75,466.0,491.0,509.0,39602.0
-300,89,11,0,0.3,1.0,0.75,468.0,502.0,553.0,39602.0
-300,94,6,0,0.3,1.0,0.75,506.0,521.0,541.0,39602.0
-300,99,1,0,0.3,1.0,0.75,490.0,509.0,529.0,39602.0
-
-\\
-\\
-400,49,51,0,0.3,1.0,0.75,473.0,501.0,533.0,45878.0
-400,54,46,0,0.3,1.0,0.75,465.0,511.0,544.0,45878.0
-400,59,41,0,0.3,1.0,0.75,491.0,528.0,573.0,45878.0
-400,64,36,0,0.3,1.0,0.75,511.0,546.0,575.0,45878.0
-400,69,31,0,0.3,1.0,0.75,534.0,559.0,583.0,45878.0
-400,74,26,0,0.3,1.0,0.75,520.0,546.0,562.0,45878.0
-400,79,21,0,0.3,1.0,0.75,543.0,573.0,612.0,45878.0
-400,84,16,0,0.3,1.0,0.75,567.0,591.0,605.0,45878.0
-400,89,11,0,0.3,1.0,0.75,557.0,589.0,617.0,45878.0
-400,94,6,0,0.3,1.0,0.75,566.0,592.0,623.0,45878.0
-400,99,1,0,0.3,1.0,0.75,554.0,591.0,640.0,45878.0
-
-\\
-\\
-500,49,51,0,0.3,1.0,0.75,543.0,575.0,637.0,54139.0
-500,54,46,0,0.3,1.0,0.75,535.0,571.0,610.0,54139.0
-500,59,41,0,0.3,1.0,0.75,540.0,594.0,620.0,54139.0
-500,64,36,0,0.3,1.0,0.75,558.0,606.0,638.0,54139.0
-500,69,31,0,0.3,1.0,0.75,591.0,622.0,655.0,54139.0
-500,74,26,0,0.3,1.0,0.75,615.0,646.0,680.0,54139.0
-500,79,21,0,0.3,1.0,0.75,609.0,642.0,674.0,54139.0
-500,84,16,0,0.3,1.0,0.75,611.0,655.0,700.0,54139.0
-500,89,11,0,0.3,1.0,0.75,633.0,684.0,709.0,54139.0
-500,94,6,0,0.3,1.0,0.75,644.0,679.0,713.0,54139.0
-500,99,1,0,0.3,1.0,0.75,648.0,674.0,723.0,54139.0
+%
+%200,34,66,0,0.3,1.0,0.75,269.0,292.0,317.0,29232.0
+%200,39,61,0,0.3,1.0,0.75,291.0,309.0,330.0,29232.0
+%200,44,56,0,0.3,1.0,0.75,300.0,318.0,334.0,29232.0
+%200,49,51,0,0.3,1.0,0.75,309.0,327.0,343.0,29232.0
+%200,54,46,0,0.3,1.0,0.75,330.0,350.0,363.0,29232.0
+%200,59,41,0,0.3,1.0,0.75,336.0,357.0,374.0,29232.0
+%200,64,36,0,0.3,1.0,0.75,357.0,369.0,394.0,29232.0
+%200,69,31,0,0.3,1.0,0.75,356.0,375.0,398.0,29232.0
+%200,74,26,0,0.3,1.0,0.75,347.0,384.0,417.0,29232.0
+%200,79,21,0,0.3,1.0,0.75,368.0,390.0,415.0,29232.0
+%200,84,16,0,0.3,1.0,0.75,379.0,398.0,422.0,29232.0
+%200,89,11,0,0.3,1.0,0.75,367.0,401.0,433.0,29232.0
+%200,94,6,0,0.3,1.0,0.75,378.0,408.0,448.0,29232.0
+%200,99,1,0,0.3,1.0,0.75,391.0,430.0,463.0,29232.0
+%
+%\\
+%\\
+%300,39,61,0,0.3,1.0,0.75,357.0,379.0,402.0,39602.0
+%300,44,56,0,0.3,1.0,0.75,379.0,401.0,426.0,39602.0
+%300,49,51,0,0.3,1.0,0.75,387.0,413.0,439.0,39602.0
+%300,54,46,0,0.3,1.0,0.75,395.0,429.0,468.0,39602.0
+%300,59,41,0,0.3,1.0,0.75,382.0,431.0,466.0,39602.0
+%300,64,36,0,0.3,1.0,0.75,421.0,450.0,477.0,39602.0
+%300,69,31,0,0.3,1.0,0.75,427.0,465.0,495.0,39602.0
+%300,74,26,0,0.3,1.0,0.75,442.0,473.0,500.0,39602.0
+%300,79,21,0,0.3,1.0,0.75,468.0,490.0,513.0,39602.0
+%300,84,16,0,0.3,1.0,0.75,466.0,491.0,509.0,39602.0
+%300,89,11,0,0.3,1.0,0.75,468.0,502.0,553.0,39602.0
+%300,94,6,0,0.3,1.0,0.75,506.0,521.0,541.0,39602.0
+%300,99,1,0,0.3,1.0,0.75,490.0,509.0,529.0,39602.0
+%
+%\\
+%\\
+%400,49,51,0,0.3,1.0,0.75,473.0,501.0,533.0,45878.0
+%400,54,46,0,0.3,1.0,0.75,465.0,511.0,544.0,45878.0
+%400,59,41,0,0.3,1.0,0.75,491.0,528.0,573.0,45878.0
+%400,64,36,0,0.3,1.0,0.75,511.0,546.0,575.0,45878.0
+%400,69,31,0,0.3,1.0,0.75,534.0,559.0,583.0,45878.0
+%400,74,26,0,0.3,1.0,0.75,520.0,546.0,562.0,45878.0
+%400,79,21,0,0.3,1.0,0.75,543.0,573.0,612.0,45878.0
+%400,84,16,0,0.3,1.0,0.75,567.0,591.0,605.0,45878.0
+%400,89,11,0,0.3,1.0,0.75,557.0,589.0,617.0,45878.0
+%400,94,6,0,0.3,1.0,0.75,566.0,592.0,623.0,45878.0
+%400,99,1,0,0.3,1.0,0.75,554.0,591.0,640.0,45878.0
+%
+%\\
+%\\
+%500,49,51,0,0.3,1.0,0.75,543.0,575.0,637.0,54139.0
+%500,54,46,0,0.3,1.0,0.75,535.0,571.0,610.0,54139.0
+%500,59,41,0,0.3,1.0,0.75,540.0,594.0,620.0,54139.0
+%500,64,36,0,0.3,1.0,0.75,558.0,606.0,638.0,54139.0
+%500,69,31,0,0.3,1.0,0.75,591.0,622.0,655.0,54139.0
+%500,74,26,0,0.3,1.0,0.75,615.0,646.0,680.0,54139.0
+%500,79,21,0,0.3,1.0,0.75,609.0,642.0,674.0,54139.0
+%500,84,16,0,0.3,1.0,0.75,611.0,655.0,700.0,54139.0
+%500,89,11,0,0.3,1.0,0.75,633.0,684.0,709.0,54139.0
+%500,94,6,0,0.3,1.0,0.75,644.0,679.0,713.0,54139.0
+%500,99,1,0,0.3,1.0,0.75,648.0,674.0,723.0,54139.0
 \section{Future Work}
 Here we can expand on improvements we would make, additional features we could add (smoke multi-floor etc.), additional experiments, and porting to other environments
 
