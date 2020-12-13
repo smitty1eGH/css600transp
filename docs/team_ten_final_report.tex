@@ -50,6 +50,14 @@ Finally, one pertaining to public space, and not fires, was \cite{zhouSimulation
 
 \subsection {Approaches}
 Talk about various modeling approaches to this problem   . mainly this paper \cite{almeidaCrowdSimulationModeling2013} 
+
+flow based modeling
+
+cellular automata
+
+Agent based
+
+Are there others that would be applicable?  probably not systems dynamics
 \section {Methodology}
 
 Our main goal was to hone in on the narrow situations in which we can detect patterns given our constrained simulation environment.  Due to the constraints of the  NetLogo environment, described further below, we are force to simplify various aspects of our model.  These simplifications though, provide us the opportunity to explore where emergent properties may arise in our agent's behavior\ref{emergentBehavior}.
@@ -70,7 +78,7 @@ Our simulations utilized the NetLogo modeling environment \footnote{https://ccl.
 One of the foundations of our simulation efforts was the ability to run experiments on a variety of maps, which mostly incrementally changed a key feature.  In order to accomplish this we implemented a custom map loader in NetLogo such that we could quickly develop custom layouts externally and procedurally load them at experiment time \ref{expEnv}.  The method of loading maps involves reading a file in line by  line which reflected a NetLogo list.  This list was then used to sequentially set the patch to the corresponding state, be it safety patch, grass, floor, or wall.  The code for loading a map is provided below.
 
 
-
+\begin{minipage}{\linewidth}
 \begin{lstlisting}[language=lisp, caption={Map loading procedure in NetLogo},captionpos=b, frame=single]
 to load-map
   file-open map-file
@@ -98,6 +106,7 @@ to load-map
   file-close
 end
 \end{lstlisting}
+\end{minipage}
 
 Users may create map files in a separate text editor. Each cell reflects the desired patch state in the world, where 3 = safety, 0 = grass, 1 = floor, and 2 = wall. An important note is the beginning and ending brackets '[ ]'.  These are necessary for NetLogo to correctly load each line as a list structure from the line's string representation.  Below is an example portion of a map file.  
 
@@ -321,23 +330,26 @@ The goal of varying the distribution of speeds among the agents is to see if tha
 
 
 \subsection{Experiments Replicating Emergent Crowd Behaviors} \label{emergentBehavior}
-- mainly from this paper \cite{almeidaCrowdSimulationModeling2013}  .  This section will cover how we hope to see these emergent behaviors in our environments even though we use a simplified pathing strategy.  This could lead to simpler models with less resource requirements.
 
+The final group of experiments that we evaluated were situations where we attempted to replicate real world human phenomena in our model.  Since our model uses a very simple environment and pathing algorithm it could be beneficial to recreate this behavior in our setup in that the underlying principals that the behavior derives from do not require complex models or computation.  Our experiments worked backwards from attempting to recreate the behavior and then looking at the environment dynamics once that behavior is observed. 
 
+The first behavior we sought to mimic was the herding behavior.  Herding is caused by irrational behavior in emergency situations that causes people to flock together \cite{almeidaCrowdSimulationModeling2013}.  For our situation, since we don't have the complex agent behavior to recreate this, we had to rely on map layouts that may evoke a similar pattern to herding.
 
 \begin{figure}[!htbp]
   \centering
-  \subfloat[Evacuation with no herding ]{\includegraphics[width=0.4\textwidth]{./figures/Herding1.png}\label{fig:f1}}
+  \subfloat[Evacuation with no herding ]{\includegraphics[width=0.35\textwidth]{./figures/Herding1.png}\label{fig:f1}}
   \hfill
-  \subfloat[Evacuation with herding (i.e. ignoring viable exit)]{\includegraphics[width=0.4\textwidth]{./figures/Herding-2.png}\label{fig:f2}}
+  \subfloat[Evacuation with herding (i.e. ignoring viable exit)]{\includegraphics[width=0.35\textwidth]{./figures/Herding-2.png}\label{fig:f2}}
   \caption{Herding behavior replicated through residual escape pathing from agents that never considered the alternative route.}
 \end{figure}
 
+The layout that we found to replicate herding behavior is one that has multiple exits with different distances to the safety patch.  As a residual of the pathing algorithm, at a certain point every agent who who would flow out of one of those exits has left while the other one still has evacuating agents.  While these agents could use the alternative exit, the flow of patch weights dictate that they continue on their current path.  This commitment to a path even if detrimental is the same observed behavior in herding.  But, since this only arises in specific map layouts in our simulation, this is not an viable area for further study with our models. 
+
 \begin{figure}[!htbp]
   \centering
-  \subfloat[No clogging due to people not blocking paths ]{\includegraphics[width=0.4\textwidth]{./figures/clogging1_clean.png}\label{fig:f1}}
+  \subfloat[No clogging due to people not blocking paths ]{\includegraphics[width=0.35\textwidth]{./figures/clogging1_clean.png}\label{fig:f1}}
   \hfill
-  \subfloat[Clogging due to increased weight per person on a patch]{\includegraphics[width=0.4\textwidth]{./figures/clogging2_clean.png}\label{fig:f2}}
+  \subfloat[Clogging due to increased weight per person on a patch]{\includegraphics[width=0.35\textwidth]{./figures/clogging2_clean.png}\label{fig:f2}}
   \caption{Clogging behavior replicated through a weight attribute calculated for each patch an agent is on as well as a configurable additional weight for each agent's neighboring patch. }
 \end{figure}
 
