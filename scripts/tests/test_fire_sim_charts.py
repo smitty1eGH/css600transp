@@ -11,6 +11,32 @@ import pytest
 
 
 @pytest.fixture
+def result_field_map():
+    """Recent pythons have an ordered dictionary, so we can be comfortable with these columns
+        "count turtles": "count_turtles",
+        "[step]": "step",
+    """
+    return {
+        "[run number]": "run_number",
+        "map-file": "map_file",
+        "People": "people",
+        "person_path_weight": "person_path_weight",
+        "Slow": "slow",
+        "Medium": "medium",
+        "Fast": "fast",
+        "display-path-cost?": "display_path_cost_p",
+        "add-person-spacing?": "add_person_spacing_p",
+        "people-wait?": "people_wait_p",
+        "equal-diagonal-weight?": "equal_diagonal_weight_p",
+        "Slow-Speed": "slow_speed",
+        "Medium-Speed": "medium_speed",
+        "Fast-Speed": "fast_speed",
+        "set-fire?": "set_fire_p",
+        "Fire_Speed": "fire_speed" ,
+        "mean-escape-time": "mean_escape_time",
+    }
+
+@pytest.fixture
 def sql_stats():
     '''To get the same answer as official software, treat our data as a population and
          divide by n.
@@ -58,6 +84,7 @@ def sql_stats2():
     return '''
               SELECT      D.map_file
                        ,  D.people, D.slow, D.medium, D.fast
+                       ,  D.slow_speed,D.fast_speed,D.medium_speed
                        ,  ROUND( MIN(D.mean_escape_time) )
                        ,  ROUND( AVG(D.mean_escape_time) )
                        ,  ROUND( MAX(D.mean_escape_time) )
@@ -65,17 +92,20 @@ def sql_stats2():
               FROM       (
                           SELECT      A.map_file
                                    ,  A.people, A.slow, A.medium, A.fast
+                                   ,  A.slow_speed,A.fast_speed,A.medium_speed
                                    ,  A.mean_escape_time - mu.mu          AS x_minus_mu
                                    ,  mu.n
                           FROM        results_fire_sim                    AS A
                           INNER JOIN (
                                       SELECT   map_file
                                              , people, slow, medium, fast
+                                             , slow_speed,fast_speed,medium_speed
                                              , AVG(mean_escape_time)      AS mu
                                              , COUNT(mean_escape_time)    AS n
                                       FROM     results_fire_sim
                                       GROUP BY map_file
                                              , people, slow, medium, fast
+                                             , slow_speed,fast_speed,medium_speed
                                      )                                    AS mu
                                   ON  A.map_file = mu.map_file
                                  AND  A.people   = mu.people AND A.slow = mu.slow
@@ -85,6 +115,7 @@ def sql_stats2():
                       ON D.map_file = C.map_file
               GROUP BY   D.map_file
                        , D.people, D.slow, D.medium, D.fast
+                       , D.slow_speed,D.fast_speed,D.medium_speed
            '''
 
 @pytest.fixture
@@ -93,6 +124,12 @@ def sql_stats3(sql_stats2):
     z = [sql_stats2.replace(' results_fire_sim', f' {x}.results_fire_sim') for x in y]
     return ' UNION '.join(z) + ';'
 
+
+@pytest.fixture
+def sql_stats4():
+    y = [' c%s00 ' % x for x in range(1,6)]
+    z = [f'SELECT * FROM {x}.results_fire_sim' for x in y]
+    return ' UNION '.join(z) + ';'
 
 
 @pytest.fixture
@@ -119,19 +156,28 @@ def test_do_partition(conn,sql_stats,filter_bits):
                 print(l)
                 print()
 
+@pytest.mark.skip
 def test_show_union(sql_stats3):
     print(sql_stats3)
 
-def test_dump_union(conn_choke,sql_stats3):
-    fs = ['map_file', 'people', 'slow', 'medium', 'fast', 'min', 'avg', 'max', 'variance']
+def test_dump_union(result_field_map,conn_choke,sql_stats3,sql_stats4):
+    fs = ['map_file', 'people', 'slow', 'medium', 'fast', 'slow_speed','fast_speed','medium_speed','min', 'avg', 'max', 'variance']
     with conn_choke:
         cur = conn_choke.cursor()
         rows = cur.execute(sql_stats3)
-    with open('fire_sim.csv','w') as f:
-        g = csv.writer(f)
-        g.writerow(fs)
-        for m in rows:
-            g.writerow(m)
+
+        with open('fire_sim_analysis.csv','w') as f:
+            g = csv.writer(f)
+            g.writerow(fs)
+            for m in rows:
+                g.writerow(m)
+
+        rows = cur.execute(sql_stats4)
+        with open('fire_sim.csv','w') as f:
+            g = csv.writer(f)
+            g.writerow(result_field_map.values())
+            for m in rows:
+                g.writerow(m)
 
 @pytest.mark.skip
 def test_do_charts0(conn,sql_stats,filter_bits):
