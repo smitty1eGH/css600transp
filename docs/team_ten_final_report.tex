@@ -176,7 +176,7 @@ The grid world, while maybe too much of a simplification of real world dynamics,
 
 \section{Experiments}
 
-The range of experiments we have decided to conduct seeks to explore specific phenomena based on layouts \ref{expLayout}, agent settings \ref{expAgent}, and replicating human behavior \ref{emergentBehavior}.  In order to narrow in on the most important features we have attempted to reduce each problem to its foundations through meticulous experiment design.  In order facilitate these experiments we developed a robust experimentation harness \ref{expEnv} to rapidly execute large and varied sets of experiments in NetLogo.  It is our goal to generate reference examples of easily understandable experiments that can help in exploring agent-based simulations in the NetLogo.  These experiments are designed to be the starting point for future and more complex evaluations of agent based evacuation models.
+The range of experiments we have decided to conduct seeks to explore specific phenomena based on layouts \ref{expLayout}, agent settings \ref{expAgent}, and replicating human behavior \ref{emergentBehavior}.  In order to hone in on the most important features we have attempted to reduce each problem to its foundations through meticulous experiment design.  In order facilitate these experiments we developed a robust experimentation harness \ref{expEnv} to rapidly execute large and varied sets of experiments in NetLogo.  It is our goal to generate reference examples of easily understandable experiments that can help in exploring agent-based simulations in the NetLogo.  These experiments are designed to be the starting point for future and more complex evaluations of agent based evacuation models.
 
 
 \subsection{Experimental Environment} \label{expEnv}
@@ -219,6 +219,10 @@ after the fact.
 Finally, Python's data science facilities are well-known \footnote{https://www.scipy.org/index.html}, supporting arbitrary visualization pipelines.  Where visualizations were required to show results we leveraged the Matplotlib library to generate those graphs \footnote{ https://matplotlib.org/}.
 
 \subsection{Experimental Parameters}
+Need to talk about how agents are placed randomly throughout map, which is why we execute multiple runs.
+
+need to break down the parameters and what they do.  
+
 For the map files in use, there were 10 runs against the map files, capturing
 mean-escape-time for the agents.
 
@@ -281,6 +285,8 @@ For each map we executed a number of runs and captured the mean escape time, wit
 
 \subsubsection{Exit Dimensions}
 
+Our next layout based experiment evaluates how exit dimension size and place impacts evacuation speeds.  We varied the size of the exits as well as their placements alternating between states of one exit on one side, exit evenly split to opposite sides, and exit evenly split into 1 width wide exits all on one side.  As shown below, each column of maps has the same overall exit size while each row shows the various placement strategies.
+
 \begin{figure*}[ht]
   \centering
   \begin{minipage}[b]{.75\linewidth}
@@ -304,6 +310,8 @@ For each map we executed a number of runs and captured the mean escape time, wit
 
   \caption{Exit Dimensions Maps}
 \end{figure*}
+
+Similar to the choke points experiment, we captured the mean escape time for a number of runs on each map, with the results provided below \ref{fig:exitdimsResults}.  In these experiments we hoped to gain some insight, when dimensions are held the same, can exit placements be beneficial to escaping pedestrians.  This is why the map itself is an empty room, so that the only layout impact we have is the size and placement of the exits.
 \subsection{Experiments Based on Agent Features} \label{expAgent}
 
 This section will cover our experiments based on modifying the agent's speed distributions.
@@ -354,6 +362,7 @@ linear increase with additional exits.
   \centering
   \includegraphics[width=.75\linewidth]{./figures/exit_dims_graph.png}
   \caption{Exit dimensions results}
+  \label{fig:exitdimsResults}
 \end{figure}
 
 \begin{figure}
