@@ -263,7 +263,7 @@ mean-escape-time & output \\
 The layout of an environment is probably the largest factor that determines evacuation behavior.  These layouts often have compounding features that work together to impact an evacuation\cite{abmEvac}. For our set of experiments based on layouts, we attempted to isolate those discreet features and exaggerate them such that the actual impact on evacuation can be seen.  These experiments build off of a base map showcasing that feature, and then replicate it with variations plotting that impact on average evacuation time.
 
 
-\subsubsection{Choke Point Experiment}
+\subsubsection{Choke Point Experiment} \label{chokepoint}
 
 Our choke point experiments seek to understand how choke points impact evacuation.  For our purposes a choke point is a narrowing of the map that people must travel through.  This is a subset of the often used definition of a choke point as a critical point at which people must move through\cite{evacOptions} regardless of its physical dimensions.  We begin our map design with a map with one choke point close to the exit.  We expand upon this by adding more choke points to that map as well as starting new families of maps that have their choke point start further away from the exit.
 
@@ -291,11 +291,12 @@ Our choke point experiments seek to understand how choke points impact evacuatio
     \includegraphics[width=0.15\textwidth]{./figures/chokepoint_3_d.png}
   \end{minipage}
   \caption{Choke point maps}
+  \label{chokepointmaps}
 \end{figure*}
 
 For each map we executed a number of runs and captured the mean escape time, with results stated below \ref{fig:chokepointResults}.  By increasing the number of choke points we sought to understand the initial impact of a choke point as well as the impact of sequential additions, which we expected to have decreasing impact. The intuition behind this is that even with more choke points, agents will start to align to the most narrow width.  We also increased the distance from the first choke point to the exit to evaluate if the ability of agents to spread back out can negate some of the negatives of the choke point.  
 
-\subsubsection{Exit Dimensions}
+\subsubsection{Exit Dimensions} \label{exitdims}
 
 Our next layout based experiment evaluates how exit dimension size and placement impacts evacuation speeds.  We varied the size of the exits as well as their placements; alternating between states of one exit on one side, exits evenly split to opposite sides, and exits evenly split into 1 width wide exits all on one side.  As shown below, each column of maps has the same overall exit size while each row shows the various placement strategies.
 
@@ -321,6 +322,7 @@ Our next layout based experiment evaluates how exit dimension size and placement
   \end{minipage}
 
   \caption{Exit dimensions maps}
+  \label{exitdimsmaps}
 \end{figure*}
 
 Similar to the choke points experiment, we captured the mean escape time for a number of runs on each map, with the results provided below \ref{fig:exitdimsResults}.  In these experiments we hoped to gain some insight, when dimensions are held the same, of how exit placements can be beneficial to escaping pedestrians.  This is why the map itself is an empty room, so that the only layout impact we have is the size and placement of the exits.
@@ -365,8 +367,7 @@ As seen in \ref{clogging} when there is no person weight, agents can follow the 
 By exploring where we can and cannot replicate these emergent behaviors we can also explore the limitations of our modeling environment.  While herding highlights a limitation of our model, clogging is replicated fairly well in our simulations.  Other behaviors may necessitate the expansion of stateful information that agents maintain or the addition of more complex pathing solutions. 
 
 \section{Results}
-
-Talk about the overall results that we found
+Overall the results we observed were in line with our expectations.  While our experiments had a random element due to the random initial placement of agents, we are confident that we performed enough tests to properly capture error ranges.  These error bars are included with each result graph.  The following detailed discussions will explore not only the results we observed but some of the caveats that our modeling environment causes.
 
 %The results showed that adding more length to the chokepoint pipeline did not
 %result in a linear increase in the exit time. Rather, the Actors resembled a
@@ -377,29 +378,34 @@ Talk about the overall results that we found
 
 \subsection{Choke Point Results}
 
- What do these results mean?
+As described in \ref{chokepoint} this experiment sought to understand the impact that choke points have on evacuations. The maps for these experiments \ref{chokepointmaps} are broken into three lines as plotted below.  Line 1 shows the family of maps with the first choke point closest to the exit, with line 2 slightly further, and line 3 the furthest.  The \emph{a} through \emph{f} designation describe maps with increasing numbers of choke points. 
 
 \begin{figure} [!ht]
   \centering
   \includegraphics[width=.9\linewidth]{./figures/chokepoint_graph.png}
-  \caption{Choke point results}
+  \caption{Number of choke points plotted against mean escape time. Choke point 1 has its first choke point closest to exit and choke point 3 the furthest.  a through f denote increasing number of choke points with a the fewest and f the most.}
   \label{fig:chokepointResults}
 \end{figure}
 
+There are few important observations from this results plot.  The most obvious is that as we add choke points the escape time increases.  This is expected behavior, but what may not be intuitive is that after a certain point adding more choke points no longer increases escape time.  This is most likely due to people forming orderly queues in which an adverse narrowing has already been achieved by preceding choke points. Another point of interest is to be seen as the gaps between the lines.  Remember that each line is a family of maps that has the first choke point further from the exit.  We can see that having a choke point further from the exit increases mean escape time and that this increase does not scale linearly with the distance, at least initially.  
+
 \subsection{Exit Dimensions Results}
 
- What do these results mean?
+The exit dimensions experiments \ref{exitdims} sought to understand how placement of exits impacts the escape times.  Each family of maps had the same dimensions of exits (2, 4, 6, \& 8) but placed them differently.  The $a$ group had one exit, the $b$ group had the dimensions evenly split between 2 exits on opposite sides of the map, and the $c$ group had the exits split into 1 unit exits evenly placed on 1 edge of the map \ref{exitdimsmaps}.
+
 
 \begin{figure} [!ht]
   \centering
   \includegraphics[width=.75\linewidth]{./figures/exit_dims_graph.png}
-  \caption{Exit dimensions results}
+  \caption{Exit placement strategies plotted against mean escape time.  exit\_dims\_$n$ are a family of maps with total width of exits equal to $n$. $a$ group has 1 exit of width $n$, $b$ has 2 exits on opposite sides with width $n/2$, and $c$ has $n$ exits all on one edge.}
   \label{fig:exitdimsResults}
 \end{figure}
 
+From this plot we can clearly see a trend where $b$ and $c$ exit placements work better.  These are the placements that break up exits to either 2 on opposing sides or 1 width exits evenly spaced on one side.  This trend also becomes more prevalent as we increase the overall exit dimensions. This may seem a little counter intuitive in that large exit dimensions should negate some of the clogging effects we see elsewhere.  Further analysis would be needed to understand fully the principals driving this conclusion though.  Similar to the choke point study, we also see diminishing returns from increasing the total exit dimension widths.  This is denoted by the shrinking grap between each line going from top to bottom.
+
 \subsection{Agent Speed Distribution Results}
 
- What do these results mean?
+As described in detail here \ref{expAgent} our agent speed experiment studied the impact of various agent speed distributions in the population.  We steadily started with a population of all medium speed agents and incrementally moved that population to the slow category.  We then ran each experiment multiple times plotted below as the measured escape line and its associated error bars.  We compared this to what we expected to see, which would be a smooth transition in escape times from faster to slower, as noted in the predicted escape line.
 
 \begin{figure} [!ht]
   \centering
@@ -407,6 +413,9 @@ Talk about the overall results that we found
   \caption{Agent speed distribution results}
   \label{fig:speedResults}
 \end{figure}
+
+As can be seen in the graph there is a deviation from the predicted results that grows as the distribution of speeds becomes 50\%.  This implies that the maximum interference between 2 groups moving at different speeds comes when those groups are evenly divided.  This follows intuition, but what doesn't follow is why this would emerge.  One possible explanation is that the faster group displaces the slower as they weave through the environment.  These perturbations cause minor delays for the slower agents that aggregates to a measurable increase in the mean delay.  Further evaluation of agent escape times, specifically broken down by agent speed group, would be needed to validate these assumptions.
+
 
 chokepoint1
 \begin{tabular}{ r | r | r | r | r }
