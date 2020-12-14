@@ -1,7 +1,7 @@
 \documentclass[12pt,letterpaper]{article}
 
 \usepackage{listings}
-
+\usepackage{float}
 \usepackage{hyperref}
 \usepackage{amsmath}
 \usepackage{listings}
@@ -38,14 +38,15 @@ Two final models of note were one that was also implemented in NetLogo, \cite{pr
 Finally, one pertaining to public space, and not fires, was \cite{zhouSimulationPedestrianEvacuation2019} This study begins with thirty-six hours of video from a public square in Ningbo, China, which were used to develop a Large-Scale Public Place (LPS) evacuation model, building upon the Social Force Model (SFM). This was expressed in five strategies. Attention was paid to walking speed and diameter, and a the model was used to study the efficiency of evacuating the area. The idea of starting with the human movement and not a map of an enclosed space.
 
 \subsection {Approaches}
-Human behavior fascinates. An annual fire drill in an office setting is nearly a pleasant affair in good weather. Drills are announced beforehand, alarms sound, people cease affecting work, an orderly progression to assigned locations occurs, rolls are taken, the fire department arrives, equipment is checked and reset, the drill concludes, and people resume affecting work.\\
-Comes the real thing, that progression is perturbed. \cite{almeidaCrowdSimulationModeling2013} refers to the "least effort principle" that succumbs to the entropy of the moment when humans encounter pressure. "As nervousness increases there is less concern about comfort zone and finding the most convenient and shortest way." Without good knowledge of the floorplan around them, people lose the ability to orient themselves. Panic sets in, as visibility conditions worsen, breathing becomes and issue, and heat effects set in.\\
-Under pressure, people seek leaders, and ". . .tend to follow others in the assumption they could get them out of the dangerous area," which leads to "flocking" behaviors, until the arrival at an exit, where arching and clogging are common.\\
-Attempts to capture these emergent behaviors come in three flavors: flow-based, cellular automata, and Agent based. In a stock-and-flow model, individuals are implicit. People are homogeneous and uniformly distributed, so that they move like current in an electrical system. This is appropriate for, say, an evacuation model, where a large area is under consideration, and individual foibles would bog the analysis down.\\
-In cellular automata, we have a more detailed map of a smaller area, but the people are really little more than ants, lacking the kind of emergent behavior that is of real-world interest.\\
-Agent-based models, then, go beyond cellular automata and keep some state for each agent, along with modeling behavior based upon that individual state.\\
-Our model was not as expressive as the one in \cite{almeidaCrowdSimulationModeling2013}, focusing mainly on agent mobility. Even then, we seemed to encounter scalability issues with NetLogo. \\
-We captured the basic components of the building geometry, fire/smoke hazards, and path selection, but did not model as many granular aspects as could be sought. While we capture speed and position, we do not model visibility, reaction time, collaboration, insistence, or knowledge. Also not captured from the reference model are intrinsic attributes such as gender, aged, experience, nervousness, or any organizational role.
+Human behavior fascinates. An annual fire drill in an office setting is nearly a pleasant affair in good weather. Drills are announced beforehand, alarms sound, people cease affecting work, an orderly progression to assigned locations occurs, rolls are taken, the fire department arrives, equipment is checked and reset, the drill concludes, and people resume affecting work.
+
+Comes the real thing, that progression is perturbed. \cite{almeidaCrowdSimulationModeling2013} refers to the "least effort principle" that succumbs to the entropy of the moment when humans encounter pressure. "As nervousness increases there is less concern about comfort zone and finding the most convenient and shortest way." Without good knowledge of the floorplan around them, people lose the ability to orient themselves. Panic sets in, as visibility conditions worsen, breathing becomes and issue, and heat effects set in.
+
+Under pressure, people seek leaders, and "\dots tend to follow others in the assumption they could get them out of the dangerous area," which leads to "flocking" behaviors, until the arrival at an exit, where arching and clogging are common.  Attempts to capture these emergent behaviors come in three flavors: flow-based, cellular automata, and Agent based. In a stock-and-flow model, individuals are implicit. People are homogeneous and uniformly distributed, so that they move like current in an electrical system. This is appropriate for, say, an evacuation model, where a large area is under consideration, and individual foibles would bog the analysis down.
+
+In cellular automata, we have a more detailed map of a smaller area, but the people are really little more than ants, lacking the kind of emergent behavior that is of real-world interest.  Agent-based models, then, go beyond cellular automata and keep some state for each agent, along with modeling behavior based upon that individual state.  Our model was not as expressive as the one in \cite{almeidaCrowdSimulationModeling2013}, focusing mainly on agent mobility. Even then, we seemed to encounter scalability issues with NetLogo. 
+
+We captured the basic components of the building geometry and path selection, but did not model as many granular aspects as could be sought. While we capture speed and position, we do not model visibility, reaction time, collaboration, insistence, or knowledge. Also not captured from the reference model are intrinsic attributes such as gender, aged, experience, nervousness, or any organizational role.
 
 \section {Methodology}
 Our main goal was to hone in on the narrow situations in which we can detect patterns given our constrained simulation environment.  Due to the constraints of the  NetLogo environment, described further below, we are force to simplify various aspects of our model.  These simplifications though, provide us the opportunity to explore where emergent properties may arise in our agent's behavior\ref{emergentBehavior}.
@@ -57,7 +58,7 @@ Our main goal was to hone in on the narrow situations in which we can detect pat
 Our simulations utilized the NetLogo modeling environment \footnote{https://ccl.northwestern.edu/netlogo/}.  NetLogo was developed to provide an easy environment to simulate multi-agent models for educators and researchers with non programming backgrounds \cite{netlogo}.  The environment is made up of patches and agents.  The patches can be thought of the properties of the world which are accessed per cell in a grid layout.  The agents are objects that can interact with the world as well as each other.  While both agents and patches can maintain their own states, only agents can move around through the world and so can change their relationship to patches.
 
 
-\begin{figure}[!h]
+\begin{figure}[H]
   \centering
   \includegraphics[width=.75\linewidth]{./figures/fire_sim_ui.png}
   \caption{Evac Sim UI implemented in NetLogo}
@@ -65,9 +66,11 @@ Our simulations utilized the NetLogo modeling environment \footnote{https://ccl.
 
 One of the foundations of our simulation efforts was the ability to run experiments on a variety of maps, which mostly incrementally changed a key feature.  In order to accomplish this we implemented a custom map loader in NetLogo such that we could quickly develop custom layouts externally and procedurally load them at experiment time \ref{expEnv}.  The method of loading maps involves reading a file in line by  line which reflected a NetLogo list.  This list was then used to sequentially set the patch to the corresponding state, be it safety patch, grass, floor, or wall.  The code for loading a map is provided below.
 
+Users may create map files in a separate text editor. Each cell reflects the desired patch state in the world, where 3 = safety, 0 = grass, 1 = floor, and 2 = wall. An important note is the beginning and ending brackets '[ ]'.  These are necessary for NetLogo to correctly load each line as a list structure from the line's string representation.  Below is an example portion of a map file.  
+
 
 \begin{minipage}{\linewidth}
-\begin{lstlisting}[language=lisp, caption={Map loading procedure in NetLogo},captionpos=b, frame=single]
+\begin{lstlisting}[language=lisp, caption={Map loading procedure in NetLogo},captionpos=b, frame=single, basicstyle=\small]
 to load-map
   file-open map-file
   ; xdim and ydim are half the dimensions
@@ -96,13 +99,13 @@ end
 \end{lstlisting}
 \end{minipage}
 
-Users may create map files in a separate text editor. Each cell reflects the desired patch state in the world, where 3 = safety, 0 = grass, 1 = floor, and 2 = wall. An important note is the beginning and ending brackets '[ ]'.  These are necessary for NetLogo to correctly load each line as a list structure from the line's string representation.  Below is an example portion of a map file.  
-
-\begin{lstlisting}[language=lisp, caption={Example map file, 3 rows},captionpos=b, frame=single]
+\begin{minipage}{\linewidth}
+\begin{lstlisting}[language=lisp, caption={Example map file, 3 rows},captionpos=b, frame=single, basicstyle=\small]
 [3 0 0 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 0 0]
 [3 0 0 1 1 1 1 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 0 0]
 [3 0 0 2 1 1 1 2 1 1 1 1 2 1 1 1 1 1 2 1 1 1 1 1 2 0 0]
 \end{lstlisting}
+\end{minipage}
 
 Since our map creation needs were constrained to the few experiments that we planned to execute we did not implement a procedural way to generate maps.  This functionality, while one of our stretch goals, had to be dropped in the interests of deadlines.  If one were to expand upon our work then there are number of mechanisms to generate layouts \cite{mirahmadiNovelAlgorithmRealtime2012} such that further experiments could be devised without the human intensive effort of generating maps by hand.  Such possibilities include evaluations of optimal floor plans through a guided search or ablative studies on the subtle modifications of ideal floor plans.
 
@@ -284,7 +287,7 @@ For each map we executed a number of runs and captured the mean escape time, wit
 
 \subsubsection{Exit Dimensions}
 
-Our next layout based experiment evaluates how exit dimension size and place impacts evacuation speeds.  We varied the size of the exits as well as their placements alternating between states of one exit on one side, exit evenly split to opposite sides, and exit evenly split into 1 width wide exits all on one side.  As shown below, each column of maps has the same overall exit size while each row shows the various placement strategies.
+Our next layout based experiment evaluates how exit dimension size and placement impacts evacuation speeds.  We varied the size of the exits as well as their placements alternating between states of one exit on one side, exit evenly split to opposite sides, and exit evenly split into 1 width wide exits all on one side.  As shown below, each column of maps has the same overall exit size while each row shows the various placement strategies.
 
 \begin{figure*}[!ht]
   \centering
