@@ -420,173 +420,7 @@ As described in detail here \ref{expAgent} our agent speed experiment studied th
 As can be seen in the graph there is a deviation from the predicted results that grows as the distribution of speeds becomes 50\%.  This implies that the maximum interference between 2 groups moving at different speeds comes when those groups are evenly divided.  This follows intuition, but what doesn't follow is why this would emerge.  One possible explanation is that the faster group displaces the slower as they weave through the environment.  These perturbations cause minor delays for the slower agents that aggregates to a measurable increase in the mean delay.  Further evaluation of agent escape times, specifically broken down by agent speed group, would be needed to validate these assumptions.
 
 
-chokepoint1
-\begin{tabular}{ r | r | r | r | r }
-map & MIN  & AVG    & MAX    & VAR    \\
-a &  966.4 & 1006.0 &  963.0 &  995.6 \\
-b & 1155.6 & 1190.0 & 1149.0 & 1181.6 \\
-c & 1207.0 & 1243.0 & 1198.0 & 1234.9 \\
-d & 1217.5 & 1234.0 & 1210.0 & 1231.1 \\
-e & 1202.4 & 1243.0 & 1200.0 & 1226.0 \\
-f & 1183.1 & 1212.0 & 1179.0 & 1206.3 \\
-\end{tabular}
-\\
-\\
-chokepoint2
-\begin{tabular}{ r | r | r | r | r }
-map & MIN  & AVG    & MAX    & VAR    \\
-a &  790.8 &  833.0 &  781.0 &  819.8 \\
-b &  975.7 & 1025.0 &  970.0 & 1015.7 \\
-c & 1036.3 & 1071.0 & 1017.0 & 1071.5 \\
-d &  103 9.3 & 10710 & 134.0 & 165.5 \\
-e & 10 34. 8 & 1055.0& 102.0 & 105.2 \\  
-\end{tabular}
-\\
-\\
-chokepoint3
-\begin{tabular}{ r | r | r | r | r }
-map &  MIN   & AVG   & MAX   & VAR   \\
-a   &  717.6 & 758.0 & 704.0 & 751.9 \\
-b   &  886.9 & 919.0 & 880.0 & 911.2 \\
-c   &  905.2 & 952.0 & 900.0 & 937.3 \\
-d   &  902.3 & 925.0 & 894.0 & 919.2 \\
-\end{tabular}          
-\\  
-\\
-extdims2
-\begin{tabular}{ r | r | r | r | r }
-map & MIN   & AVG   & MAX   & VAR   \\
-a   & 480.6 & 516.0 & 472.0 & 502.5 \\
-b   & 482.9 & 522.0 & 474.0 & 510.0 \\
-c   & 481.3 & 524.0 & 473.0 & 510.6 \\
-\end{tabular}                          
-\\
-\\
-exitdims4
-\begin{tabular}{ r | r | r | r | r }
-map & MIN   & AVG   & MAX   & VAR   \\
-a   & 348.4 & 368.0 & 342.0 & 367.3 \\
-b   & 319.2 & 344.0 & 317.0 & 336.3 \\
-c   & 334.3 & 365.0 & 328.0 & 358.8 \\
-\end{tabular}
-\\
-\\
-exitdims6
-\begin{tabular}{ r | r | r | r | r }
-map & MIN   & AVG   & MAX   & VAR   \\
-a   & 292.0 & 302.0 & 287.0 & 301.7 \\    
-b   & 262.0 & 285.0 & 258.0 & 277.9 \\
-c   & 265.8 & 290.0 & 265.0 & 280.3 \\
-\end{tabular}
-\\
-\\
-exitdims8
-\begin{tabular}{ r | r | r | r | r }
-map &  MIN   &  AVG  & MAX   & VAR   \\
-a   &  264.7 & 279.0 & 263.0 & 276.2 \\
-b   &  230.4 & 243.0 & 228.0 & 240.3 \\
-c   &  231.4 & 250.0 & 231.0 & 242.7 \\
-\end{tabular}  
-\\
-\\
-chokepoint.map, 100 people, variance=17161
-\begin{tabular}{ r | r | r | r | r }
-slow & medium & MIN   & AVG   & MAX \\
-   4 & 96     & 107.0 & 128.0 & 153.0 \\
-   9 & 91     & 127.0 & 140.0 & 154.0 \\
-  14 & 86     & 147.0 & 156.0 & 166.0 \\
-  19 & 81     & 159.0 & 167.0 & 175.0 \\
-  24 & 76     & 166.0 & 181.0 & 196.0 \\
-  29 & 71     & 174.0 & 188.0 & 195.0 \\
-  34 & 66     & 183.0 & 201.0 & 216.0 \\
-  39 & 61     & 189.0 & 208.0 & 219.0 \\
-  44 & 56     & 209.0 & 224.0 & 234.0 \\
-  49 & 51     & 216.0 & 228.0 & 250.0 \\
-  54 & 46     & 210.0 & 235.0 & 256.0 \\
-  59 & 41     & 235.0 & 245.0 & 261.0 \\
-  64 & 36     & 240.0 & 255.0 & 268.0 \\
-  69 & 31     & 243.0 & 257.0 & 268.0 \\
-  74 & 26     & 248.0 & 267.0 & 291.0 \\
-  79 & 21     & 260.0 & 272.0 & 279.0 \\
-  84 & 16     & 274.0 & 285.0 & 296.0 \\
-  89 & 11     & 267.0 & 278.0 & 293.0 \\
-  94 &  6     & 270.0 & 290.0 & 311.0 \\
-  99 &  1     & 272.0 & 294.0 & 316.0 \\
-\end{tabular}  
-\\
-\\
-chokepoint.map, 200 people, variance=29232.0
-\begin{tabular}{ r | r | r | r | r }
-slow & medium & MIN   & AVG   & MAX   \\
-34   & 66     & 269.0 & 292.0 & 317.0 \\
-39   & 61     & 291.0 & 309.0 & 330.0 \\
-44   & 56     & 300.0 & 318.0 & 334.0 \\
-49   & 51     & 309.0 & 327.0 & 343.0 \\
-54   & 46     & 330.0 & 350.0 & 363.0 \\
-59   & 41     & 336.0 & 357.0 & 374.0 \\
-64   & 36     & 357.0 & 369.0 & 394.0 \\
-69   & 31     & 356.0 & 375.0 & 398.0 \\
-74   & 26     & 347.0 & 384.0 & 417.0 \\
-79   & 21     & 368.0 & 390.0 & 415.0 \\
-84   & 16     & 379.0 & 398.0 & 422.0 \\
-89   & 11     & 367.0 & 401.0 & 433.0 \\
-94   &  6     & 378.0 & 408.0 & 448.0 \\
-99   &  1     & 391.0 & 430.0 & 463.0 \\
-\end{tabular}  
-\\
-\\
-chokepoint.map, 300 people, variance=39602.0
-\begin{tabular}{ r | r | r | r | r }
-slow & medium & MIN   & AVG   & MAX \\
-39 & 61 & 357.0 & 379.0 & 402.0 \\
-44 & 56 & 379.0 & 401.0 & 426.0 \\
-49 & 51 & 387.0 & 413.0 & 439.0 \\
-54 & 46 & 395.0 & 429.0 & 468.0 \\
-59 & 41 & 382.0 & 431.0 & 466.0 \\
-64 & 36 & 421.0 & 450.0 & 477.0 \\
-69 & 31 & 427.0 & 465.0 & 495.0 \\
-74 & 26 & 442.0 & 473.0 & 500.0 \\
-79 & 21 & 468.0 & 490.0 & 513.0 \\
-84 & 16 & 466.0 & 491.0 & 509.0 \\
-89 & 11 & 468.0 & 502.0 & 553.0 \\
-94 &  6 & 506.0 & 521.0 & 541.0 \\
-99 &  1 & 490.0 & 509.0 & 529.0 \\
-\end{tabular}  
-\\
-\\
-chokepoint.map, 400 people, variance=45878.0
-\begin{tabular}{ r | r | r | r | r }
-slow & medium & MIN   & AVG   & MAX \\
-49 & 51 & 473.0 & 501.0 & 533.0 \\
-54 & 46 & 465.0 & 511.0 & 544.0 \\
-59 & 41 & 491.0 & 528.0 & 573.0 \\
-64 & 36 & 511.0 & 546.0 & 575.0 \\
-69 & 31 & 534.0 & 559.0 & 583.0 \\
-74 & 26 & 520.0 & 546.0 & 562.0 \\
-79 & 21 & 543.0 & 573.0 & 612.0 \\
-84 & 16 & 567.0 & 591.0 & 605.0 \\
-89 & 11 & 557.0 & 589.0 & 617.0 \\
-94 &  6 & 566.0 & 592.0 & 623.0 \\
-99 &  1 & 554.0 & 591.0 & 640.0 \\
-\end{tabular}  
-\\                                     
-\\
-chokepoint.map, 500 people, variance=54139.0
-\begin{tabular}{ r | r | r | r | r }
-slow & medium & MIN   & AVG   & MAX \\
-49 & 51 & 543.0 & 575.0 & 637.0 \\
-54 & 46 & 535.0 & 571.0 & 610.0 \\
-59 & 41 & 540.0 & 594.0 & 620.0 \\
-64 & 36 & 558.0 & 606.0 & 638.0 \\
-69 & 31 & 591.0 & 622.0 & 655.0 \\
-74 & 26 & 615.0 & 646.0 & 680.0 \\
-79 & 21 & 609.0 & 642.0 & 674.0 \\
-84 & 16 & 611.0 & 655.0 & 700.0 \\
-89 & 11 & 633.0 & 684.0 & 709.0 \\
-94 &  6 & 644.0 & 679.0 & 713.0 \\
-99 &  1 & 648.0 & 674.0 & 723.0 \\
-\end{tabular}  
-\\                                     
+  
 \section{Future Work}
 This sort of model never reaches an end-state. Every aspect can be improved.
 Starting with the agents, per \cite{almeidaCrowdSimulationModeling2013}, much
@@ -608,15 +442,181 @@ would be a near term goal for future work.
 
 \section {Conclusion}
 
-Restate the problem.
+The demand that our buildings and public spaces are designed with safety in mind is becoming increasingly loud.  Before large investments are made in these projects planners need to have robust tools to understand the impact of their design choices.  Every model of the world loses some amount of information in its abstraction.  Our models seek to explore where these trade-offs impact realism and where simplified representations can stay relevant.  This paper described a first step to realizing the capability of running these types of simulations in the NetLogo environment.
 
-Talk about the benefits and limitations of our environment
-
-lessons learned from test harness
-
-Agent based simulations will remain as one of the few efficient ways to conduct experiments that explore problems of these magnitudes for the foreseeable future.
+Our experiments attacked small discrete problems in the hopes that this could be the foundation to more complicated experiments built on top of our framework.  Understanding that each aspect of our model has room to grow we hope that these experiments and models inspire future work with NetLogo in this field.  While there exists other modeling environments with more capabilities, NetLogo remains a key tool to communicate and educate the agent based approach.  Our study should show that there are areas that can be modeled effectively in NetLogo if you are prepared to make certain trade-offs .  Agent based simulations will remain as one of the few efficient ways to conduct experiments that explore problems of these magnitudes for the foreseeable future.
 
 
+
+
+%chokepoint1
+%\begin{tabular}{ r | r | r | r | r }
+%map & MIN  & AVG    & MAX    & VAR    \\
+%a &  966.4 & 1006.0 &  963.0 &  995.6 \\
+%b & 1155.6 & 1190.0 & 1149.0 & 1181.6 \\
+%c & 1207.0 & 1243.0 & 1198.0 & 1234.9 \\
+%d & 1217.5 & 1234.0 & 1210.0 & 1231.1 \\
+%e & 1202.4 & 1243.0 & 1200.0 & 1226.0 \\
+%f & 1183.1 & 1212.0 & 1179.0 & 1206.3 \\
+%\end{tabular}
+%\\
+%\\
+%chokepoint2
+%\begin{tabular}{ r | r | r | r | r }
+%map & MIN  & AVG    & MAX    & VAR    \\
+%a &  790.8 &  833.0 &  781.0 &  819.8 \\
+%b &  975.7 & 1025.0 &  970.0 & 1015.7 \\
+%c & 1036.3 & 1071.0 & 1017.0 & 1071.5 \\
+%d &  103 9.3 & 10710 & 134.0 & 165.5 \\
+%e & 10 34. 8 & 1055.0& 102.0 & 105.2 \\  
+%\end{tabular}
+%\\
+%\\
+%chokepoint3
+%\begin{tabular}{ r | r | r | r | r }
+%map &  MIN   & AVG   & MAX   & VAR   \\
+%a   &  717.6 & 758.0 & 704.0 & 751.9 \\
+%b   &  886.9 & 919.0 & 880.0 & 911.2 \\
+%c   &  905.2 & 952.0 & 900.0 & 937.3 \\
+%d   &  902.3 & 925.0 & 894.0 & 919.2 \\
+%\end{tabular}          
+%\\  
+%\\
+%extdims2
+%\begin{tabular}{ r | r | r | r | r }
+%map & MIN   & AVG   & MAX   & VAR   \\
+%a   & 480.6 & 516.0 & 472.0 & 502.5 \\
+%b   & 482.9 & 522.0 & 474.0 & 510.0 \\
+%c   & 481.3 & 524.0 & 473.0 & 510.6 \\
+%\end{tabular}                          
+%\\
+%\\
+%exitdims4
+%\begin{tabular}{ r | r | r | r | r }
+%map & MIN   & AVG   & MAX   & VAR   \\
+%a   & 348.4 & 368.0 & 342.0 & 367.3 \\
+%b   & 319.2 & 344.0 & 317.0 & 336.3 \\
+%c   & 334.3 & 365.0 & 328.0 & 358.8 \\
+%\end{tabular}
+%\\
+%\\
+%exitdims6
+%\begin{tabular}{ r | r | r | r | r }
+%map & MIN   & AVG   & MAX   & VAR   \\
+%a   & 292.0 & 302.0 & 287.0 & 301.7 \\    
+%b   & 262.0 & 285.0 & 258.0 & 277.9 \\
+%c   & 265.8 & 290.0 & 265.0 & 280.3 \\
+%\end{tabular}
+%\\
+%\\
+%exitdims8
+%\begin{tabular}{ r | r | r | r | r }
+%map &  MIN   &  AVG  & MAX   & VAR   \\
+%a   &  264.7 & 279.0 & 263.0 & 276.2 \\
+%b   &  230.4 & 243.0 & 228.0 & 240.3 \\
+%c   &  231.4 & 250.0 & 231.0 & 242.7 \\
+%\end{tabular}  
+%\\
+%\\
+%chokepoint.map, 100 people, variance=17161
+%\begin{tabular}{ r | r | r | r | r }
+%slow & medium & MIN   & AVG   & MAX \\
+%   4 & 96     & 107.0 & 128.0 & 153.0 \\
+%   9 & 91     & 127.0 & 140.0 & 154.0 \\
+%  14 & 86     & 147.0 & 156.0 & 166.0 \\
+%  19 & 81     & 159.0 & 167.0 & 175.0 \\
+%  24 & 76     & 166.0 & 181.0 & 196.0 \\
+%  29 & 71     & 174.0 & 188.0 & 195.0 \\
+%  34 & 66     & 183.0 & 201.0 & 216.0 \\
+%  39 & 61     & 189.0 & 208.0 & 219.0 \\
+%  44 & 56     & 209.0 & 224.0 & 234.0 \\
+%  49 & 51     & 216.0 & 228.0 & 250.0 \\
+%  54 & 46     & 210.0 & 235.0 & 256.0 \\
+%  59 & 41     & 235.0 & 245.0 & 261.0 \\
+%  64 & 36     & 240.0 & 255.0 & 268.0 \\
+%  69 & 31     & 243.0 & 257.0 & 268.0 \\
+%  74 & 26     & 248.0 & 267.0 & 291.0 \\
+%  79 & 21     & 260.0 & 272.0 & 279.0 \\
+%  84 & 16     & 274.0 & 285.0 & 296.0 \\
+%  89 & 11     & 267.0 & 278.0 & 293.0 \\
+%  94 &  6     & 270.0 & 290.0 & 311.0 \\
+%  99 &  1     & 272.0 & 294.0 & 316.0 \\
+%\end{tabular}  
+%\\
+%\\
+%chokepoint.map, 200 people, variance=29232.0
+%\begin{tabular}{ r | r | r | r | r }
+%slow & medium & MIN   & AVG   & MAX   \\
+%34   & 66     & 269.0 & 292.0 & 317.0 \\
+%39   & 61     & 291.0 & 309.0 & 330.0 \\
+%44   & 56     & 300.0 & 318.0 & 334.0 \\
+%49   & 51     & 309.0 & 327.0 & 343.0 \\
+%54   & 46     & 330.0 & 350.0 & 363.0 \\
+%59   & 41     & 336.0 & 357.0 & 374.0 \\
+%64   & 36     & 357.0 & 369.0 & 394.0 \\
+%69   & 31     & 356.0 & 375.0 & 398.0 \\
+%74   & 26     & 347.0 & 384.0 & 417.0 \\
+%79   & 21     & 368.0 & 390.0 & 415.0 \\
+%84   & 16     & 379.0 & 398.0 & 422.0 \\
+%89   & 11     & 367.0 & 401.0 & 433.0 \\
+%94   &  6     & 378.0 & 408.0 & 448.0 \\
+%99   &  1     & 391.0 & 430.0 & 463.0 \\
+%\end{tabular}  
+%\\
+%\\
+%chokepoint.map, 300 people, variance=39602.0
+%\begin{tabular}{ r | r | r | r | r }
+%slow & medium & MIN   & AVG   & MAX \\
+%39 & 61 & 357.0 & 379.0 & 402.0 \\
+%44 & 56 & 379.0 & 401.0 & 426.0 \\
+%49 & 51 & 387.0 & 413.0 & 439.0 \\
+%54 & 46 & 395.0 & 429.0 & 468.0 \\
+%59 & 41 & 382.0 & 431.0 & 466.0 \\
+%64 & 36 & 421.0 & 450.0 & 477.0 \\
+%69 & 31 & 427.0 & 465.0 & 495.0 \\
+%74 & 26 & 442.0 & 473.0 & 500.0 \\
+%79 & 21 & 468.0 & 490.0 & 513.0 \\
+%84 & 16 & 466.0 & 491.0 & 509.0 \\
+%89 & 11 & 468.0 & 502.0 & 553.0 \\
+%94 &  6 & 506.0 & 521.0 & 541.0 \\
+%99 &  1 & 490.0 & 509.0 & 529.0 \\
+%\end{tabular}  
+%\\
+%\\
+%chokepoint.map, 400 people, variance=45878.0
+%\begin{tabular}{ r | r | r | r | r }
+%slow & medium & MIN   & AVG   & MAX \\
+%49 & 51 & 473.0 & 501.0 & 533.0 \\
+%54 & 46 & 465.0 & 511.0 & 544.0 \\
+%59 & 41 & 491.0 & 528.0 & 573.0 \\
+%64 & 36 & 511.0 & 546.0 & 575.0 \\
+%69 & 31 & 534.0 & 559.0 & 583.0 \\
+%74 & 26 & 520.0 & 546.0 & 562.0 \\
+%79 & 21 & 543.0 & 573.0 & 612.0 \\
+%84 & 16 & 567.0 & 591.0 & 605.0 \\
+%89 & 11 & 557.0 & 589.0 & 617.0 \\
+%94 &  6 & 566.0 & 592.0 & 623.0 \\
+%99 &  1 & 554.0 & 591.0 & 640.0 \\
+%\end{tabular}  
+%\\                                     
+%\\
+%chokepoint.map, 500 people, variance=54139.0
+%\begin{tabular}{ r | r | r | r | r }
+%slow & medium & MIN   & AVG   & MAX \\
+%49 & 51 & 543.0 & 575.0 & 637.0 \\
+%54 & 46 & 535.0 & 571.0 & 610.0 \\
+%59 & 41 & 540.0 & 594.0 & 620.0 \\
+%64 & 36 & 558.0 & 606.0 & 638.0 \\
+%69 & 31 & 591.0 & 622.0 & 655.0 \\
+%74 & 26 & 615.0 & 646.0 & 680.0 \\
+%79 & 21 & 609.0 & 642.0 & 674.0 \\
+%84 & 16 & 611.0 & 655.0 & 700.0 \\
+%89 & 11 & 633.0 & 684.0 & 709.0 \\
+%94 &  6 & 644.0 & 679.0 & 713.0 \\
+%99 &  1 & 648.0 & 674.0 & 723.0 \\
+%\end{tabular}  
+%\\                                   
+\pagebreak
 \bibliographystyle{plain}
 
 \bibliography{css600}
