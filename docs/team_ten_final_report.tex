@@ -38,17 +38,16 @@ Two final models of note were one that was also implemented in NetLogo, \cite{pr
 Finally, one pertaining to public space, and not fires, was \cite{zhouSimulationPedestrianEvacuation2019} This study begins with thirty-six hours of video from a public square in Ningbo, China, which were used to develop a Large-Scale Public Place (LPS) evacuation model, building upon the Social Force Model (SFM). This was expressed in five strategies. Attention was paid to walking speed and diameter, and a the model was used to study the efficiency of evacuating the area. The idea of starting with the human movement and not a map of an enclosed space.
 
 \subsection {Approaches}
-Talk about various modeling approaches to this problem   . mainly this paper \cite{almeidaCrowdSimulationModeling2013} 
+Human behavior fascinates. An annual fire drill in an office setting is nearly a pleasant affair in good weather. Drills are announced beforehand, alarms sound, people cease affecting work, an orderly progression to assigned locations occurs, rolls are taken, the fire department arrives, equipment is checked and reset, the drill concludes, and people resume affecting work.\\
+Comes the real thing, that progression is perturbed. \cite{almeidaCrowdSimulationModeling2013} refers to the "least effort principle" that succumbs to the entropy of the moment when humans encounter pressure. "As nervousness increases there is less concern about comfort zone and finding the most convenient and shortest way." Without good knowledge of the floorplan around them, people lose the ability to orient themselves. Panic sets in, as visibility conditions worsen, breathing becomes and issue, and heat effects set in.\\
+Under pressure, people seek leaders, and ". . .tend to follow others in the assumption they could get them out of the dangerous area," which leads to "flocking" behaviors, until the arrival at an exit, where arching and clogging are common.\\
+Attempts to capture these emergent behaviors come in three flavors: flow-based, cellular automata, and Agent based. In a stock-and-flow model, individuals are implicit. People are homogeneous and uniformly distributed, so that they move like current in an electrical system. This is appropriate for, say, an evacuation model, where a large area is under consideration, and individual foibles would bog the analysis down.\\
+In cellular automata, we have a more detailed map of a smaller area, but the people are really little more than ants, lacking the kind of emergent behavior that is of real-world interest.\\
+Agent-based models, then, go beyond cellular automata and keep some state for each agent, along with modeling behavior based upon that individual state.\\
+Our model was not as expressive as the one in \cite{almeidaCrowdSimulationModeling2013}, focusing mainly on agent mobility. Even then, we seemed to encounter scalability issues with NetLogo. \\
+We captured the basic components of the building geometry, fire/smoke hazards, and path selection, but did not model as many granular aspects as could be sought. While we capture speed and position, we do not model visibility, reaction time, collaboration, insistence, or knowledge. Also not captured from the reference model are intrinsic attributes such as gender, aged, experience, nervousness, or any organizational role.
 
-flow based modeling
-
-cellular automata
-
-Agent based
-
-Are there others that would be applicable?  probably not systems dynamics
 \section {Methodology}
-
 Our main goal was to hone in on the narrow situations in which we can detect patterns given our constrained simulation environment.  Due to the constraints of the  NetLogo environment, described further below, we are force to simplify various aspects of our model.  These simplifications though, provide us the opportunity to explore where emergent properties may arise in our agent's behavior\ref{emergentBehavior}.
 
 
@@ -489,65 +488,80 @@ slow & medium & MIN   & AVG   & MAX \\
   94 &  6     & 270.0 & 290.0 & 311.0 \\
   99 &  1     & 272.0 & 294.0 & 316.0 \\
 \end{tabular}  
-%
-%200,34,66,0,0.3,1.0,0.75,269.0,292.0,317.0,29232.0
-%200,39,61,0,0.3,1.0,0.75,291.0,309.0,330.0,29232.0
-%200,44,56,0,0.3,1.0,0.75,300.0,318.0,334.0,29232.0
-%200,49,51,0,0.3,1.0,0.75,309.0,327.0,343.0,29232.0
-%200,54,46,0,0.3,1.0,0.75,330.0,350.0,363.0,29232.0
-%200,59,41,0,0.3,1.0,0.75,336.0,357.0,374.0,29232.0
-%200,64,36,0,0.3,1.0,0.75,357.0,369.0,394.0,29232.0
-%200,69,31,0,0.3,1.0,0.75,356.0,375.0,398.0,29232.0
-%200,74,26,0,0.3,1.0,0.75,347.0,384.0,417.0,29232.0
-%200,79,21,0,0.3,1.0,0.75,368.0,390.0,415.0,29232.0
-%200,84,16,0,0.3,1.0,0.75,379.0,398.0,422.0,29232.0
-%200,89,11,0,0.3,1.0,0.75,367.0,401.0,433.0,29232.0
-%200,94,6,0,0.3,1.0,0.75,378.0,408.0,448.0,29232.0
-%200,99,1,0,0.3,1.0,0.75,391.0,430.0,463.0,29232.0
-%
-%\\
-%\\
-%300,39,61,0,0.3,1.0,0.75,357.0,379.0,402.0,39602.0
-%300,44,56,0,0.3,1.0,0.75,379.0,401.0,426.0,39602.0
-%300,49,51,0,0.3,1.0,0.75,387.0,413.0,439.0,39602.0
-%300,54,46,0,0.3,1.0,0.75,395.0,429.0,468.0,39602.0
-%300,59,41,0,0.3,1.0,0.75,382.0,431.0,466.0,39602.0
-%300,64,36,0,0.3,1.0,0.75,421.0,450.0,477.0,39602.0
-%300,69,31,0,0.3,1.0,0.75,427.0,465.0,495.0,39602.0
-%300,74,26,0,0.3,1.0,0.75,442.0,473.0,500.0,39602.0
-%300,79,21,0,0.3,1.0,0.75,468.0,490.0,513.0,39602.0
-%300,84,16,0,0.3,1.0,0.75,466.0,491.0,509.0,39602.0
-%300,89,11,0,0.3,1.0,0.75,468.0,502.0,553.0,39602.0
-%300,94,6,0,0.3,1.0,0.75,506.0,521.0,541.0,39602.0
-%300,99,1,0,0.3,1.0,0.75,490.0,509.0,529.0,39602.0
-%
-%\\
-%\\
-%400,49,51,0,0.3,1.0,0.75,473.0,501.0,533.0,45878.0
-%400,54,46,0,0.3,1.0,0.75,465.0,511.0,544.0,45878.0
-%400,59,41,0,0.3,1.0,0.75,491.0,528.0,573.0,45878.0
-%400,64,36,0,0.3,1.0,0.75,511.0,546.0,575.0,45878.0
-%400,69,31,0,0.3,1.0,0.75,534.0,559.0,583.0,45878.0
-%400,74,26,0,0.3,1.0,0.75,520.0,546.0,562.0,45878.0
-%400,79,21,0,0.3,1.0,0.75,543.0,573.0,612.0,45878.0
-%400,84,16,0,0.3,1.0,0.75,567.0,591.0,605.0,45878.0
-%400,89,11,0,0.3,1.0,0.75,557.0,589.0,617.0,45878.0
-%400,94,6,0,0.3,1.0,0.75,566.0,592.0,623.0,45878.0
-%400,99,1,0,0.3,1.0,0.75,554.0,591.0,640.0,45878.0
-%
-%\\
-%\\
-%500,49,51,0,0.3,1.0,0.75,543.0,575.0,637.0,54139.0
-%500,54,46,0,0.3,1.0,0.75,535.0,571.0,610.0,54139.0
-%500,59,41,0,0.3,1.0,0.75,540.0,594.0,620.0,54139.0
-%500,64,36,0,0.3,1.0,0.75,558.0,606.0,638.0,54139.0
-%500,69,31,0,0.3,1.0,0.75,591.0,622.0,655.0,54139.0
-%500,74,26,0,0.3,1.0,0.75,615.0,646.0,680.0,54139.0
-%500,79,21,0,0.3,1.0,0.75,609.0,642.0,674.0,54139.0
-%500,84,16,0,0.3,1.0,0.75,611.0,655.0,700.0,54139.0
-%500,89,11,0,0.3,1.0,0.75,633.0,684.0,709.0,54139.0
-%500,94,6,0,0.3,1.0,0.75,644.0,679.0,713.0,54139.0
-%500,99,1,0,0.3,1.0,0.75,648.0,674.0,723.0,54139.0
+\\
+\\
+chokepoint.map, 200 people, variance=29232.0
+\begin{tabular}{ r | r | r | r | r }
+slow & medium & MIN   & AVG   & MAX   \\
+34   & 66     & 269.0 & 292.0 & 317.0 \\
+39   & 61     & 291.0 & 309.0 & 330.0 \\
+44   & 56     & 300.0 & 318.0 & 334.0 \\
+49   & 51     & 309.0 & 327.0 & 343.0 \\
+54   & 46     & 330.0 & 350.0 & 363.0 \\
+59   & 41     & 336.0 & 357.0 & 374.0 \\
+64   & 36     & 357.0 & 369.0 & 394.0 \\
+69   & 31     & 356.0 & 375.0 & 398.0 \\
+74   & 26     & 347.0 & 384.0 & 417.0 \\
+79   & 21     & 368.0 & 390.0 & 415.0 \\
+84   & 16     & 379.0 & 398.0 & 422.0 \\
+89   & 11     & 367.0 & 401.0 & 433.0 \\
+94   &  6     & 378.0 & 408.0 & 448.0 \\
+99   &  1     & 391.0 & 430.0 & 463.0 \\
+\end{tabular}  
+\\
+\\
+chokepoint.map, 300 people, variance=39602.0
+\begin{tabular}{ r | r | r | r | r }
+slow & medium & MIN   & AVG   & MAX \\
+39 & 61 & 357.0 & 379.0 & 402.0 \\
+44 & 56 & 379.0 & 401.0 & 426.0 \\
+49 & 51 & 387.0 & 413.0 & 439.0 \\
+54 & 46 & 395.0 & 429.0 & 468.0 \\
+59 & 41 & 382.0 & 431.0 & 466.0 \\
+64 & 36 & 421.0 & 450.0 & 477.0 \\
+69 & 31 & 427.0 & 465.0 & 495.0 \\
+74 & 26 & 442.0 & 473.0 & 500.0 \\
+79 & 21 & 468.0 & 490.0 & 513.0 \\
+84 & 16 & 466.0 & 491.0 & 509.0 \\
+89 & 11 & 468.0 & 502.0 & 553.0 \\
+94 &  6 & 506.0 & 521.0 & 541.0 \\
+99 &  1 & 490.0 & 509.0 & 529.0 \\
+\end{tabular}  
+\\
+\\
+chokepoint.map, 400 people, variance=45878.0
+\begin{tabular}{ r | r | r | r | r }
+slow & medium & MIN   & AVG   & MAX \\
+49 & 51 & 473.0 & 501.0 & 533.0 \\
+54 & 46 & 465.0 & 511.0 & 544.0 \\
+59 & 41 & 491.0 & 528.0 & 573.0 \\
+64 & 36 & 511.0 & 546.0 & 575.0 \\
+69 & 31 & 534.0 & 559.0 & 583.0 \\
+74 & 26 & 520.0 & 546.0 & 562.0 \\
+79 & 21 & 543.0 & 573.0 & 612.0 \\
+84 & 16 & 567.0 & 591.0 & 605.0 \\
+89 & 11 & 557.0 & 589.0 & 617.0 \\
+94 &  6 & 566.0 & 592.0 & 623.0 \\
+99 &  1 & 554.0 & 591.0 & 640.0 \\
+\end{tabular}  
+\\                                     
+\\
+chokepoint.map, 500 people, variance=54139.0
+\begin{tabular}{ r | r | r | r | r }
+slow & medium & MIN   & AVG   & MAX \\
+49 & 51 & 543.0 & 575.0 & 637.0 \\
+54 & 46 & 535.0 & 571.0 & 610.0 \\
+59 & 41 & 540.0 & 594.0 & 620.0 \\
+64 & 36 & 558.0 & 606.0 & 638.0 \\
+69 & 31 & 591.0 & 622.0 & 655.0 \\
+74 & 26 & 615.0 & 646.0 & 680.0 \\
+79 & 21 & 609.0 & 642.0 & 674.0 \\
+84 & 16 & 611.0 & 655.0 & 700.0 \\
+89 & 11 & 633.0 & 684.0 & 709.0 \\
+94 &  6 & 644.0 & 679.0 & 713.0 \\
+99 &  1 & 648.0 & 674.0 & 723.0 \\
+\end{tabular}  
+\\                                     
 \section{Future Work}
 Here we can expand on improvements we would make, additional features we could add (smoke multi-floor etc.), additional experiments, and porting to other environments
 
