@@ -239,26 +239,26 @@ In BehaviorSpace, the <experiment> tag was constant for all runs as follows:\\
 \\
 More repetitions would have been better, but there were enough scalability
 problems as it was. The average of the ten individual runs were then averaged to
-produce the results below.
+produce the results below.\\
 
 \begin{tabular}{ l | l | l }
 VARIABLE & DESCRIPTION & VALUE \\
-map-file & Name of map file to set up & Indicated on chart \\
-People & Number of Agents, as indicated on the chart \\
-person\_path\_weight & Agent blockage factor for patch & Constant 2.0 \\
-Slow & Percentage of Agents at Slow-Speed & Indicated on chart \\
-Medium & Percentage of Agents at Medium-Speed & Indicated on chart \\
-Fast & Percentage of Agents at Slow-Speed & Held at 0 throughout \\
+map-file & Name of map file to set up & On chart \\
+People & Number of Agents & On chart \\
+person\_path\_weight & Agent blockage & Const 2.0 \\
+Slow & Agents at Slow-Speed & On chart \\
+Medium & Agents at Medium-Speed & On chart \\
+Fast & Agents at Slow-Speed & Const 0 \\
 Slow-Speed & Agent movement rate & 0.3 patches \\
 Medium-Speed & Agent movement rate  & 0.75 patches \\
 Fast-Speed & Agent movement rate  & 1.0 patches \\
-add-person-spacing? & Whether to include person path weight & true \\
-equal-diagonal-weight? & How to calculate diagonal move costs & true \\
-display-path-cost? & Whether to display path costs in UI & false \\
-people-wait? & Whether people tarried for open spaces before moving & true \\
-set-fire? & Whether to have flaming patches & false \\
+add-person-spacing? & Include person path wt & true \\
+equal-diagonal-weight? & Calc diag move cost & true \\
+display-path-cost? & Display path costs in UI & false \\
+people-wait? & If people tarried & true \\
+set-fire? & Flaming patches & false \\
 Fire\_Speed & Rate of fire spread & 50 \\
-mean-escape-time & Average Agent escape time over the run, the output variable & output \\
+mean-escape-time & Average Agent escape time & output \\
 \end{tabular}
 
 \subsection{Experiments Based on Layouts} \label{expLayout}
