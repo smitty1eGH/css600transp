@@ -219,7 +219,6 @@ across multiple ones. For example, the number of slow/medium/fast people, these
 were three discrete integers, but were really percentage chunks of the people
 variable.
 
-
 SQLite proved really helpful when we discovered some scalability issues with
 NetLogo itself. While there was no time to light off a Java debugger and delve
 into the root cause, we saw decreasing ability of the system to complete the
@@ -231,35 +230,44 @@ after the fact.
 Finally, Python's data science facilities are well-known \footnote{https://www.scipy.org/index.html}, supporting arbitrary visualization pipelines.  Where visualizations were required to show results we leveraged the Matplotlib library to generate those graphs \footnote{ https://matplotlib.org/}.
 
 \subsection{Experimental Parameters}
-The number of Agents randomly distributed across the map is controlled by the
-People variable. \\
-In BehaviorSpace, the <experiment> tag was constant for all runs as follows:\\
-\\
-  <experiment name="FireSim" repetitions="10" runMetricsEveryStep="false">\\
-\\
-More repetitions would have been better, but there were enough scalability
-problems as it was. The average of the ten individual runs were then averaged to
-produce the results below.\\
 
-\begin{tabular}{ l | l | l }
-VARIABLE & DESCRIPTION & VALUE \\
-map-file & Name of map file to set up & On chart \\
-People & Number of Agents & On chart \\
-person\_path\_weight & Agent blockage & Const 2.0 \\
-Slow & Agents at Slow-Speed & On chart \\
-Medium & Agents at Medium-Speed & On chart \\
-Fast & Agents at Slow-Speed & Const 0 \\
+To facilitate the various experiments that we wished to conduct we exposed a number of the variables that drive the models behavior to the user interface as well as the Behavior Space environment.  Since most of our simulations were exploring a single feature we would only tweak a single parameter such as the map file or the Slow and Medium agent counts.  
+%The number of Agents randomly distributed across the map is controlled by the
+%People variable. \\
+%In BehaviorSpace, the <experiment> tag was constant for all runs as follows:\\
+%\\
+%  <experiment name="FireSim" repetitions="10" runMetricsEveryStep="false">\\
+%\\
+%More repetitions would have been better, but there were enough scalability
+%problems as it was. The average of the ten individual runs were then averaged to
+%produce the results below.\\
+\begin{table}[H]
+\begin{tabular}{| l | l | l| }
+\hline
+Variable & Description & Default Value \\
+\hline \hline
+map-file & Name of map file to set up & N/A \\
+People & Number of Agents & 500 \\
+person\_path\_weight & Agent blockage &  2.0 \\
+Slow & Agents at Slow-Speed & 100\% \\
+Medium & Agents at Medium-Speed & 0\% \\
+Fast & Agents at Slow-Speed & 0\% \\
 Slow-Speed & Agent movement rate & 0.3 patches \\
 Medium-Speed & Agent movement rate  & 0.75 patches \\
-Fast-Speed & Agent movement rate  & 1.0 patches \\
-add-person-spacing? & Include person path wt & true \\
-equal-diagonal-weight? & Calc diag move cost & true \\
-display-path-cost? & Display path costs in UI & false \\
-people-wait? & If people tarried & true \\
-set-fire? & Flaming patches & false \\
-Fire\_Speed & Rate of fire spread & 50 \\
-mean-escape-time & Average Agent escape time & output \\
+Fast-Speed & Agent movement rate  & 0.99 patches \\
+add-person-spacing? & Add person path wt buffer & True \\
+equal-diagonal-weight? & Calc diag move cost & True \\
+people-wait? & If people tarried & True \\
+\hline
+mean-escape-time & Average agent escape time & Output \\
+\hline
+
 \end{tabular}
+\caption{Model parameters exposed to experimenters}
+\end{table}
+
+To account for the fact that agents are randomly positioned at the beginning of the simulation we ran multiple iterations of each experiment for a given set of parameters.  Generally this count was 10 which enabled is to be confident in our output as well as to run the simulations in a reasonable amount of time.  Due to the extensive experimentation harness that we developed we had the ability to control the parameter input at a much higher level than NetLogo's built in Behavior Space.  This is especially evident in situations where we wanted to modify pairs of parameters in conjunction with each other instead of all pairwise combinations.
+
 
 \subsection{Experiments Based on Layouts} \label{expLayout}
 
@@ -422,23 +430,16 @@ As can be seen in the graph there is a deviation from the predicted results that
 
   
 \section{Future Work}
-This sort of model never reaches an end-state. Every aspect can be improved.
-Starting with the agents, per \cite{almeidaCrowdSimulationModeling2013}, much
-personality can be added to make their reactions to the stress more realistic.
-Age, gender, experience, role, specific challenges, e.g. wheel chairs,
-blindness, deafness, and the attendant behaviors are ripe for
-investigation.\\
+This sort of model never reaches an end-state. Every aspect can be improved.  Starting with the agents, per \cite{almeidaCrowdSimulationModeling2013}, additional features can be modeled to make their reactions to stress more realistic. Age, gender, experience, role, specific challenges, e.g. wheel chairs, blindness, deafness, and the attendant behaviors are ripe for investigation.  Along with the intrinsic agent dynamics there are also other agent decision behaviors that can be modeled.  Avoiding crowds and following crowds are opposite behaviors that can be beneficial in different scenarios.  Modeling behaviors such as these can lead to more realistic simulations.
 
-The fire's behavior can be improved to include reactions to materials, smoke
-visibility effects, heat effects, and so forth. \\
+%The fire's behavior can be improved to include reactions to materials, smoke visibility effects, heat effects, and so forth. 
 
-The layouts could be randomly generated, and multi-floor. \\
+While we intended to model the aspects of fire, smoke, and their associated side effects, we realized it doesn't contribute to the key evacuation components that we were studying.  But, to add these features, can be beneficial for studying other aspects such as path degradation, fire spread, and more dynamic layouts.  To compliment the fire's behavior other features could be added such as the fires reaction to materials, smoke visibility effects on agents, and so forth. 
 
-These enhancements strain the environment, and we already were operating at the
-edge of NetLogo. Porting to Mason
-\footnote{https://cs.gmu.edu/~eclab/projects/mason/} or Mesa
-\footnote{https://mesa.readthedocs.io/en/master/tutorials/intro\_tutorial.html}
-would be a near term goal for future work.
+There are also improvements that can be made with how the maps were generated, currently the extremely limited strategy of by hand.  The layouts could be procedurally generated within some sort of constraints to open up the space that is experimented with.  We could also include multi floor maps within NetLogo through some clever world manipulation and the introduction of patches that transport agents to different floors.
+
+
+While NetLogo was developed in part to aid in teaching about simulations, its use of Lisp like programming dialect can make development difficult for modern practitioners.  Porting to Mason \footnote{https://cs.gmu.edu/~eclab/projects/mason/} or Mesa \footnote{https://mesa.readthedocs.io/en/master/tutorials/intro\_tutorial.html} and there more modern development environments could increase the speed at which new capabilities could be developed.  This porting effort would be beneficial in spreading these models and techniques to a broader audience. 
 
 \section {Conclusion}
 
