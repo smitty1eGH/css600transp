@@ -278,7 +278,7 @@ The layout of an environment is probably the largest factor that determines evac
 
 Our choke point experiments seek to understand how choke points impact evacuation.  For our purposes a choke point is a narrowing of the map that people must travel through.  This is a subset of the often used definition of a choke point as a critical point at which people must move through\cite{evacOptions} regardless of its physical dimensions.  We begin our map design with a map with one choke point close to the exit.  We expand upon this by adding more choke points to that map as well as starting new families of maps that have their choke point start further away from the exit.
 
-\begin{figure*}[!ht]
+\begin{figure*}[H]
   \centering
   \begin{minipage}[b]{\linewidth}
     \includegraphics[width=0.15\textwidth]{./figures/chokepoint_1_a.png}
@@ -311,7 +311,7 @@ For each map we executed a number of runs and captured the mean escape time, wit
 
 Our next layout based experiment evaluates how exit dimension size and placement impacts evacuation speeds.  We varied the size of the exits as well as their placements; alternating between states of one exit on one side, exits evenly split to opposite sides, and exits evenly split into 1 width wide exits all on one side.  As shown below, each column of maps has the same overall exit size while each row shows the various placement strategies.
 
-\begin{figure*}[!ht]
+\begin{figure*}[H]
   \centering
   \begin{minipage}[b]{.75\linewidth}
     \includegraphics[width=0.24\textwidth]{./figures/exit_dims_2_a.png}
@@ -351,7 +351,7 @@ The final group of experiments that we evaluated were situations where we attemp
 
 The first behavior we sought to mimic was the herding behavior.  Herding is caused by irrational behavior in emergency situations that causes people to flock together \cite{almeidaCrowdSimulationModeling2013}.  For our situation, since we don't have the complex agent behavior to recreate this, we had to rely on map layouts that may evoke a similar pattern to herding.
 
-\begin{figure}[!ht]
+\begin{figure}[H]
   \centering
   \subfloat[Evacuation with no herding ]{\includegraphics[width=0.35\textwidth]{./figures/Herding1.png}\label{fig:f1}}
   \hfill
@@ -364,7 +364,7 @@ The layout that we found to replicate herding behavior is one that has multiple 
 The next behavior we tried to replicate was that of clogging.  This phenomena arises when people block a passageway from each other while waiting for others to pass through \cite{almeidaCrowdSimulationModeling2013}.  We sought to replicate this behavior by adding parameters that makes agents increase distance between each other as described here \ref{agentWeight} and here \ref{cost}.  The weight of a given agent is the cost that is directly added to a patches weight.  This by itself causes a majority of avoidance behavior that we see. The person spacing parameter, when turned on, increases a patches weight if it is next to a patch with a neighbor.  This makes patches next to people slightly more expensive to move to than other empty patches.  
 
 
-\begin{figure}[!ht]
+\begin{figure}[H]
   \centering
   \subfloat[No clogging due to people not blocking paths ]{\includegraphics[width=0.35\textwidth]{./figures/clogging1_clean.png}\label{fig:f1}}
   \hfill
@@ -391,7 +391,7 @@ Overall the results we observed were in line with our expectations.  While our e
 
 As described in \ref{chokepoint} this experiment sought to understand the impact that choke points have on evacuations. The maps for these experiments \ref{chokepointmaps} are broken into three lines as plotted below.  Line 1 shows the family of maps with the first choke point closest to the exit, with line 2 slightly further, and line 3 the furthest.  The \emph{a} through \emph{f} designation describe maps with increasing numbers of choke points. 
 
-\begin{figure} [!ht]
+\begin{figure} [H]
   \centering
   \includegraphics[width=.9\linewidth]{./figures/chokepoint_graph.png}
   \caption{Number of choke points plotted against mean escape time. Choke point 1 has its first choke point closest to exit and choke point 3 the furthest.  a through f denote increasing number of choke points with a the fewest and f the most.}
@@ -405,7 +405,7 @@ There are few important observations from this results plot.  The most obvious i
 The exit dimensions experiments \ref{exitdims} sought to understand how placement of exits impacts the escape times.  Each family of maps had the same dimensions of exits (2, 4, 6, \& 8) but placed them differently.  The $a$ group had one exit, the $b$ group had the dimensions evenly split between 2 exits on opposite sides of the map, and the $c$ group had the exits split into 1 unit exits evenly placed on 1 edge of the map \ref{exitdimsmaps}.
 
 
-\begin{figure} [!ht]
+\begin{figure} [H]
   \centering
   \includegraphics[width=.75\linewidth]{./figures/exit_dims_graph.png}
   \caption{Exit placement strategies plotted against mean escape time.  exit\_dims\_$n$ are a family of maps with total width of exits equal to $n$. $a$ group has 1 exit of width $n$, $b$ has 2 exits on opposite sides with width $n/2$, and $c$ has $n$ exits all on one edge.}
@@ -418,7 +418,7 @@ From this plot we can clearly see a trend where $b$ and $c$ exit placements work
 
 As described in detail here \ref{expAgent} our agent speed experiment studied the impact of various agent speed distributions in the population.  We steadily started with a population of all medium speed agents and incrementally moved that population to the slow category.  We then ran each experiment multiple times plotted below as the measured escape line and its associated error bars.  We compared this to what we expected to see, which would be a smooth transition in escape times from faster to slower, as noted in the predicted escape line.
 
-\begin{figure} [!ht]
+\begin{figure} [H]
   \centering
   \includegraphics[width=.75\linewidth]{./figures/speed_dist_test.png}
   \caption{Agent speed distribution results}
